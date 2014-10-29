@@ -16,6 +16,7 @@ class Sample(np.ndarray):
     def __array_finalize__(self, obj):
         if obj is None: return
         self.prob = getattr(obj, 'prob', None)
+        self.result = None
         # We do not need to return anything
 
     def simulate(self):
