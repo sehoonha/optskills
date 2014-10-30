@@ -26,7 +26,7 @@ class Cov(object):
         # lhs = self
         pass
 
-    def generate_sample(self):
+    def generate_params(self):
         mean = self.m
         cov = self.C
         params = np.random.multivariate_normal(mean, cov)

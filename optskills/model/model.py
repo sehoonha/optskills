@@ -1,3 +1,4 @@
+import numpy as np
 from mean import Linear
 from cov import Cov
 
@@ -18,8 +19,20 @@ class Model(object):
             center = self.mean.point(task)
             self.covs += [Cov(dim, center)]
 
-    def generate(self):
-        pass
+        # Populate a set of volumns
+        self.volumns = [1.0] * self.n
+
+    def generate_params(self):
+        prob = np.array(self.volumns)
+        if sum(prob) == 0.0:
+            prob = [1.0 / float(self.n)] * self.n
+        else:
+            prob /= sum(prob)
+        print('prob: %s' % prob)
+
+        i = np.random.choice(range(self.n), p=prob)
+        params = self.covs[i].generate_params()
+        return params
 
     def update(self, samples):
         # samples is a two-dimensional array of samples
