@@ -23,24 +23,27 @@ class Model(object):
         self.volumns = [1.0] * self.n
 
     def generate_params(self):
-        prob = np.array(self.volumns)
-        if sum(prob) == 0.0:
-            prob = [1.0 / float(self.n)] * self.n
-        else:
-            prob /= sum(prob)
-        print('prob: %s' % prob)
-
+        prob = np.array(self.volumns) / sum(self.volumns)
+        # i = picked covariance matrix
         i = np.random.choice(range(self.n), p=prob)
-        params = self.covs[i].generate_params()
-        return params
+        return self.covs[i].generate_params()
 
     def update(self, samples):
         # samples is a two-dimensional array of samples
         # sample[i][j] = a jth good sample for the ith task
-        pass
+        self.update_mean(samples)
+        print self.mean
+        mean_pts = [self.mean.point(t) for t in self.tasks]
+        for p in mean_pts:
+            print ')', p
 
     def update_mean(self, samples):
-        pass
+        pts = []
+        for selected_for_task in samples:
+            m = np.mean(selected_for_task, axis=0)
+            print '>', m
+            pts += [m]
+        self.mean.fit(pts)
 
     def update_covs(self, samples):
         pass

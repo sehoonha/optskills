@@ -6,7 +6,7 @@ class Sphere(object):
     def __init__(self):
         self.dim = 2
         self.lo = np.array([-0.5, -0.5])
-        self.hi = np.array([1.0, 1.0])
+        self.hi = np.array([0.5, 0.5])
 
     def center(self, task):
         w = task
