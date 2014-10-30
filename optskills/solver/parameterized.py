@@ -14,7 +14,7 @@ class ParameterizedSolver(object):
 
     def solve(self):
         res = {'result': 'NG'}
-        MAX_ITER = 1
+        MAX_ITER = 1000
         for i in range(MAX_ITER):
             self.solve_step(i)
         return res
@@ -30,7 +30,7 @@ class ParameterizedSolver(object):
             s = Sample(params, self.prob)
             s.simulate()
             samples += [s]
-            # print("%s %s" % (i, s))
+            print("%s %s" % (i, s))
 
         # Select samples based on the criteria
         selected = []
@@ -41,7 +41,11 @@ class ParameterizedSolver(object):
             selected += [task_samples]
 
         # Update the model
+
         self.model.update(selected)
+        print('-' * 80)
+        print(str(self.model))
+        print('-' * 80)
 
     def __str__(self):
         return "[ParameterizedSolver on %s]" % self.prob

@@ -37,5 +37,5 @@ class Sample(np.ndarray):
         ret = ""
         ret += "Sample("
         ret += ", ".join(["%.8f" % x for x in self])
-        ret += ", " + repr(self.prob) + ")"
+        ret += ", %s)" % repr(self.prob)
         return ret

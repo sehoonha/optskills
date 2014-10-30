@@ -12,15 +12,10 @@ class Cov(object):
             self.C = np.identity(dim)
 
     def fit(self, pts):
-        n = len(pts)
-        dim = self.dim
-        C = np.zeros(dim, dim)
-        for x in pts:
-            d = x - self.m  # Difference from the center
-            C += d.reshape(dim, 1) * d
-        # should we specially care when n = 1?
-        C /= (n - 1)
-        self.C = C
+        """each row of pts is a point"""
+        # np.matrix subtracted by np.array (for every row)
+        X = pts - self.m
+        self.C = np.cov(X, rowvar=0)  # A row is an observation, not variable
 
     def interploate(self, rhs):
         # lhs = self

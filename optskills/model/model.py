@@ -32,21 +32,21 @@ class Model(object):
         # samples is a two-dimensional array of samples
         # sample[i][j] = a jth good sample for the ith task
         self.update_mean(samples)
-        print self.mean
-        mean_pts = [self.mean.point(t) for t in self.tasks]
-        for p in mean_pts:
-            print ')', p
+        self.update_covs(samples)
 
     def update_mean(self, samples):
         pts = []
         for selected_for_task in samples:
             m = np.mean(selected_for_task, axis=0)
-            print '>', m
             pts += [m]
         self.mean.fit(pts)
 
     def update_covs(self, samples):
-        pass
+        mean_pts = [self.mean.point(t) for t in self.tasks]
+        self.covs = []
+        for m, selected_for_task in zip(mean_pts, samples):
+            pts = np.matrix(selected_for_task)
+            self.covs += [Cov(self.dim, m, pts)]
 
     def __str__(self):
         cov_strings = ["\n%s" % c for c in self.covs]
