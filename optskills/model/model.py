@@ -26,6 +26,7 @@ class Model(object):
         prob = np.array(self.volumns) / sum(self.volumns)
         # i = picked covariance matrix
         i = np.random.choice(range(self.n), p=prob)
+        self.debug_last_generate_index = i
         return self.covs[i].generate_params()
 
     def update(self, samples):
@@ -33,11 +34,17 @@ class Model(object):
         # sample[i][j] = a jth good sample for the ith task
         self.update_mean(samples)
         self.update_covs(samples)
+        self.volumns = []
+        for task, samples_for_task in zip(self.tasks, samples):
+            s = samples_for_task[0]
+            v = s.evaluate(task)
+            self.volumns += [v]
 
     def update_mean(self, samples):
         pts = []
         for selected_for_task in samples:
-            m = np.mean(selected_for_task, axis=0)
+            # m = np.mean(selected_for_task, axis=0)
+            m = selected_for_task[0]
             pts += [m]
         self.mean.fit(pts)
 
@@ -50,4 +57,5 @@ class Model(object):
 
     def __str__(self):
         cov_strings = ["\n%s" % c for c in self.covs]
-        return "[Model %s / %s]" % (self.mean, " ".join(cov_strings))
+        return "[Model %s %s / %s]" % (self.mean, self.volumns,
+                                       " ".join(cov_strings))

@@ -33,9 +33,9 @@ class Sample(np.ndarray):
     def __str__(self):
         return "S[" + ", ".join(["%.6f" % x for x in self]) + "]"
 
-    def __repr__(self):
-        ret = ""
-        ret += "Sample("
-        ret += ", ".join(["%.8f" % x for x in self])
-        ret += ", %s)" % repr(self.prob)
-        return ret
+    # def __repr__(self):
+    #     ret = ""
+    #     ret += "Sample("
+    #     ret += ", ".join(["%.8f" % x for x in self])
+    #     ret += ", %s)" % repr(self.prob)
+    #     return ret
