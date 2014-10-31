@@ -11,6 +11,8 @@ class PlotMean(object):
         legends = []
         n = len(self.data)
         colors = iter(plt.cm.rainbow(np.linspace(0, 1, n)))
+        fig = plt.figure()
+        fig.set_size_inches(12, 12)
 
         for i, pts in enumerate(self.data):
             legends += ['Iter %02d' % i]
@@ -18,8 +20,8 @@ class PlotMean(object):
             plt.plot([p0[0], p1[0]], [p0[1], p1[1]], color=next(colors))
         plt.legend(legends)
         plt.axes().set_aspect('equal', 'datalim')
-        plt.show()
-        print('solve finished')
+        # plt.show()
+        plt.savefig('plot_mean.png')
 
     def notify_step(self, solver, model):
         if self.mean_type == 'linear':

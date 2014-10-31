@@ -9,6 +9,7 @@ print 'Hello, OptSkills!'
 prob = problems.Sphere()
 mean_type = 'linear'
 solver = solver.ParameterizedSolver(prob, mean_type)
+solver.add_observer(observer.PlotValues())
 solver.add_observer(observer.PlotMean(mean_type))
 
 print(solver)
