@@ -4,9 +4,9 @@ from sample import Sample
 
 
 class ParameterizedSolver(object):
-    def __init__(self, _prob, _mean_type):
+    def __init__(self, _prob, _ntasks, _mean_type):
         self.prob = _prob
-        self.n = 6
+        self.n = _ntasks
         self.tasks = np.linspace(0.0, 1.0, self.n)
         self.model = model.Model(self.prob.dim, self.tasks, _mean_type)
         self.num_parents = 16  # lambda
@@ -64,6 +64,9 @@ class ParameterizedSolver(object):
         print(str(self.model))
         print('-' * 80)
         return next_best_samples
+
+    def values(self):
+        return self.model.volumns
 
     def __str__(self):
         return "[ParameterizedSolver on %s]" % self.prob

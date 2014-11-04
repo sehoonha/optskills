@@ -15,6 +15,11 @@ class Linear(object):
             self.a = np.random.rand(dim) - 0.5
             self.b = np.random.rand(dim) - 0.5
 
+    def set_params(self, params):
+        assert(len(params) == self.paramdim)
+        self.a = np.array(params[:self.dim])
+        self.b = np.array(params[self.dim:])
+
     def fit(self, pts):
         xdata = self.tasks
         a, b = [], []

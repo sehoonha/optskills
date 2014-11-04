@@ -18,6 +18,6 @@ class PlotValues(object):
         plt.savefig('plot_values.png')
 
     def notify_step(self, solver, model):
-        values = model.volumns
+        values = solver.values()
         self.data += [values]
         print('data: %s' % self.data)
