@@ -10,6 +10,8 @@ class DirectSolver(object):
         self.n = _ntasks
         self.tasks = np.linspace(0.0, 1.0, self.n)
         self.model = model.Model(self.prob.dim, self.tasks, _mean_type)
+        self.iter_counter = 0
+        self.eval_counter = 0
         self.observers = []
         print 'model:', self.model
 
@@ -21,7 +23,7 @@ class DirectSolver(object):
 
     def solve(self):
         res = {'result': 'NG'}
-        opt = {'verb_time': 0}
+        opt = {'verb_time': 0, 'popsize': 16}
         x0 = np.random.rand(self.mean().paramdim) - 0.5
 
         print
@@ -36,12 +38,17 @@ class DirectSolver(object):
         return res
 
     def evaluate(self, x):
+        self.eval_counter += 1
         self.mean().set_params(x)
         sum_error = 0.0
         for task in self.tasks:
             pt = self.mean().point(task)
             s = Sample(pt, self.prob)
             sum_error += s.evaluate(task)
+        if self.eval_counter % 16 == 0:
+            self.iter_counter += 1
+            print 'CMA Iteration', self.iter_counter
+
         return sum_error
 
     def __str__(self):

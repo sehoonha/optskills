@@ -7,12 +7,14 @@ class Sphere(object):
         self.dim = 2
         self.lo = np.array([-0.5, -0.5])
         self.hi = np.array([0.5, 0.5])
+        self.eval_counter = 0  # Well, increasing when evaluated..
 
     def center(self, task):
         w = task
         return self.lo * (1 - w) + self.hi * w
 
     def simulate(self, sample):
+        self.eval_counter += 1
         return sample.view(np.ndarray)
 
     def evaluate(self, result, task):
