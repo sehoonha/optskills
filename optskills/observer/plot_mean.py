@@ -7,6 +7,9 @@ class PlotMean(object):
         self.mean_type = mean_type
         self.data = []
 
+    def notify_init(self, solver, model):
+        pass
+
     def notify_solve(self, solver, model):
         legends = []
         n = len(self.data)

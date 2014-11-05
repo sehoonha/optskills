@@ -6,6 +6,7 @@ from sample import Sample
 
 class DirectSolver(object):
     def __init__(self, _prob, _ntasks, _mean_type):
+        self.name = 'Direct'
         self.prob = _prob
         self.n = _ntasks
         self.tasks = np.linspace(0.0, 1.0, self.n)
@@ -23,6 +24,7 @@ class DirectSolver(object):
         return self.model.mean
 
     def solve(self):
+        [o.notify_init(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
         opt = {'verb_time': 0, 'popsize': 16}
         x0 = np.random.rand(self.mean().paramdim) - 0.5

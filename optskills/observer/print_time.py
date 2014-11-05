@@ -5,6 +5,9 @@ class PrintTime(object):
     def __init__(self):
         self.time_records = []
 
+    def notify_init(self, solver, model):
+        pass
+
     def notify_step(self, solver, model):
         self.time_records += [time.time()]
 

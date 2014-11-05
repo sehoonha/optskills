@@ -5,6 +5,7 @@ from sample import Sample
 
 class ParameterizedSolver(object):
     def __init__(self, _prob, _ntasks, _mean_type):
+        self.name = 'Parameterized'
         self.prob = _prob
         self.n = _ntasks
         self.tasks = np.linspace(0.0, 1.0, self.n)
@@ -19,6 +20,7 @@ class ParameterizedSolver(object):
         self.observers += [o]
 
     def solve(self):
+        [o.notify_init(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
         MAX_ITER = 10
         best_samples = [[] for i in range(self.n)]
