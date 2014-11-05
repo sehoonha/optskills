@@ -13,6 +13,7 @@ class DirectSolver(object):
         self.iter_counter = 0
         self.eval_counter = 0
         self.observers = []
+        self.iter_values = []
         print 'model:', self.model
 
     def add_observer(self, o):
@@ -40,16 +41,35 @@ class DirectSolver(object):
     def evaluate(self, x):
         self.eval_counter += 1
         self.mean().set_params(x)
-        sum_error = 0.0
+        sample_values = []
         for task in self.tasks:
             pt = self.mean().point(task)
             s = Sample(pt, self.prob)
-            sum_error += s.evaluate(task)
+            v = s.evaluate(task)
+            sample_values += [v]
+        sum_error = sum(sample_values)
+        self.iter_values += [sample_values]  # Values for the entire iterations
+
+        # If one iteration is ended
         if self.eval_counter % 16 == 0:
             self.iter_counter += 1
-            print 'CMA Iteration', self.iter_counter
+            # print 'CMA Iteration', self.iter_counter, self.prob.eval_counter
+            # for v in self.iter_values:
+            #     print sum(v), v
+            # print 'best:', self.values()
+            [o.notify_step(self, self.model) for o in self.observers]
+
+            self.iter_values = []
 
         return sum_error
+
+    def num_evals(self):
+        return self.prob.eval_counter
+
+    def values(self):
+        sum_values = [sum(v) for v in self.iter_values]
+        best_index = np.argmin(sum_values)
+        return self.iter_values[best_index]
 
     def __str__(self):
         return "[DirectSolver on %s]" % self.prob

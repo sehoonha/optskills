@@ -12,7 +12,8 @@ class ParameterizedSolver(object):
         self.num_parents = 16  # lambda
         self.num_offsprings = 4  # mu
         self.observers = []
-        print 'ParameterizedSolver init OK'
+        print('model: %s' % self.model)
+        print('ParameterizedSolver init OK')
 
     def add_observer(self, o):
         self.observers += [o]
@@ -65,8 +66,20 @@ class ParameterizedSolver(object):
         print('-' * 80)
         return next_best_samples
 
+    def num_evals(self):
+        return self.prob.eval_counter
+
     def values(self):
-        return self.model.volumns
+        saved = self.prob.eval_counter
+        sample_values = []
+        for task in self.tasks:
+            pt = self.model.mean.point(task)
+            s = Sample(pt, self.prob)
+            v = s.evaluate(task)
+            sample_values += [v]
+
+        self.prob.eval_counter = saved
+        return sample_values
 
     def __str__(self):
         return "[ParameterizedSolver on %s]" % self.prob

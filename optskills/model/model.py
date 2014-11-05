@@ -21,9 +21,12 @@ class Model(object):
 
         # Populate a set of volumns
         self.volumns = [1.0] * self.n
+        print 'n:', self.n
+        print 'volumns:', self.volumns
 
     def generate_params(self):
         prob = np.array(self.volumns) / sum(self.volumns)
+        print 'probs:', prob
         # i = picked covariance matrix
         i = np.random.choice(range(self.n), p=prob)
         self.debug_last_generate_index = i

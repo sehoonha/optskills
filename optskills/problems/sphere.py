@@ -7,7 +7,7 @@ class Sphere(object):
         self.dim = 2
         self.lo = np.array([-0.5, -0.5])
         self.hi = np.array([0.5, 0.5])
-        self.eval_counter = 0  # Well, increasing when evaluated..
+        self.eval_counter = 0  # Well, increasing when simulated
 
     def center(self, task):
         w = task
