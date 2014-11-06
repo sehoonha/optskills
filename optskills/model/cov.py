@@ -21,9 +21,9 @@ class Cov(object):
         # lhs = self
         pass
 
-    def generate_params(self):
+    def generate_params(self, stepsize=1.0):
         mean = self.m
-        cov = self.C
+        cov = self.C * stepsize
         params = np.random.multivariate_normal(mean, cov)
         return params
 

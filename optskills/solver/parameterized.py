@@ -1,5 +1,6 @@
 import numpy as np
 import model
+import math
 from sample import Sample
 
 
@@ -13,6 +14,7 @@ class ParameterizedSolver(object):
         self.num_parents = 16  # lambda
         self.num_offsprings = 4  # mu
         self.observers = []
+        self.no_counter = 0
         print('model: %s' % self.model)
         print('ParameterizedSolver init OK')
 
@@ -35,6 +37,8 @@ class ParameterizedSolver(object):
     def solve_step(self, iteration, best_samples):
         print('solver iteration: %d' % iteration)
         print('best samples: %s' % best_samples)
+
+        prev_values = self.values()
 
         samples = []
         # Generate all samples
@@ -68,8 +72,21 @@ class ParameterizedSolver(object):
 
         # Update the model
         self.model.update(selected)
+
+        # Step size control
+        curr_values = self.values()
+        # If offspring is better than parent
+        if sum(curr_values) < sum(prev_values):
+            self.model.stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
+            print('Updated: YES (NO: %d)' % self.no_counter)
+        else:
+            self.model.stepsize /= (math.exp(1.0 / 3.0) ** 0.25)
+            self.no_counter += 1
+            print('Updated: NO (%d)' % self.no_counter)
+
         print('-' * 80)
         print(str(self.model))
+        print('sum(values): %.8f' % sum(self.values()))
         print('-' * 80)
         return next_best_samples
 

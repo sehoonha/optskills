@@ -6,7 +6,7 @@ import observer
 
 print 'Hello, OptSkills!'
 
-NUM_TESTS = 21
+NUM_TESTS = 51
 NUM_TASKS = 6
 MEAN_TYPE = 'linear'
 

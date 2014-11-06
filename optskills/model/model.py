@@ -19,6 +19,9 @@ class Model(object):
             center = self.mean.point(task)
             self.covs += [Cov(dim, center)]
 
+        # Stepsize, externally controlled
+        self.stepsize = 1.0
+
         # Populate a set of volumns
         self.volumns = [1.0] * self.n
         print 'n:', self.n
@@ -30,7 +33,7 @@ class Model(object):
         # i = picked covariance matrix
         i = np.random.choice(range(self.n), p=prob)
         self.debug_last_generate_index = i
-        return self.covs[i].generate_params()
+        return self.covs[i].generate_params(self.stepsize)
 
     def update(self, samples):
         # samples is a two-dimensional array of samples
@@ -58,7 +61,12 @@ class Model(object):
             pts = np.matrix(selected_for_task)
             self.covs += [Cov(self.dim, m, pts)]
 
+    def set_stepsize(self, stepsize):
+        self.stepsize = stepsize
+
     def __str__(self):
         cov_strings = ["\n%s" % c for c in self.covs]
-        return "[Model %s %s / %s]" % (self.mean, self.volumns,
-                                       " ".join(cov_strings))
+        return "[Model %s stepsize %.4f %s / %s]" % (self.mean,
+                                                     self.stepsize,
+                                                     self.volumns,
+                                                     " ".join(cov_strings))
