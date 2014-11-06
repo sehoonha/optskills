@@ -54,7 +54,9 @@ class PlotValues(object):
 
         fig = plt.figure()
         fig.set_size_inches(18.5, 10.5)
+        num_trials = 0
         for name, exp_list in self.data.iteritems():
+            num_trials = len(exp_list)
             n = min([e.num_data() for e in exp_list])
             x = exp_list[0].evals[:n]
             y = []
@@ -63,6 +65,7 @@ class PlotValues(object):
                 avg = np.mean(i_values)
                 y += [avg]
             plt.plot(x, y)
+
             # # Plot errorbar as well
             # last_values = [e.values[n - 1] for e in exp_list]
             # lo = np.percentile(last_values, 20)
@@ -70,6 +73,11 @@ class PlotValues(object):
             # hi = np.percentile(last_values, 80)
             # plt.errorbar(x[n - 1], y[n - 1], yerr=[[mi - lo], [hi - mi]])
         # plt.plot(self.evals, self.values)
-        plt.legend(self.data.keys())
+        font = {'size': 24}
+        plt.title('Compare %d Trials' % num_trials, fontdict=font)
+        font = {'size': 20}
+        plt.xlabel('The number of sample evaluations', fontdict=font)
+        plt.ylabel('The average error of mean segments', fontdict=font)
+        plt.legend(self.data.keys(), fontsize=20)
         # plt.show()
         plt.savefig('plot_values.png')

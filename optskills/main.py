@@ -6,9 +6,10 @@ import observer
 
 print 'Hello, OptSkills!'
 
-NUM_TESTS = 5
+NUM_TESTS = 21
 NUM_TASKS = 6
 MEAN_TYPE = 'linear'
+
 
 def benchmark():
     obs_plot_values = observer.PlotValues()
@@ -28,6 +29,7 @@ def benchmark():
 
     obs_plot_values.plot()
 
+
 def test_parameterized_solver():
     obs_plot_values = observer.PlotValues()
     observers = [obs_plot_values, observer.PrintTime()]
@@ -41,5 +43,5 @@ def test_parameterized_solver():
     print(res)
     obs_plot_values.plot()
 
-# benchmark()
-test_parameterized_solver()
+benchmark()
+# test_parameterized_solver()

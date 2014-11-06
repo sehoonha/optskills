@@ -6,7 +6,7 @@ from sample import Sample
 
 class DirectSolver(object):
     def __init__(self, _prob, _ntasks, _mean_type):
-        self.name = 'Direct'
+        self.name = 'CMA-ES'
         self.prob = _prob
         self.n = _ntasks
         self.tasks = np.linspace(0.0, 1.0, self.n)
@@ -26,16 +26,19 @@ class DirectSolver(object):
     def solve(self):
         [o.notify_init(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
-        opt = {'verb_time': 0, 'popsize': 16}
+        opt = {'verb_time': 0, 'popsize': 16, 'tolfun': 1e-5}
         x0 = np.random.rand(self.mean().paramdim) - 0.5
 
-        print
-        print '------- CMA-ES --------'
+        # print cma.CMAOptions()
+        # exit(0)
+
+        print()
+        print('------- CMA-ES --------')
         res = cma.fmin(self.evaluate, x0, 2.0, opt)
-        print '-----------------------'
-        print
+        print('-----------------------')
+        print()
         # np.set_printoptions(precision=6, suppress=True)
-        print 'the answer:', res[0]
+        print('the answer: %s' % res[0])
 
         [o.notify_solve(self, self.model) for o in self.observers]
         return res

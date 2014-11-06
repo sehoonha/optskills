@@ -25,7 +25,6 @@ class Cov(object):
         mean = self.m
         cov = self.C
         params = np.random.multivariate_normal(mean, cov)
-        print '-- ', self.m, self.C, params
         return params
 
     def __str__(self):

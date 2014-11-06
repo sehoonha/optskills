@@ -5,7 +5,7 @@ from sample import Sample
 
 class ParameterizedSolver(object):
     def __init__(self, _prob, _ntasks, _mean_type):
-        self.name = 'Parameterized'
+        self.name = 'Ours'
         self.prob = _prob
         self.n = _ntasks
         self.tasks = np.linspace(0.0, 1.0, self.n)
@@ -23,11 +23,12 @@ class ParameterizedSolver(object):
         [o.notify_init(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
         MAX_ITER = 100
-        best_samples = [[] for i in range(self.n)]
+        best_samples = []
         for i in range(MAX_ITER):
             next_best_samples = self.solve_step(i, best_samples)
             best_samples = next_best_samples
             [o.notify_step(self, self.model) for o in self.observers]
+
         [o.notify_solve(self, self.model) for o in self.observers]
         return res
 
@@ -47,19 +48,23 @@ class ParameterizedSolver(object):
             j = self.model.debug_last_generate_index
             print("%s (from %d) %s" % (i, j, s))
 
+        samples += best_samples
         # Select samples based on the criteria
         selected = []
         next_best_samples = []
-        for task, best in zip(self.tasks, best_samples):
+        for task in self.tasks:
             key = lambda s: s.evaluate(task)
-            sorted_samples = sorted(samples + best, key=key)
+            sorted_samples = sorted(samples, key=key)
             task_samples = sorted_samples[:self.num_offsprings]
             selected += [task_samples]
-            next_best_samples += [task_samples[:1]]
+
+            next_best_samples += task_samples
             # print('Selected sample for task %f' % task)
             # for i, s in enumerate(task_samples):
             #     print("%d (%.6f) : %s from %d" % (i, s.evaluate(task),
             #                                       s, s.iteration))
+
+        next_best_samples = list(set(next_best_samples))
 
         # Update the model
         self.model.update(selected)
