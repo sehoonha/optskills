@@ -59,9 +59,16 @@ class PlotValues(object):
             x = exp_list[0].evals[:n]
             y = []
             for i in range(n):
-                avg = np.mean([e.values[i] for e in exp_list])
+                i_values = [e.values[i] for e in exp_list]
+                avg = np.mean(i_values)
                 y += [avg]
             plt.plot(x, y)
+            # # Plot errorbar as well
+            # last_values = [e.values[n - 1] for e in exp_list]
+            # lo = np.percentile(last_values, 20)
+            # mi = np.mean(last_values)
+            # hi = np.percentile(last_values, 80)
+            # plt.errorbar(x[n - 1], y[n - 1], yerr=[[mi - lo], [hi - mi]])
         # plt.plot(self.evals, self.values)
         plt.legend(self.data.keys())
         # plt.show()
