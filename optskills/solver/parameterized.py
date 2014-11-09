@@ -24,7 +24,7 @@ class ParameterizedSolver(object):
     def solve(self):
         [o.notify_init(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
-        MAX_ITER = 100
+        MAX_ITER = 10
         best_samples = []
         for i in range(MAX_ITER):
             next_best_samples = self.solve_step(i, best_samples)
@@ -86,7 +86,7 @@ class ParameterizedSolver(object):
 
         print('-' * 80)
         print(str(self.model))
-        print('sum(values): %.8f' % sum(self.values()))
+        print('average(values): %.8f' % np.mean(self.values()))
         print('-' * 80)
         return next_best_samples
 

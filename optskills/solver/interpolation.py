@@ -52,6 +52,9 @@ class InterpolationSolver(object):
 
         # 2. The final step notification
         [o.notify_step(self, self.model) for o in self.observers]
+        for i in range(self.n):
+            print("%d (%.4f) : %s" % (i, self.tasks[i], pts[i]))
+        print('sum values: %.6f' % np.mean(self.values()))
         print self.model
 
         [o.notify_solve(self, self.model) for o in self.observers]
