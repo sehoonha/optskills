@@ -30,11 +30,19 @@ def benchmark():
     obs_plot_values.plot()
 
 
-def test_parameterized_solver():
+def test_solver(name=None):
     obs_plot_values = observer.PlotValues()
     observers = [obs_plot_values, observer.PrintTime()]
     prob = problems.Sphere()
-    s = solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE)
+    s = None
+    if name == 'parameterized':
+        s = solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE)
+    elif name == 'direct':
+        s = solver.DirectSolver(prob, NUM_TASKS, MEAN_TYPE)
+    elif name == 'interpolation':
+        s = solver.InterpolationSolver(prob, NUM_TASKS, MEAN_TYPE)
+    else:
+        return
     for o in observers:
         s.add_observer(o)
     print(s)
@@ -43,5 +51,7 @@ def test_parameterized_solver():
     print(res)
     obs_plot_values.plot()
 
-benchmark()
-# test_parameterized_solver()
+# benchmark()
+# test_solver('parameterized')
+# test_solver('direct')
+test_solver('interpolation')
