@@ -15,7 +15,9 @@ from PyQt4 import QtGui
 from PyQt4 import QtCore
 from glwidget import GLWidget
 from pydart import Trackball
+import numpy as np
 import problems
+import model
 
 
 class MyWindow(QtGui.QMainWindow):
@@ -29,6 +31,12 @@ class MyWindow(QtGui.QMainWindow):
         # Create a simulation
         self.prob = problems.GPBow()
         self.prob.set_random_params()
+
+        self.tasks = np.linspace(0.0, 1.0, 6)
+        self.model = model.Model(self.prob.dim, self.tasks, 'linear')
+        params = np.array([0.8647, 0.6611, -0.6017, -0.3276, -0.3781, 0.2489])
+        self.model.mean.set_params(params)
+        print('model:\n%s\n' % self.model)
 
         self.initUI()
         self.initActions()
@@ -91,6 +99,12 @@ class MyWindow(QtGui.QMainWindow):
         # Create a toolbar
         self.toolbar = self.addToolBar('Control')
         self.toolbar.addAction(self.resetAction)
+        self.taskSpin = QtGui.QDoubleSpinBox(self)
+        self.taskSpin.setRange(0.0, 1.0)
+        self.taskSpin.setDecimals(4)
+        self.taskSpin.setSingleStep(0.2)
+        self.taskSpin.valueChanged[float].connect(self.taskSpinEvent)
+        self.toolbar.addWidget(self.taskSpin)
         self.toolbar.addAction(self.playAction)
         self.toolbar.addAction(self.animAction)
         self.toolbar.addSeparator()
@@ -143,12 +157,18 @@ class MyWindow(QtGui.QMainWindow):
     def renderTimerEvent(self):
         self.glwidget.updateGL()
         self.statusBar().showMessage(str(self.prob))
-        # self.rangeSlider.setRange(0, len(self.sim) - 1)
+        self.rangeSlider.setRange(0, self.prob.world.nframes - 1)
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:
             print 'Escape key pressed! Bye.'
             self.close()
+
+    def taskSpinEvent(self, value):
+        task = self.taskSpin.value()
+        pt = self.model.mean.point(task)
+        print('task: %.4f point: %s' % (task, pt))
+        self.prob.set_params(pt)
 
     def rangeSliderEvent(self, value):
         i = value
@@ -163,7 +183,7 @@ class MyWindow(QtGui.QMainWindow):
         os.system('rm ./captures/frame.*.png')
 
     def resetEvent(self):
-        self.prob.set_random_params()
+        # self.prob.set_random_params()
         self.prob.reset()
 
     def cam0Event(self):

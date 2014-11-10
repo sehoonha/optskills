@@ -8,6 +8,13 @@ def confine(x, lo, hi):
     return min(max(lo, x), hi)
 
 
+def STR(vector, precision):
+    if vector is None:
+        return "[]"
+    fmt = '%%.%df' % precision
+    return "[" + ", ".join([fmt % v for v in vector]) + "]"
+
+
 class PDController:
     def __init__(self, _skel, _kp, _kd, _effort_ratio=1.0):
         self.skel = _skel
