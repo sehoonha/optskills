@@ -26,7 +26,15 @@ class DirectSolver(object):
     def solve(self):
         [o.notify_init(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
-        opt = {'verb_time': 0, 'popsize': 16, 'tolfun': 1e-5}
+        # opt = {'verb_time': 0, 'popsize': 16, 'tolfun': 1.0}
+        opts = cma.CMAOptions()
+        opts.set('verb_disp', 1)
+        opts.set('tolfun', 0.0001)
+        opts.set('tolx', 0.1)
+        opts.set('popsize', 16)
+        for key, value in opts.iteritems():
+            print '[', key, ']\n', value
+
         x0 = np.random.rand(self.mean().paramdim) - 0.5
 
         # print cma.CMAOptions()
@@ -34,7 +42,7 @@ class DirectSolver(object):
 
         print()
         print('------- CMA-ES --------')
-        res = cma.fmin(self.evaluate, x0, 2.0, opt)
+        res = cma.fmin(self.evaluate, x0, 2.0, opts)
         print('-----------------------')
         print()
         # np.set_printoptions(precision=6, suppress=True)
@@ -52,8 +60,8 @@ class DirectSolver(object):
             s = Sample(pt, self.prob)
             v = s.evaluate(task)
             sample_values += [v]
-        sum_error = sum(sample_values)
-        print x, sum_error
+        avg_error = np.mean(sample_values)
+        print x, avg_error
         self.iter_values += [sample_values]  # Values for the entire iterations
 
         # If one iteration is ended
@@ -67,7 +75,7 @@ class DirectSolver(object):
 
             self.iter_values = []
 
-        return sum_error
+        return avg_error
 
     def num_evals(self):
         return self.prob.eval_counter

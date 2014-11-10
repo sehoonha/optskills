@@ -25,13 +25,14 @@ class ParameterizedSolver(object):
     def solve(self):
         [o.notify_init(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
-        MAX_ITER = 20
+        MAX_ITER = 100
         best_samples = []
         for i in range(MAX_ITER):
             next_best_samples = self.solve_step(i, best_samples)
             best_samples = next_best_samples
             [o.notify_step(self, self.model) for o in self.observers]
-
+            if np.mean(self.curr_values) < 0.0001:
+                break
         [o.notify_solve(self, self.model) for o in self.observers]
         return res
 
@@ -75,9 +76,9 @@ class ParameterizedSolver(object):
         self.model.update(selected)
 
         # Step size control
-        curr_values = self.values()
+        self.curr_values = self.values()
         # If offspring is better than parent
-        if sum(curr_values) < sum(prev_values):
+        if sum(self.curr_values) < sum(prev_values):
             # self.model.stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
             self.model.stepsize *= (math.exp(1.0 / 3.0))
             print('Updated: YES (NO: %d)' % self.no_counter)
@@ -88,7 +89,7 @@ class ParameterizedSolver(object):
 
         print('-' * 80)
         print(str(self.model))
-        print('average(values): %.8f' % np.mean(self.values()))
+        print('average(values): %.8f' % np.mean(self.curr_values))
         print('-' * 80)
         return next_best_samples
 

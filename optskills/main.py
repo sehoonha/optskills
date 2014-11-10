@@ -26,7 +26,8 @@ def benchmark():
     observers = [obs_plot_values, observer.PrintTime()]
     for i in range(2 * NUM_TESTS):
         # prob = problems.Sphere()
-        prob = problems.MirroredSphere()
+        # prob = problems.MirroredSphere()
+        prob = problems.GPBow()
         if i % 2 == 0:
             s = solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE)
         elif i % 2 == 1:
