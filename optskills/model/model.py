@@ -8,6 +8,7 @@ class Model(object):
         self.dim = dim
         self.tasks = tasks
         self.n = len(tasks)
+        self.mean_type = mean_type
 
         # Create a mean function
         if mean_type == 'linear':

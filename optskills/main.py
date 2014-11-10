@@ -11,6 +11,16 @@ NUM_TASKS = 6
 MEAN_TYPE = 'linear'
 
 
+def save(prob, model, filename):
+    import json
+    with open(filename, 'w+') as fp:
+        data = {}
+        data['prob'] = repr(prob)
+        data['mean_type'] = repr(model.mean_type)
+        data['mean_params'] = repr(model.mean.params())
+        json.dump(data, fp)
+
+
 def benchmark():
     obs_plot_values = observer.PlotValues()
     observers = [obs_plot_values, observer.PrintTime()]
@@ -56,11 +66,9 @@ def test_solver(name=None):
     print('==== respond from solver ====')
     print(res)
     obs_plot_values.plot()
+    save(prob, s.model, 'result_%s.json' % name)
 
 # benchmark()
-# test_solver('parameterized')
+test_solver('parameterized')
 # test_solver('direct')
 # test_solver('interpolation')
-
-prob = problems.GPBow()
-print repr(prob)

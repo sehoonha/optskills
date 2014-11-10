@@ -21,22 +21,40 @@ import model
 
 
 class MyWindow(QtGui.QMainWindow):
-    def __init__(self):
+    def __init__(self, filename=None):
         super(MyWindow, self).__init__()
 
         # Check and create captures directory
         if not os.path.isdir('captures'):
             os.makedirs('captures')
 
-        # Create a simulation
-        self.prob = problems.GPBow()
-        self.prob.set_random_params()
-
         self.tasks = np.linspace(0.0, 1.0, 6)
-        self.model = model.Model(self.prob.dim, self.tasks, 'linear')
-        # params = np.array([0.8647, 0.6611, -0.6017, -0.3276, -0.3781, 0.2489])
-        params = np.array([1.0447, -0.8950, 0.0627, -0.5505, 0.3516, 0.0807])
-        self.model.mean.set_params(params)
+
+        # Create a simulation
+        if filename is None:
+            self.prob = problems.GPBow()
+            self.model = model.Model(self.prob.dim, self.tasks, 'linear')
+            # params = np.array([0.8647, 0.6611, -0.6017,
+            #                    -0.3276, -0.3781, 0.2489])
+            params = np.array([1.0447, -0.8950, 0.0627,
+                               -0.5505, 0.3516, 0.0807])
+            self.model.mean.set_params(params)
+        else:
+            import json
+            with open(filename) as fp:
+                data = json.load(fp)
+                print data
+                # Parse and print
+                self.prob = eval(data['prob'])
+                print('Problem: %s' % self.prob)
+
+                mean_type = eval(data['mean_type'])
+                print('Mean_type: %s' % mean_type)
+                self.model = model.Model(self.prob.dim, self.tasks, mean_type)
+
+                mean_params = eval('np.' + data['mean_params'])
+                print('params: %s' % mean_params)
+                self.model.mean.set_params(mean_params)
         print('model:\n%s\n' % self.model)
 
         self.initUI()
@@ -53,6 +71,7 @@ class MyWindow(QtGui.QMainWindow):
         self.renderTimer.start(25)
 
         self.cam0Event()
+        self.taskSpinEvent(0.0)
         # self.sim.load('gp_step_1.5.plan')
         # self.sim.load('gp_step_5.plan')
         # self.sim.load('test.plan')
@@ -216,9 +235,12 @@ class MyWindow(QtGui.QMainWindow):
         print '----'
 
 glutInit(sys.argv)
+for i, arg in enumerate(sys.argv):
+    print ('Arg %d: %s' % (i, arg))
 app = QtGui.QApplication(["Sample Viewer"])
 # widget = WfWidget()
 # widget.show()
-w = MyWindow()
+filename = None if len(sys.argv) == 1 else sys.argv[1]
+w = MyWindow(filename)
 w.show()
 app.exec_()

@@ -20,6 +20,9 @@ class Linear(object):
         self.a = np.array(params[:self.dim])
         self.b = np.array(params[self.dim:])
 
+    def params(self):
+        return np.concatenate([self.a, self.b])
+
     def fit(self, pts):
         xdata = self.tasks
         a, b = [], []
