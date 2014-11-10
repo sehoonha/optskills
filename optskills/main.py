@@ -37,7 +37,8 @@ def test_solver(name=None):
     obs_plot_values = observer.PlotValues()
     observers = [obs_plot_values, observer.PrintTime()]
     # prob = problems.Sphere()
-    prob = problems.MirroredSphere()
+    # prob = problems.MirroredSphere()
+    prob = problems.GPBow()
     s = None
     if name == 'parameterized':
         s = solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE)
@@ -58,7 +59,5 @@ def test_solver(name=None):
 
 # benchmark()
 # test_solver('parameterized')
-# test_solver('direct')
+test_solver('direct')
 # test_solver('interpolation')
-prob = problems.GPBow()
-print prob

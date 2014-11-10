@@ -28,6 +28,7 @@ class MyWindow(QtGui.QMainWindow):
 
         # Create a simulation
         self.prob = problems.GPBow()
+        self.prob.set_random_params()
 
         self.initUI()
         self.initActions()
@@ -162,6 +163,7 @@ class MyWindow(QtGui.QMainWindow):
         os.system('rm ./captures/frame.*.png')
 
     def resetEvent(self):
+        self.prob.set_random_params()
         self.prob.reset()
 
     def cam0Event(self):

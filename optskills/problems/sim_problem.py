@@ -44,7 +44,6 @@ class SimProblem(object):
     world = None
 
     def __init__(self, skel_filename):
-        self.eval_counter = 0  # Well, increasing when simulated
         self.skel_filename = skel_filename
         if SimProblem.world is None:
             self.__init__pydart__(skel_filename)
@@ -73,6 +72,10 @@ class SimProblem(object):
             tau[0:6] = 0.0
             self.skel().tau = tau
         self.world.step()
+        return self.terminated()
+        # return False
+
+    def terminated(self):
         return False
 
     def render(self):

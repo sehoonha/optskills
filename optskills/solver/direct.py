@@ -53,6 +53,7 @@ class DirectSolver(object):
             v = s.evaluate(task)
             sample_values += [v]
         sum_error = sum(sample_values)
+        print x, sum_error
         self.iter_values += [sample_values]  # Values for the entire iterations
 
         # If one iteration is ended
