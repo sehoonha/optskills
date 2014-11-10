@@ -67,7 +67,9 @@ class PlotValues(object):
             plt.plot(x, y)
 
             # # Plot errorbar as well
-            # last_values = [e.values[n - 1] for e in exp_list]
+            last_values = [e.values[n - 1] for e in exp_list]
+            print('%s: %.8f' % (name, np.mean(last_values)))
+            print('last_values: %s' % last_values)
             # lo = np.percentile(last_values, 20)
             # mi = np.mean(last_values)
             # hi = np.percentile(last_values, 80)

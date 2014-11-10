@@ -14,11 +14,12 @@ MEAN_TYPE = 'linear'
 def benchmark():
     obs_plot_values = observer.PlotValues()
     observers = [obs_plot_values, observer.PrintTime()]
-    for i in range(3 * NUM_TESTS):
-        prob = problems.Sphere()
-        if i % 3 == 0:
+    for i in range(2 * NUM_TESTS):
+        # prob = problems.Sphere()
+        prob = problems.MirroredSphere()
+        if i % 2 == 0:
             s = solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE)
-        elif i % 3 == 1:
+        elif i % 2 == 1:
             s = solver.InterpolationSolver(prob, NUM_TASKS, MEAN_TYPE)
         else:
             s = solver.DirectSolver(prob, NUM_TASKS, MEAN_TYPE)

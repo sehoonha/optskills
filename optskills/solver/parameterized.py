@@ -11,7 +11,8 @@ class ParameterizedSolver(object):
         self.n = _ntasks
         self.tasks = np.linspace(0.0, 1.0, self.n)
         self.model = model.Model(self.prob.dim, self.tasks, _mean_type)
-        self.num_parents = 16  # lambda
+        self.num_parents = 16
+        # lambda
         self.num_offsprings = 4  # mu
         self.observers = []
         self.no_counter = 0
@@ -77,7 +78,8 @@ class ParameterizedSolver(object):
         curr_values = self.values()
         # If offspring is better than parent
         if sum(curr_values) < sum(prev_values):
-            self.model.stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
+            # self.model.stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
+            self.model.stepsize *= (math.exp(1.0 / 3.0))
             print('Updated: YES (NO: %d)' % self.no_counter)
         else:
             self.model.stepsize /= (math.exp(1.0 / 3.0) ** 0.25)
