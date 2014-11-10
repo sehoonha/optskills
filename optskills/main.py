@@ -57,6 +57,8 @@ def test_solver(name=None):
     obs_plot_values.plot()
 
 # benchmark()
-test_solver('parameterized')
+# test_solver('parameterized')
 # test_solver('direct')
 # test_solver('interpolation')
+prob = problems.GPBow()
+print prob
