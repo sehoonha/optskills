@@ -59,5 +59,8 @@ def test_solver(name=None):
 
 # benchmark()
 # test_solver('parameterized')
-test_solver('direct')
+# test_solver('direct')
 # test_solver('interpolation')
+
+prob = problems.GPBow()
+print repr(prob)

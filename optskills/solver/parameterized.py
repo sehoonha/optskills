@@ -25,7 +25,7 @@ class ParameterizedSolver(object):
     def solve(self):
         [o.notify_init(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
-        MAX_ITER = 10
+        MAX_ITER = 20
         best_samples = []
         for i in range(MAX_ITER):
             next_best_samples = self.solve_step(i, best_samples)

@@ -105,3 +105,6 @@ class GPBow(SimProblem):
         status += ' '.join(['%.4f' % v for v in values])
         status += '}]'
         return status
+
+    def __repr__(self):
+        return 'problems.GPBow()'
