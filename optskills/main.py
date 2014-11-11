@@ -26,8 +26,8 @@ def benchmark():
     observers = [obs_plot_values, observer.PrintTime()]
     for i in range(2 * NUM_TESTS):
         # prob = problems.Sphere()
-        # prob = problems.MirroredSphere()
-        prob = problems.GPBow()
+        prob = problems.MirroredSphere()
+        # prob = problems.GPBow()
         if i % 2 == 0:
             s = solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE)
         elif i % 2 == 1:
@@ -42,6 +42,67 @@ def benchmark():
         print(res)
 
     obs_plot_values.plot()
+
+
+def create_solver(solver_name, prob):
+    if solver_name == 'parameterized':
+        return solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE)
+    elif solver_name == 'interpolation':
+        return solver.InterpolationSolver(prob, NUM_TASKS, MEAN_TYPE)
+    elif solver_name == 'direct':
+        return solver.DirectSolver(prob, NUM_TASKS, MEAN_TYPE)
+    else:
+        return None
+
+
+def mpi_evaluate(solver_name):
+    import os
+    pid = os.getpid()
+    print('==== begin solver: %d ====' % pid)
+    obs_plot_values = observer.PlotValues()
+    observers = [obs_plot_values, observer.PrintTime()]
+    prob = problems.Sphere()
+    s = create_solver(solver_name, prob)
+    for o in observers:
+        s.add_observer(o)
+    res = s.solve()
+    print('==== respond from solver %d ====' % pid)
+    print(res)
+    return (pid, solver_name, obs_plot_values.data)
+
+
+def mpi_benchmark(solvers, NUM_CORES=4):
+    # obs_plot_values = observer.PlotValues()
+    import multiprocessing as mp
+    import time
+    begin_time = time.time()
+    print ('-' * 80)
+    print('all solvers:')
+    print('%s' % solvers)
+    print ('-' * 80)
+    pool = mp.Pool(NUM_CORES)
+    results = pool.map(mpi_evaluate, solvers)
+    print ('\n\n')
+    print ('-' * 80)
+    collected_data = {}
+    for i, res in enumerate(results):
+        (pid, solver_name, solver_data) = res
+        print i, pid, solver_data
+        # Merge solver data into one structure
+        for name, exp_list in solver_data.iteritems():
+            if name not in collected_data:
+                collected_data[name] = []
+            collected_data[name] += exp_list
+    print ('-' * 80)
+    print 'collected data:'
+    print ('-' * 80)
+    print ('plot...')
+    pl = observer.PlotValues()
+    pl.data = collected_data
+    pl.plot()
+    print ('plot... done')
+    end_time = time.time()
+    print ('total %.4fs elapsed' % (end_time - begin_time))
 
 
 def test_solver(name=None):
@@ -70,6 +131,8 @@ def test_solver(name=None):
     save(prob, s.model, 'result_%s.json' % name)
 
 # benchmark()
-test_solver('parameterized')
+mpi_benchmark(['parameterized', 'direct'] * 51)
+# mpi_benchmark(['parameterized'])
+# test_solver('parameterized')
 # test_solver('direct')
 # test_solver('interpolation')

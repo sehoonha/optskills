@@ -79,8 +79,8 @@ class ParameterizedSolver(object):
         self.curr_values = self.values()
         # If offspring is better than parent
         if sum(self.curr_values) < sum(prev_values):
-            # self.model.stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
-            self.model.stepsize *= (math.exp(1.0 / 3.0))
+            self.model.stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
+            # self.model.stepsize *= (math.exp(1.0 / 3.0))
             print('Updated: YES (NO: %d)' % self.no_counter)
         else:
             self.model.stepsize /= (math.exp(1.0 / 3.0) ** 0.25)
