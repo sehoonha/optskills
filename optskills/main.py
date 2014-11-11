@@ -55,13 +55,33 @@ def create_solver(solver_name, prob):
         return None
 
 
+def evaluate(name):
+    obs_plot_values = observer.PlotValues()
+    observers = [obs_plot_values, observer.PrintTime()]
+    # prob = problems.Sphere()
+    prob = problems.MirroredSphere()
+    # prob = problems.GPBow()
+    s = create_solver(name, prob)
+    if s == 'parameterized':
+        observers += [observer.PlotMean('linear')]
+    for o in observers:
+        s.add_observer(o)
+    print(s)
+    res = s.solve()
+    print('==== respond from solver ====')
+    print(res)
+    obs_plot_values.plot()
+    save(prob, s.model, 'result_%s.json' % name)
+
+
 def mpi_evaluate(solver_name):
     import os
     pid = os.getpid()
     print('==== begin solver: %d ====' % pid)
     obs_plot_values = observer.PlotValues()
     observers = [obs_plot_values, observer.PrintTime()]
-    prob = problems.Sphere()
+    # prob = problems.Sphere()
+    prob = problems.MirroredSphere()
     s = create_solver(solver_name, prob)
     for o in observers:
         s.add_observer(o)
@@ -105,34 +125,6 @@ def mpi_benchmark(solvers, NUM_CORES=4):
     print ('total %.4fs elapsed' % (end_time - begin_time))
 
 
-def test_solver(name=None):
-    obs_plot_values = observer.PlotValues()
-    observers = [obs_plot_values, observer.PrintTime()]
-    # prob = problems.Sphere()
-    # prob = problems.MirroredSphere()
-    prob = problems.GPBow()
-    s = None
-    if name == 'parameterized':
-        s = solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE)
-        observers += [observer.PlotMean('linear')]
-    elif name == 'direct':
-        s = solver.DirectSolver(prob, NUM_TASKS, MEAN_TYPE)
-    elif name == 'interpolation':
-        s = solver.InterpolationSolver(prob, NUM_TASKS, MEAN_TYPE)
-    else:
-        return
-    for o in observers:
-        s.add_observer(o)
-    print(s)
-    res = s.solve()
-    print('==== respond from solver ====')
-    print(res)
-    obs_plot_values.plot()
-    save(prob, s.model, 'result_%s.json' % name)
-
-# benchmark()
-mpi_benchmark(['parameterized', 'direct'] * 51)
-# mpi_benchmark(['parameterized'])
-# test_solver('parameterized')
-# test_solver('direct')
-# test_solver('interpolation')
+# evaluate('parameterized')
+# mpi_benchmark(['parameterized', 'direct'] * 11)
+mpi_benchmark(['parameterized', 'interpolation'] * 51)
