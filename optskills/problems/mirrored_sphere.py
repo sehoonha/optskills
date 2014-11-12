@@ -31,4 +31,4 @@ class MirroredSphere(object):
         return norm(c - result)
 
     def __str__(self):
-        return "[SphereProblem]"
+        return "[MirroredSphereProblem]"

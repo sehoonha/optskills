@@ -9,6 +9,7 @@ print 'Hello, OptSkills!'
 NUM_TESTS = 11
 NUM_TASKS = 6
 MEAN_TYPE = 'linear'
+PROBLEM_CODE = None
 
 
 def save(prob, model, filename):
@@ -44,6 +45,10 @@ def benchmark():
     obs_plot_values.plot()
 
 
+def create_problem():
+    return eval(PROBLEM_CODE)
+
+
 def create_solver(solver_name, prob):
     if solver_name == 'parameterized':
         return solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE)
@@ -58,9 +63,7 @@ def create_solver(solver_name, prob):
 def evaluate(name):
     obs_plot_values = observer.PlotValues()
     observers = [obs_plot_values, observer.PrintTime()]
-    # prob = problems.Sphere()
-    prob = problems.MirroredSphere()
-    # prob = problems.GPBow()
+    prob = create_problem()
     s = create_solver(name, prob)
     if s == 'parameterized':
         observers += [observer.PlotMean('linear')]
@@ -124,8 +127,11 @@ def mpi_benchmark(solvers, NUM_CORES=4):
     end_time = time.time()
     print ('total %.4fs elapsed' % (end_time - begin_time))
 
+# PROBLEM_CODE = 'problems.Sphere()'
+PROBLEM_CODE = 'problems.MirroredSphere()'
+# PROBLEM_CODE = 'problems.GPBow()'
 
-# evaluate('parameterized')
+evaluate('parameterized')
 # mpi_benchmark(['parameterized'] * 51)
 # mpi_benchmark(['parameterized', 'direct'] * 11)
-mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 51)
+# mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 51)

@@ -26,7 +26,7 @@ class ParameterizedSolver(object):
     def solve(self):
         [o.notify_init(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
-        MAX_ITER = 100
+        MAX_ITER = 10
         self.mean_values, self.mean_samples = self.evaluate_model(self.model,
                                                                   -1)
         best_samples = self.mean_samples
@@ -105,9 +105,9 @@ class ParameterizedSolver(object):
             s.iteration = iteration
             s.simulate()
             samples += [s]
-            # # Debuging
-            # j = self.model.debug_last_generate_index
-            # print("%s (from %d) %s" % (i, j, s))
+            # Debuging
+            j = self.model.debug_last_generate_index
+            print("%s (from %d) %s" % (i, j, s))
         return samples
 
     def select_samples(self, samples):
@@ -119,10 +119,10 @@ class ParameterizedSolver(object):
             task_samples = sorted_samples[:self.num_offsprings]
             selected += [task_samples]
 
-            # print('Selected sample for task %f' % task)
-            # for i, s in enumerate(task_samples):
-            #     print("%d (%.6f) : %s from %d" % (i, s.evaluate(task),
-            #                                       s, s.iteration))
+            print('Selected sample for task %f' % task)
+            for i, s in enumerate(task_samples):
+                print("%d (%.6f) : %s from %d" % (i, s.evaluate(task),
+                                                  s, s.iteration))
         return selected
 
     def evaluate_model(self, model, iteration):
