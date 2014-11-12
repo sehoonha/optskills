@@ -113,8 +113,8 @@ def mpi_benchmark(solvers, NUM_CORES=4):
             if name not in collected_data:
                 collected_data[name] = []
             collected_data[name] += exp_list
-    print ('-' * 80)
-    print 'collected data:'
+    print('-' * 80)
+    print('collected data: %s' % collected_data)
     print ('-' * 80)
     print ('plot...')
     pl = observer.PlotValues()
@@ -126,5 +126,6 @@ def mpi_benchmark(solvers, NUM_CORES=4):
 
 
 # evaluate('parameterized')
+# mpi_benchmark(['parameterized'] * 51)
 # mpi_benchmark(['parameterized', 'direct'] * 11)
-mpi_benchmark(['parameterized', 'interpolation'] * 51)
+mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 51)

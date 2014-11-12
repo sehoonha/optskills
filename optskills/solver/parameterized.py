@@ -27,7 +27,8 @@ class ParameterizedSolver(object):
         [o.notify_init(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
         MAX_ITER = 100
-        self.mean_values, self.mean_samples = self.evaluate_model(self.model)
+        self.mean_values, self.mean_samples = self.evaluate_model(self.model,
+                                                                  -1)
         best_samples = self.mean_samples
         for i in range(MAX_ITER):
             next_best_samples = self.solve_step(i, best_samples)
@@ -61,7 +62,8 @@ class ParameterizedSolver(object):
         # Update the model
         curr_model = copy.deepcopy(self.model)
         curr_model.update(selected)
-        curr_mean_values, curr_mean_samples = self.evaluate_model(curr_model)
+        curr_mean_values, curr_mean_samples = self.evaluate_model(curr_model,
+                                                                  iteration)
 
         is_better = np.mean(curr_mean_values) < np.mean(self.mean_values)
         print('self.mean_values: %.8f' % np.mean(self.mean_values))
@@ -123,12 +125,13 @@ class ParameterizedSolver(object):
             #                                       s, s.iteration))
         return selected
 
-    def evaluate_model(self, model):
+    def evaluate_model(self, model, iteration):
         mean_samples = []
         mean_values = []
         for task in self.tasks:
             pt = model.mean.point(task)
             s = Sample(pt, self.prob)
+            s.iteration = iteration
             v = s.evaluate(task)
             mean_samples += [s]
             mean_values += [v]
