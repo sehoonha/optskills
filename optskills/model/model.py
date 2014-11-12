@@ -39,7 +39,9 @@ class Model(object):
     def update(self, samples):
         # samples is a two-dimensional array of samples
         # sample[i][j] = a jth good sample for the ith task
-        self.update_mean(samples)
+
+        # self.update_mean(samples)
+        self.update_mean_randomized(samples)
         self.update_covs(samples)
         self.volumns = []
         for task, samples_for_task in zip(self.tasks, samples):
@@ -54,6 +56,28 @@ class Model(object):
             m = selected_for_task[0]
             pts += [m]
         self.mean.fit(pts)
+
+    def update_mean_randomized(self, samples):
+        NUM_TRIALS = 32
+        best_estimation, best_params = None, None
+
+        for loop in range(NUM_TRIALS):
+            pts = []
+            values = []
+            for task, selected_for_task in zip(self.tasks, samples):
+                nbests = len(selected_for_task)
+                i = np.random.choice(range(nbests))
+                s = selected_for_task[i]
+                pts += [s]
+                values += [s.evaluate(task)]
+            self.mean.fit(pts)
+            estimated_cost = sum(values) + 0.5 * self.mean.fit_error
+            # print loop, self.mean.params(), ':',
+            # print estimated_cost, sum(values), estimated_cost - sum(values)
+            if best_estimation is None or estimated_cost < best_estimation:
+                best_estimation = estimated_cost
+                best_params = self.mean.params()
+        self.mean.set_params(best_params)
 
     def update_covs(self, samples):
         mean_pts = [self.mean.point(t) for t in self.tasks]

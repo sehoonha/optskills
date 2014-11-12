@@ -8,11 +8,11 @@ class MirroredSphere(object):
         # self.lo = [np.array([-0.5, -0.25]), np.array([-0.5, 0.25])]
         # self.hi = [np.array([0.5, -0.25]), np.array([0.5, 0.25])]
 
-        self.lo = [np.array([-0.5, -0.5]), np.array([-0.5, 0.5])]
-        self.hi = [np.array([0.5, -0.5]), np.array([0.5, 0.5])]
+        # self.lo = [np.array([-0.5, -0.5]), np.array([-0.5, 0.5])]
+        # self.hi = [np.array([0.5, -0.5]), np.array([0.5, 0.5])]
 
-        # self.lo = [np.array([-0.5, -0.75]), np.array([-0.5, 0.75])]
-        # self.hi = [np.array([0.5, -0.75]), np.array([0.5, 0.75])]
+        self.lo = [np.array([-0.5, -0.75]), np.array([-0.5, 0.75])]
+        self.hi = [np.array([0.5, -0.75]), np.array([0.5, 0.75])]
 
         self.eval_counter = 0  # Well, increasing when simulated
 

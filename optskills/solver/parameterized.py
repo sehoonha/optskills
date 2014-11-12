@@ -14,7 +14,7 @@ class ParameterizedSolver(object):
         self.model = model.Model(self.prob.dim, self.tasks, _mean_type)
         self.num_parents = 16
         # lambda
-        self.num_offsprings = 4  # mu
+        self.num_offsprings = 8  # mu
         self.observers = []
         self.no_counter = 0
         print('model: %s' % self.model)
@@ -26,7 +26,7 @@ class ParameterizedSolver(object):
     def solve(self):
         [o.notify_init(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
-        MAX_ITER = 10
+        MAX_ITER = 100
         self.mean_values, self.mean_samples = self.evaluate_model(self.model,
                                                                   -1)
         best_samples = self.mean_samples
@@ -44,7 +44,7 @@ class ParameterizedSolver(object):
         print('solver iteration: %d' % iteration)
         print('previous mean values: %s' % self.mean_values)
         print('previous mean samples: %s' % self.mean_samples)
-        print('best samples: %s' % best_samples)
+        # print('best samples: %s' % best_samples)
 
         # Generate the population based on the current model
         samples = self.generate_samples(iteration)
@@ -107,9 +107,9 @@ class ParameterizedSolver(object):
             s.iteration = iteration
             s.simulate()
             samples += [s]
-            # Debuging
-            j = self.model.debug_last_generate_index
-            print("%s (from %d) %s" % (i, j, s))
+            # # Debuging
+            # j = self.model.debug_last_generate_index
+            # print("%s (from %d) %s" % (i, j, s))
         return samples
 
     def select_samples(self, samples):
@@ -121,10 +121,10 @@ class ParameterizedSolver(object):
             task_samples = sorted_samples[:self.num_offsprings]
             selected += [task_samples]
 
-            print('Selected sample for task %f' % task)
-            for i, s in enumerate(task_samples):
-                print("%d (%.6f) : %s from %d" % (i, s.evaluate(task),
-                                                  s, s.iteration))
+            # print('Selected sample for task %f' % task)
+            # for i, s in enumerate(task_samples):
+            #     print("%d (%.6f) : %s from %d" % (i, s.evaluate(task),
+            #                                       s, s.iteration))
         return selected
 
     def evaluate_model(self, model, iteration):

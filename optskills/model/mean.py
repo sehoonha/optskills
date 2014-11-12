@@ -8,6 +8,7 @@ class Linear(object):
         self.dim = dim
         self.paramdim = self.dim * 2
         self.tasks = tasks
+        self.fit_error = 0.0
 
         if pts is not None:
             self.fit(pts)
@@ -26,11 +27,14 @@ class Linear(object):
     def fit(self, pts):
         xdata = self.tasks
         a, b = [], []
+        self.fit_error = 0
+
         for i in range(self.dim):
             ydata = [x[i] for x in pts]
             popt, pcov = scipy.optimize.curve_fit(self.fit_func, xdata, ydata)
             a += [popt[0]]
             b += [popt[1]]
+            self.fit_error += sum(np.sqrt(np.diag(pcov)))
         self.a, self.b = np.array(a), np.array(b)
 
     def fit_func(self, x, a_i, b_i):
@@ -40,4 +44,4 @@ class Linear(object):
         return self.a + w * self.b
 
     def __str__(self):
-        return "{Linear: %s %s}" % (self.a, self.b)
+        return "{Linear: %s %s (err: %.8f)}" % (self.a, self.b, self.fit_error)

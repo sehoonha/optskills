@@ -131,7 +131,7 @@ def mpi_benchmark(solvers, NUM_CORES=4):
 PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
 
-evaluate('parameterized')
-# mpi_benchmark(['parameterized'] * 51)
+# evaluate('parameterized')
+mpi_benchmark(['parameterized'] * 51)
 # mpi_benchmark(['parameterized', 'direct'] * 11)
 # mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 51)
