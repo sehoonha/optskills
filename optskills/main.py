@@ -65,7 +65,7 @@ def evaluate(name):
     observers = [obs_plot_values, observer.PrintTime()]
     prob = create_problem()
     s = create_solver(name, prob)
-    if s == 'parameterized':
+    if name == 'parameterized':
         observers += [observer.PlotMean('linear')]
     for o in observers:
         s.add_observer(o)

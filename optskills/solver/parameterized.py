@@ -48,6 +48,7 @@ class ParameterizedSolver(object):
 
         # Generate the population based on the current model
         samples = self.generate_samples(iteration)
+        self.iter_samples = samples
 
         # Add previous best samples, for stability
         samples += best_samples
@@ -85,6 +86,7 @@ class ParameterizedSolver(object):
             self.model = curr_model
             self.mean_values = curr_mean_values
             self.mean_samples = curr_mean_samples
+            self.model.volumns = self.mean_values
         self.model.stepsize = stepsize  # Always update stepsize
 
         # Print out some information
