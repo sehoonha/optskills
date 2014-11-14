@@ -67,6 +67,8 @@ class Model(object):
             for task, selected_for_task in zip(self.tasks, samples):
                 nbests = len(selected_for_task)
                 i = np.random.choice(range(nbests))
+                if loop == 0:
+                    i = 0
                 s = selected_for_task[i]
                 pts += [s]
                 values += [s.evaluate(task)]

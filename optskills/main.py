@@ -122,7 +122,7 @@ def mpi_benchmark(solvers, NUM_CORES=4):
     print ('plot...')
     pl = observer.PlotValues()
     pl.data = collected_data
-    pl.plot()
+    pl.plot(PROBLEM_CODE)
     print ('plot... done')
     end_time = time.time()
     print ('total %.4fs elapsed' % (end_time - begin_time))

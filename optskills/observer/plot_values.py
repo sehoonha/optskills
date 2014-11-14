@@ -79,10 +79,11 @@ class PlotValues(object):
     #     # plt.show()
     #     plt.savefig('plot_values.png')
 
-    def plot(self):
+    def plot(self, prob_name=''):
         print('\n' * 3)
         print('plot the experiment values')
         names = self.data.keys()
+        print('Problem name = %s' % prob_name)
         print('Solver names = %s' % names)
 
         fig = plt.figure()
@@ -101,7 +102,8 @@ class PlotValues(object):
 
         # plt.plot(self.evals, self.values)
         font = {'size': 24}
-        plt.title('Compare %d Trials' % num_trials, fontdict=font)
+        plt.title('Compare %d Trials on %s' % (num_trials, prob_name),
+                  fontdict=font)
         font = {'size': 20}
         plt.xlabel('The number of sample evaluations', fontdict=font)
         plt.ylabel('The error of mean segments', fontdict=font)
