@@ -65,8 +65,8 @@ def evaluate(name):
     observers = [obs_plot_values, observer.PrintTime()]
     prob = create_problem()
     s = create_solver(name, prob)
-    if name == 'parameterized':
-        observers += [observer.PlotMean('linear')]
+    # if name == 'parameterized':
+    #     observers += [observer.PlotMean('linear')]
     for o in observers:
         s.add_observer(o)
     print(s)
@@ -132,6 +132,6 @@ PROBLEM_CODE = 'problems.Sphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
 
 # evaluate('parameterized')
-# mpi_benchmark(['parameterized'] * 11)
-mpi_benchmark(['parameterized', 'direct'] * 11)
+mpi_benchmark(['parameterized'] * 21)
+# mpi_benchmark(['parameterized', 'direct'] * 11)
 # mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 51)

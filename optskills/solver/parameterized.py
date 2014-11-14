@@ -65,8 +65,15 @@ class ParameterizedSolver(object):
         curr_model.update(selected)
         curr_mean_values, curr_mean_samples = self.evaluate_model(curr_model,
                                                                   iteration)
+        # curr_mean_values, curr_mean_samples = self.evaluate_model_approx(
+        #     curr_model, iteration, selected)
 
         is_better = np.mean(curr_mean_values) < np.mean(self.mean_values)
+
+        # c_v = np.mean(curr_mean_values) + 0.1 * curr_model.mean.fit_error
+        # s_v = np.mean(self.mean_values) + 0.1 * self.model.mean.fit_error
+        # is_better = c_v < s_v
+
         print('self.mean_values: %.8f' % np.mean(self.mean_values))
         print('curr_mean_values: %.8f' % np.mean(curr_mean_values))
 
@@ -134,6 +141,16 @@ class ParameterizedSolver(object):
             pt = model.mean.point(task)
             s = Sample(pt, self.prob)
             s.iteration = iteration
+            v = s.evaluate(task)
+            mean_samples += [s]
+            mean_values += [v]
+        return mean_values, mean_samples
+
+    def evaluate_model_approx(self, model, iteration, selected):
+        mean_samples = []
+        mean_values = []
+        for i, task in enumerate(self.tasks):
+            s = selected[i][0]
             v = s.evaluate(task)
             mean_samples += [s]
             mean_values += [v]

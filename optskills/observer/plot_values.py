@@ -96,9 +96,15 @@ class PlotValues(object):
             x = med.evals
             y = med.values
             plt.plot(x, y)
+            print('')
             print('Exp name: %s' % name)
             print('Median index: %d' % ((num_trials - 1) / 2))
             print('exp_list: %s' % exp_list)
+
+            final_iters = [e.evals[-1] for e in exp_list]
+            final_values = [e.values[-1] for e in exp_list]
+            print('average final iters: %.1f' % np.mean(final_iters))
+            print('average final values: %.8f' % np.mean(final_values))
 
         # plt.plot(self.evals, self.values)
         font = {'size': 24}
