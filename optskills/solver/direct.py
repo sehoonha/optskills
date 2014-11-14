@@ -30,7 +30,7 @@ class DirectSolver(object):
         opts = cma.CMAOptions()
         opts.set('verb_disp', 1)
         opts.set('tolfun', 0.0001)
-        opts.set('tolx', 0.1)
+        # opts.set('tolx', 0.00001)
         opts.set('popsize', 16)
         for key, value in opts.iteritems():
             print '[', key, ']\n', value

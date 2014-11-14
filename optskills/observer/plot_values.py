@@ -11,11 +11,14 @@ class Experiment(object):
         self.evals += [e]
         self.values += [v]
 
+    def num_evals(self):
+        return max(self.evals)
+
     def num_data(self):
         return max(len(self.evals), len(self.values))
 
     def __repr__(self):
-        return 'Exp(max_iter=%d)' % max(self.evals)
+        return 'Exp(%d, %.6f)' % (self.evals[-1], self.values[-1])
 
 
 class PlotValues(object):
@@ -38,6 +41,44 @@ class PlotValues(object):
         v = np.mean(solver.values())
         self.exp.add_point(e, v)
 
+    # def plot(self):
+    #     print('\n' * 3)
+    #     print('plot the experiment values')
+    #     names = self.data.keys()
+    #     print('Solver names = %s' % names)
+
+    #     fig = plt.figure()
+    #     fig.set_size_inches(18.5, 10.5)
+    #     num_trials = 0
+    #     for name, exp_list in self.data.iteritems():
+    #         num_trials = len(exp_list)
+    #         n = min([e.num_data() for e in exp_list])
+    #         x = exp_list[0].evals[:n]
+    #         y = []
+    #         for i in range(n):
+    #             i_values = [e.values[i] for e in exp_list]
+    #             avg = np.mean(i_values)
+    #             y += [avg]
+    #         plt.plot(x, y)
+
+    #         # # Plot errorbar as well
+    #         last_values = [e.values[n - 1] for e in exp_list]
+    #         print('%s: %.8f' % (name, np.mean(last_values)))
+    #         print('last_values: %s' % last_values)
+    #         # lo = np.percentile(last_values, 20)
+    #         # mi = np.mean(last_values)
+    #         # hi = np.percentile(last_values, 80)
+    #         # plt.errorbar(x[n - 1], y[n - 1], yerr=[[mi - lo], [hi - mi]])
+    #     # plt.plot(self.evals, self.values)
+    #     font = {'size': 24}
+    #     plt.title('Compare %d Trials' % num_trials, fontdict=font)
+    #     font = {'size': 20}
+    #     plt.xlabel('The number of sample evaluations', fontdict=font)
+    #     plt.ylabel('The average error of mean segments', fontdict=font)
+    #     plt.legend(self.data.keys(), fontsize=20)
+    #     # plt.show()
+    #     plt.savefig('plot_values.png')
+
     def plot(self):
         print('\n' * 3)
         print('plot the experiment values')
@@ -48,30 +89,22 @@ class PlotValues(object):
         fig.set_size_inches(18.5, 10.5)
         num_trials = 0
         for name, exp_list in self.data.iteritems():
+            exp_list.sort(key=lambda exp: exp.num_evals())
             num_trials = len(exp_list)
-            n = min([e.num_data() for e in exp_list])
-            x = exp_list[0].evals[:n]
-            y = []
-            for i in range(n):
-                i_values = [e.values[i] for e in exp_list]
-                avg = np.mean(i_values)
-                y += [avg]
+            med = exp_list[(num_trials - 1) / 2]
+            x = med.evals
+            y = med.values
             plt.plot(x, y)
+            print('Exp name: %s' % name)
+            print('Median index: %d' % ((num_trials - 1) / 2))
+            print('exp_list: %s' % exp_list)
 
-            # # Plot errorbar as well
-            last_values = [e.values[n - 1] for e in exp_list]
-            print('%s: %.8f' % (name, np.mean(last_values)))
-            print('last_values: %s' % last_values)
-            # lo = np.percentile(last_values, 20)
-            # mi = np.mean(last_values)
-            # hi = np.percentile(last_values, 80)
-            # plt.errorbar(x[n - 1], y[n - 1], yerr=[[mi - lo], [hi - mi]])
         # plt.plot(self.evals, self.values)
         font = {'size': 24}
         plt.title('Compare %d Trials' % num_trials, fontdict=font)
         font = {'size': 20}
         plt.xlabel('The number of sample evaluations', fontdict=font)
-        plt.ylabel('The average error of mean segments', fontdict=font)
+        plt.ylabel('The error of mean segments', fontdict=font)
         plt.legend(self.data.keys(), fontsize=20)
         # plt.show()
         plt.savefig('plot_values.png')
