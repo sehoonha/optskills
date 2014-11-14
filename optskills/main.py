@@ -132,6 +132,7 @@ PROBLEM_CODE = 'problems.Sphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
 
 # evaluate('parameterized')
-mpi_benchmark(['parameterized'] * 21)
-# mpi_benchmark(['parameterized', 'direct'] * 11)
+# mpi_benchmark(['parameterized'] * 11)
+mpi_benchmark(['parameterized', 'direct'] * 21)
+# mpi_benchmark(['parameterized', 'interpolation'] * 21)
 # mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 51)
