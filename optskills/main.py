@@ -127,12 +127,12 @@ def mpi_benchmark(solvers, NUM_CORES=4):
     end_time = time.time()
     print ('total %.4fs elapsed' % (end_time - begin_time))
 
-PROBLEM_CODE = 'problems.Sphere()'
-# PROBLEM_CODE = 'problems.MirroredSphere()'
+# PROBLEM_CODE = 'problems.Sphere()'
+PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
 
 # evaluate('parameterized')
 # mpi_benchmark(['parameterized'] * 11)
-mpi_benchmark(['parameterized', 'direct'] * 21)
+# mpi_benchmark(['parameterized', 'direct'] * 21)
 # mpi_benchmark(['parameterized', 'interpolation'] * 21)
-# mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 51)
+mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 21)

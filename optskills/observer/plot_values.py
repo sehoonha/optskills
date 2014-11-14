@@ -116,7 +116,7 @@ class PlotValues(object):
             print ('10%% percentile iters: %d' % lo)
             print ('median: %d' % mi)
             print ('90%% percentile iters: %d' % hi)
-            plt.errorbar(x[-1], y[-1], xerr=[[mi - lo], [hi - mi]],
+            plt.errorbar(x[-1], y[-1], fmt='o', xerr=[[mi - lo], [hi - mi]],
                          capsize=20, capthick=2.0, color=colors[index])
 
             # Final, ugly..
@@ -130,5 +130,7 @@ class PlotValues(object):
         plt.xlabel('The number of sample evaluations', fontdict=font)
         plt.ylabel('The error of mean segments', fontdict=font)
         plt.legend(pp, self.data.keys(), numpoints=1, fontsize=20)
+        plt.axes().set_ylim(-0.1, 1.0)
+        plt.axhline(y=0)
         # plt.show()
         plt.savefig('plot_values.png')
