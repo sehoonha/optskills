@@ -25,6 +25,14 @@ class DirectSolver(object):
 
     def solve(self):
         [o.notify_init(self, self.model) for o in self.observers]
+        sample_values = []
+        for task in self.tasks:
+            pt = self.mean().point(task)
+            s = Sample(pt, self.prob)
+            v = s.evaluate(task)
+            sample_values += [v]
+        self.iter_values += [sample_values]
+        [o.notify_step(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
         # opt = {'verb_time': 0, 'popsize': 16, 'tolfun': 1.0}
         opts = cma.CMAOptions()

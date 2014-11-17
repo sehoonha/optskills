@@ -20,8 +20,12 @@ class CEC15(object):
 
     def evaluate(self, result, task):
         c = self.center(task)
-        if self.func_name == 'weierstrass':
+        if self.func_name == 'bent_cigar':
+            return cec15.bent_cigar_func(result, Os=c)
+        elif self.func_name == 'weierstrass':
             return cec15.weierstrass_func(result, Os=c)
+        elif self.func_name == 'schwefel':
+            return cec15.schwefel_func(result, Os=c)
         else:
             return 0.0
 

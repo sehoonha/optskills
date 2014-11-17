@@ -1,5 +1,5 @@
 import numpy as np
-from math import pi, cos
+from math import pi, sin, cos, fmod, fabs
 
 PI = pi
 
@@ -32,7 +32,8 @@ def sr_func(x, Os=None, Mr=None, sh_rate=1.0):
 
 def bent_cigar_func(x, Os=None, Mr=None):
     nx = len(x)
-    z = sr_func(x, Os, Mr, 1.0)
+    # z = sr_func(x, Os, Mr, 1.0)
+    z = sr_func(x, Os, Mr, 100.0)
     f = z[0] * z[0]
     for i in range(1, nx):
         f += pow(10.0, 6.0) * z[i] * z[i]
@@ -46,7 +47,8 @@ def weierstrass_func(x, Os=None, Mr=None):
     f = 0.0
 
     nx = len(x)
-    z = sr_func(x, Os, Mr, 0.5 / 100.0)
+    # z = sr_func(x, Os, Mr, 0.5 / 100.0)
+    z = sr_func(x, Os, Mr, 0.5)
     for i in range(nx):
         sum = 0.0
         sum2 = 0.0
@@ -58,18 +60,47 @@ def weierstrass_func(x, Os=None, Mr=None):
     return f
 
 
+def schwefel_func(x, Os=None, Mr=None):
+    nx = len(x)
+    # z = sr_func(x, Os, Mr, 1000.0 / 100.0)
+    z = sr_func(x, Os, Mr, 100000.0 / 100.0)
+    f = 0.0
+    for i in range(nx):
+        z[i] += 4.209687462275036e+002
+        if z[i] > 500:
+            f -= (500.0 - fmod(z[i], 500)) * sin(pow(500.0 - fmod(z[i], 500),
+                                                     0.5))
+            tmp = (z[i] - 500.0) / 100.0
+            f += tmp * tmp / nx
+        elif z[i] < -500:
+            f -= (-500.0 + fmod(fabs(z[i]), 500)) * sin(
+                pow(500.0 - fmod(fabs(z[i]), 500), 0.5))
+            tmp = (z[i] + 500.0) / 100
+            f += tmp * tmp / nx
+        else:
+            f -= z[i] * sin(pow(fabs(z[i]), 0.5))
+        f += 4.189828872724338e+002 * nx
+    # return f
+    return f / 1000.0
+
+
 if __name__ == '__main__':
     print('Hello, cec15')
     n = 51
-    xs = np.linspace(-1, 1, n)
-    ys = np.linspace(-1, 1, n)
+    xmax = 1.0
+    xmin = -xmax
+    ymax = xmax
+    ymin = -ymax
+    xs = np.linspace(xmin, xmax, n)
+    ys = np.linspace(ymin, ymax, n)
     xv, yv = np.meshgrid(xs, ys)
     zv = np.zeros(shape=(n, n))
     for i in range(n):
         for j in range(n):
             x = np.array([xs[i], ys[j]])
             # zv[i][j] = bent_cigar_func(x)
-            zv[i][j] = weierstrass_func(x, Os=np.array([0.5, 0.25]))
+            # zv[i][j] = weierstrass_func(x, Os=np.array([0.5, 0.25]))
+            zv[i][j] = schwefel_func(x)
 
     from mpl_toolkits.mplot3d import Axes3D
     from matplotlib import cm

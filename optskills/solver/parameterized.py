@@ -25,6 +25,7 @@ class ParameterizedSolver(object):
 
     def solve(self):
         [o.notify_init(self, self.model) for o in self.observers]
+        [o.notify_step(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
         MAX_ITER = 300
         self.mean_values, self.mean_samples = self.evaluate_model(self.model,
