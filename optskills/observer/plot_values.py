@@ -131,6 +131,6 @@ class PlotValues(object):
         plt.ylabel('The error of mean segments', fontdict=font)
         plt.legend(pp, self.data.keys(), numpoints=1, fontsize=20)
         plt.axes().set_ylim(-0.1, 1.0)
-        plt.axhline(y=0)
+        plt.axhline(y=0, color='k')
         # plt.show()
         plt.savefig('plot_values.png')
