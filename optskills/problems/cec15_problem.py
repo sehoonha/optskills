@@ -20,14 +20,23 @@ class CEC15(object):
 
     def evaluate(self, result, task):
         c = self.center(task)
+        penalty = 0.0
+        for i in range(self.dim):
+            if result[i] > 1.0:
+                penalty += (result[i] - 1.0) ** 2
+            if result[i] < -1.0:
+                penalty += (result[i] - (-1.0)) ** 2
+
+        f = 0.0
         if self.func_name == 'bent_cigar':
-            return cec15.bent_cigar_func(result, Os=c)
+            f = cec15.bent_cigar_func(result, Os=c)
         elif self.func_name == 'weierstrass':
-            return cec15.weierstrass_func(result, Os=c)
+            f = cec15.weierstrass_func(result, Os=c)
         elif self.func_name == 'schwefel':
-            return cec15.schwefel_func(result, Os=c)
+            f = cec15.schwefel_func(result, Os=c)
         else:
-            return 0.0
+            f = 0.0
+        return f + 0.1 * penalty
 
     def __str__(self):
         return "[CEC15.%s]" % self.func_name

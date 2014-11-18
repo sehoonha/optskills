@@ -37,7 +37,7 @@ def bent_cigar_func(x, Os=None, Mr=None):
     f = z[0] * z[0]
     for i in range(1, nx):
         f += pow(10.0, 6.0) * z[i] * z[i]
-    return f
+    return f / 5e10
 
 
 def weierstrass_func(x, Os=None, Mr=None):
@@ -57,7 +57,7 @@ def weierstrass_func(x, Os=None, Mr=None):
             sum2 += pow(a, j) * cos(2.0 * PI * pow(b, j) * 0.5)
         f += sum
     f -= nx * sum2
-    return f
+    return f / 10.0
 
 
 def schwefel_func(x, Os=None, Mr=None):
@@ -81,13 +81,13 @@ def schwefel_func(x, Os=None, Mr=None):
             f -= z[i] * sin(pow(fabs(z[i]), 0.5))
         f += 4.189828872724338e+002 * nx
     # return f
-    return f / 1000.0
+    return f / 1000.0 - 0.80
 
 
 if __name__ == '__main__':
     print('Hello, cec15')
     n = 51
-    xmax = 1.0
+    xmax = 2.0
     xmin = -xmax
     ymax = xmax
     ymin = -ymax
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         for j in range(n):
             x = np.array([xs[i], ys[j]])
             # zv[i][j] = bent_cigar_func(x)
-            # zv[i][j] = weierstrass_func(x, Os=np.array([0.5, 0.25]))
+            # zv[i][j] = weierstrass_func(x)
             zv[i][j] = schwefel_func(x)
 
     from mpl_toolkits.mplot3d import Axes3D
