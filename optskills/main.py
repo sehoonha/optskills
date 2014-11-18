@@ -144,9 +144,9 @@ def mpi_benchmark(solvers, NUM_CORES=4):
 # PROBLEM_CODE = 'problems.Sphere()'
 # PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
-# PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
+PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
 # PROBLEM_CODE = 'problems.CEC15(2, "weierstrass")'
-PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
+# PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
 
 # evaluate('parameterized')
 # evaluate('direct')
@@ -156,5 +156,5 @@ PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
 # benchmark(['parameterized', 'direct'] * 5)
 # mpi_benchmark(['parameterized', 'interpolation'] * 5)
 # mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 3, 1)
-benchmark(['parameterized'] * 11)
-# benchmark(['parameterized', 'direct'] * 21)
+# benchmark(['parameterized'] * 11)
+benchmark(['parameterized', 'direct'] * 21)

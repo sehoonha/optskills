@@ -58,7 +58,7 @@ class Model(object):
         self.mean.fit(pts)
 
     def update_mean_randomized(self, samples):
-        NUM_TRIALS = 32
+        NUM_TRIALS = 64
         best_estimation, best_params = None, None
 
         for loop in range(NUM_TRIALS):
@@ -73,7 +73,7 @@ class Model(object):
                 pts += [s]
                 values += [s.evaluate(task)]
             self.mean.fit(pts)
-            estimated_cost = sum(values) + 1.0 * self.mean.fit_error
+            estimated_cost = sum(values) + 10.0 * self.mean.fit_error
             # print loop, self.mean.params(), ':',
             # print estimated_cost, sum(values), estimated_cost - sum(values)
             if best_estimation is None or estimated_cost < best_estimation:
