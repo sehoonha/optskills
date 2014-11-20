@@ -32,7 +32,8 @@ class MyWindow(QtGui.QMainWindow):
 
         # Create a simulation
         if filename is None:
-            self.prob = problems.GPBow()
+            # self.prob = problems.GPBow()
+            self.prob = problems.SimJump()
             self.model = model.Model(self.prob.dim, self.tasks, 'linear')
             # params = np.array([0.8647, 0.6611, -0.6017,
             #                    -0.3276, -0.3781, 0.2489])
@@ -208,14 +209,24 @@ class MyWindow(QtGui.QMainWindow):
 
     def cam0Event(self):
         print 'cam0Event'
-        self.glwidget.tb = Trackball(phi=2.266, theta=-15.478, zoom=1,
-                                     rot=[-0.09399048175876601,
-                                          -0.612401798950921,
-                                          -0.0675106984290682,
-                                          0.7820307740607462],
-                                     trans=[-0.5100000000000008,
-                                            -0.060000000000000005,
-                                            -1.320000000000003])
+        if 'Bioloid' in self.prob.skel_filename:
+            self.glwidget.tb = Trackball(phi=2.266, theta=-15.478, zoom=1,
+                                         rot=[-0.09399048175876601,
+                                              -0.612401798950921,
+                                              -0.0675106984290682,
+                                              0.7820307740607462],
+                                         trans=[-0.5100000000000008,
+                                                -0.060000000000000005,
+                                                -1.320000000000003])
+        else:
+            self.glwidget.tb = Trackball(phi=2.266, theta=-15.478, zoom=1,
+                                         rot=[-0.09399048175876601,
+                                              -0.612401798950921,
+                                              -0.0675106984290682,
+                                              0.7820307740607462],
+                                         trans=[-0.2700000000000008,
+                                                -0.580000000000000005,
+                                                -3.920000000000003])
 
     def cam1Event(self):
         print 'cam1Event: frontview'

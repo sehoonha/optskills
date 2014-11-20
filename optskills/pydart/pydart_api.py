@@ -82,6 +82,10 @@ def createWorld(*args):
   return _pydart_api.createWorld(*args)
 createWorld = _pydart_api.createWorld
 
+def createWorldFromSkel(*args):
+  return _pydart_api.createWorldFromSkel(*args)
+createWorldFromSkel = _pydart_api.createWorldFromSkel
+
 def destroyWorld(*args):
   return _pydart_api.destroyWorld(*args)
 destroyWorld = _pydart_api.destroyWorld
@@ -89,6 +93,10 @@ destroyWorld = _pydart_api.destroyWorld
 def addSkeleton(*args):
   return _pydart_api.addSkeleton(*args)
 addSkeleton = _pydart_api.addSkeleton
+
+def numSkeletons(*args):
+  return _pydart_api.numSkeletons(*args)
+numSkeletons = _pydart_api.numSkeletons
 
 def setSkeletonJointDamping(*args):
   return _pydart_api.setSkeletonJointDamping(*args)

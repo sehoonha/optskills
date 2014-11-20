@@ -43,6 +43,7 @@ class GLWidget(QGLWidget):
         # Draw skeleton
         gltools.glMove([0, 0, 0])
         self.prob.skel().render()
+        # self.prob.render()
         glPopMatrix()
 
     def resizeGL(self, w, h):

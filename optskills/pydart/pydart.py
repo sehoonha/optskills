@@ -13,20 +13,34 @@ def init():
     papi.init()
 
 
-def create_world(step):
-    return World(step)
+def create_world(step, skel_path=None):
+    return World(step, skel_path)
 
 
 class World(object):
-    def __init__(self, step):
-        self.id = papi.createWorld(step)
+    def __init__(self, step, skel_path=None):
         self.skels = []
         self.control_skel = None
+        if skel_path is not None:
+            self.id = papi.createWorldFromSkel(skel_path)
+            nskels = self.num_skeletons()
+            for i in range(nskels):
+                self.add_skeleton_from_id(i, (i == nskels - 1))
+        else:
+            self.id = papi.createWorld(step)
 
     def add_skeleton(self, filename, friction=1.0, control=True):
         self.skels += [Skeleton(self, filename, friction)]
         if control:
             self.control_skel = self.skels[-1]
+
+    def add_skeleton_from_id(self, _skel_id, control=True):
+        self.skels += [Skeleton(self, None, None, _skel_id)]
+        if control:
+            self.control_skel = self.skels[-1]
+
+    def num_skeletons(self):
+        return papi.numSkeletons(self.id)
 
     @property
     def skel(self):
@@ -83,11 +97,14 @@ class World(object):
 
 
 class Skeleton(object):
-    def __init__(self, _world, _filename, _friction):
+    def __init__(self, _world, _filename=None, _friction=None, _id=None):
         self.world = _world
         self.filename = _filename
         self.friction = _friction
-        self.id = papi.addSkeleton(self.world.id, _filename, _friction)
+        if self.filename is not None:
+            self.id = papi.addSkeleton(self.world.id, _filename, _friction)
+        else:
+            self.id = _id
 
         # Initialize dofs
         _ndofs = papi.getSkeletonNumDofs(self.world.id, self.id)
