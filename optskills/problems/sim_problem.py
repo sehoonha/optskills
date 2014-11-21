@@ -1,5 +1,6 @@
 import pydart
 import numpy as np
+from numpy.linalg import inv
 
 DATA_PATH = '../optskills/pydart/data/'
 
@@ -32,7 +33,6 @@ class PDController:
     def control(self):
         q = self.skel.q
         qdot = self.skel.qdot
-
         tau = np.zeros(self.ndofs)
         tau_lo = self.skel.tau_lo * self.effort_ratio
         tau_hi = self.skel.tau_hi * self.effort_ratio
@@ -44,6 +44,36 @@ class PDController:
             tau[i] = confine(tau[i], tau_lo[i], tau_hi[i])
             # tau[i] = confine(tau[i], -100.0, 100.0)  # Ugly..
         self.step_counter += 1
+        return tau
+
+
+class SPDController:
+    def __init__(self, _skel, _kp, _kd, _h):
+        self.skel = _skel
+        self.ndofs = self.skel.ndofs
+        self.KP = np.diag([_kp] * self.ndofs)
+        self.KD = np.diag([_kd] * self.ndofs)
+        self.h = _h
+        self.target = None
+        self.step_counter = 0  # For debug
+
+    def verbose(self):
+        return False
+        # return (self.step_counter % 100 == 0)
+
+    def control(self):
+        skel = self.skel
+
+        invM = inv(skel.M + self.KD * self.h)
+        p = -self.KP.dot(skel.q + skel.qdot * self.h - self.target)
+        d = -self.KD.dot(skel.qdot)
+        qddot = invM.dot(-skel.c + p + d + skel.constraint_forces())
+        tau = p + d - self.KD.dot(qddot) * self.h
+
+        # Confine max torque
+        tau[:6] = 0.0
+        for i in range(6, self.ndofs):
+            tau[i] = confine(tau[i], -600, 600)
         return tau
 
 
@@ -66,7 +96,7 @@ class SimProblem(object):
         else:
             world = pydart.create_world(1.0 / 2000.0,
                                         DATA_PATH + skel_filename)
-        world.skels[-1].set_joint_damping(0.15)
+            world.skels[-1].set_joint_damping(0.15)
         SimProblem.world = world
         print('__init__pydart__ OK')
 

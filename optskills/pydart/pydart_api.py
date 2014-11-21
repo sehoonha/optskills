@@ -174,6 +174,18 @@ def getSkeletonVelocities(*args):
   return _pydart_api.getSkeletonVelocities(*args)
 getSkeletonVelocities = _pydart_api.getSkeletonVelocities
 
+def getSkeletonMassMatrix(*args):
+  return _pydart_api.getSkeletonMassMatrix(*args)
+getSkeletonMassMatrix = _pydart_api.getSkeletonMassMatrix
+
+def getSkeletonCoriolisAndGravityForces(*args):
+  return _pydart_api.getSkeletonCoriolisAndGravityForces(*args)
+getSkeletonCoriolisAndGravityForces = _pydart_api.getSkeletonCoriolisAndGravityForces
+
+def getSkeletonConstraintForces(*args):
+  return _pydart_api.getSkeletonConstraintForces(*args)
+getSkeletonConstraintForces = _pydart_api.getSkeletonConstraintForces
+
 def setSkeletonPositions(*args):
   return _pydart_api.setSkeletonPositions(*args)
 setSkeletonPositions = _pydart_api.setSkeletonPositions

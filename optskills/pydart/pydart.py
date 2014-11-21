@@ -140,6 +140,15 @@ class Skeleton(object):
     def m(self):
         return self.mass()
 
+    def mass_matrix(self):
+        M = np.zeros((self.ndofs, self.ndofs))
+        papi.getSkeletonMassMatrix(self.world.id, self.id, M)
+        return M
+
+    @property
+    def M(self):
+        return self.mass_matrix()
+
     def positions(self):
         return papi.getSkeletonPositions(self.world.id, self.id, self.ndofs)
 
@@ -200,6 +209,18 @@ class Skeleton(object):
     @x.setter
     def x(self, _x):
         self.set_states(_x)
+
+    def coriolis_and_gravity_forces(self):
+        return papi.getSkeletonCoriolisAndGravityForces(self.world.id,
+                                                        self.id, self.ndofs)
+
+    @property
+    def c(self):
+        return self.coriolis_and_gravity_forces()
+
+    def constraint_forces(self):
+        return papi.getSkeletonConstraintForces(self.world.id,
+                                                self.id, self.ndofs)
 
     def body(self, query):
         if isinstance(query, str):

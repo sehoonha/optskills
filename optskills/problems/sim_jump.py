@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.linalg import norm
-from sim_problem import SimProblem, PDController, STR
+from sim_problem import SimProblem, SPDController, STR
 
 
 class SimJump(SimProblem):
@@ -24,7 +24,9 @@ class SimJump(SimProblem):
         self.init_state[5] = 0.0
 
         self.reset()
-        self.controller = PDController(self.skel(), 10, 0.0, 0.3)
+        h = self.world.dt
+        print('World time step: %.6f' % h)
+        self.controller = SPDController(self.skel(), 400.0, 40.0, h)
         self.controller.target = self.skel().q
 
     def simulate(self, sample):
@@ -66,17 +68,18 @@ class SimJump(SimProblem):
 
     def set_params(self, x):
         self.params = x
-        ndofs = self.skel().ndofs
-        q = np.array(self.init_state[:ndofs])
-        lo = np.array([-2.0] * ndofs)
-        hi = -lo
-        for i, dofs in enumerate(self.desc):
-            v = (x[i] - (-1.0)) / 2.0  # Change to 0 - 1 scale
-            for (d, w) in dofs:
-                index = d if isinstance(d, int) else self.skel().dof_index(d)
-                vv = v if w > 0.0 else 1.0 - v
-                q[index] = lo[index] + (hi[index] - lo[index]) * vv
-        self.controller.target = q
+        # ndofs = self.skel().ndofs
+        # q = np.array(self.init_state[:ndofs])
+        # lo = np.array([-2.0] * ndofs)
+        # hi = -lo
+        # for i, dofs in enumerate(self.desc):
+        #     v = (x[i] - (-1.0)) / 2.0  # Change to 0 - 1 scale
+        #     for (d, w) in dofs:
+        #         index = d if isinstance(d, int) else self.skel().dof_index(d)
+        #         vv = v if w > 0.0 else 1.0 - v
+        #         q[index] = lo[index] + (hi[index] - lo[index]) * vv
+        # self.controller.target = q
+        print 'set_params is empty!'
 
     def collect_result(self):
         res = {}
@@ -85,7 +88,7 @@ class SimJump(SimProblem):
         return res
 
     def terminated(self):
-        return (self.world.t > 0.5)
+        return (self.world.t > 10.0)
 
     def __str__(self):
         return 'Good'
