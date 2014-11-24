@@ -1,6 +1,71 @@
 import numpy as np
 from numpy.linalg import norm
-from sim_problem import SimProblem, SPDController, STR
+from sim_problem import SimProblem, SPDController, JTController, STR
+
+
+class SimJumpController(object):
+    def __init__(self, _world):
+        self.world = _world
+        self.spd = SPDController(self.skel(), 300.0, 30.0, self.world.dt)
+        self.spd.target = self.skel().q
+        self.jt = JTController(self.skel())
+
+        self.dim = 6
+        self.params = (np.random.rand(self.dim) - 0.5) * 2.0
+
+        self.reset()
+        # for i, dof in enumerate(self.skel().dofs):
+        #     print i, dof.name
+        # for i, body in enumerate(self.skel().bodies):
+        #     print i, body.name
+
+    def skel(self):
+        return self.world.skels[-1]
+
+    def reset(self):
+        self.target_index = -1
+
+        w = (self.params - (-1.0)) / 2.0  # Change to 0 - 1 Scale
+        lo = np.array([-3.0, 0.0, -3.0, -3.0, -3.0, 0.0])
+        hi = np.array([3.0, -3.0, 3.0, 3.0, 3.0, 500.0])
+        params = lo * (1 - w) + hi * w
+        # print('self.params = %s' % self.params)
+        # print('normalized params = %s' % params)
+        (q0, q1, q2, q3, q4, f0) = params
+
+        # Set the first pose
+        pose0 = self.skel().q
+        pose0[6] = pose0[9] = q0  # Thighs
+        pose0[14] = pose0[15] = q1  # Knees
+        pose0[17] = pose0[19] = q2  # Heels
+        pose0[28], pose0[31] = q3, -q3  # Shoulder
+
+        # Set the second pose
+        pose1 = self.skel().q
+        pose1[28], pose1[31] = q4, -q4  # Shoulder
+
+        # Set the third pose
+        pose2 = self.skel().q
+
+        self.target_time = [0.0, 0.5, 1.0, 9.9e8]
+        self.targets = [pose0, pose1, pose2]
+        self.forces = [[],
+                       [(["h_toe_left", "h_toe_right"], [0, -f0, 0])],
+                       []]
+
+    def control(self):
+        next_t = self.target_time[self.target_index + 1]
+        if self.world.t >= next_t:
+            self.target_index += 1
+            self.spd.target = self.targets[self.target_index]
+
+        vf = np.zeros(self.skel().ndofs)
+        for f in self.forces[self.target_index]:
+            bodies = f[0]
+            force = f[1]
+            vf += self.jt.control(bodies, force)
+
+        return self.spd.control() + vf
 
 
 class SimJump(SimProblem):
@@ -8,26 +73,20 @@ class SimJump(SimProblem):
         super(SimJump, self).__init__('skel/fullbody1.skel')
         self.__init__simulation__()
 
-        desc = []
-        desc.append([('j_thigh_left', 1.0), ('j_thigh_right', 1.0), ])
-        desc.append([('j_shin_left', 1.0), ('j_shin_right', 1.0), ])
-        desc.append([('j_heel_left', 1.0), ('j_heel_right', 1.0), ])
-        self.desc = desc
-        self.dim = len(self.desc)
+        self.dim = self.controller.dim
         self.eval_counter = 0  # Well, increasing when simulated
         self.params = None
 
     def __init__simulation__(self):
         self.init_state = self.skel().x
         self.init_state[1] = -0.50 * 3.14
-        self.init_state[4] = 0.92
+        self.init_state[4] = 0.88
         self.init_state[5] = 0.0
 
         self.reset()
-        h = self.world.dt
-        print('World time step: %.6f' % h)
-        self.controller = SPDController(self.skel(), 400.0, 40.0, h)
-        self.controller.target = self.skel().q
+        self.controller = SimJumpController(self.world)
+        # self.controller = SPDController(self.skel(), 400.0, 40.0, h)
+        # self.controller.target = self.skel().q
 
     def simulate(self, sample):
         self.eval_counter += 1
@@ -42,12 +101,20 @@ class SimJump(SimProblem):
     def evaluate(self, result, task):
         # Calculate the validity of COM
         C = result['C']
-        lo = np.array([0.0, 0.10, 0.0])
-        hi = np.array([0.0, 0.15, 0.0])
+        C[1] = result['maxCy']
+        lo = np.array([0.0, 0.90, 0.0])
+        hi = np.array([0.0, 1.40, 0.0])
         w = task
         C_hat = lo * (1 - w) + hi * w
         weight = np.array([1.0, 1.0, 1.0]) * 2.0
         obj = norm((C - C_hat) * weight) ** 2
+
+        # Calculate unbalanced penalty
+        T = result['T']
+        obj_balanced = 10.0
+        if T is not None:
+            weight = np.array([1.0, 0.0, 1.0])
+            obj_balanced = norm((T - C) * weight) ** 2
 
         # Calculate parameter penalty
         params = result['params']
@@ -58,40 +125,50 @@ class SimJump(SimProblem):
                 penalty += max(0.0, v - 1.0) ** 2
                 penalty += min(0.0, v - (-1.0)) ** 2
 
-        return obj + penalty
+        return obj + obj_balanced + penalty
 
     def set_random_params(self):
-        # self.set_params(0.45 + 0.1 * np.random.rand(self.dim))
-        # self.set_params(2.0 * (np.random.rand(self.dim) - 0.5))
-        # self.set_params([0.5, -1.0, 0.7])
-        self.set_params([0.5, -0.5, 0.1])
+        self.set_params(2.0 * (np.random.rand(self.dim) - 0.5))
 
     def set_params(self, x):
         self.params = x
-        # ndofs = self.skel().ndofs
-        # q = np.array(self.init_state[:ndofs])
-        # lo = np.array([-2.0] * ndofs)
-        # hi = -lo
-        # for i, dofs in enumerate(self.desc):
-        #     v = (x[i] - (-1.0)) / 2.0  # Change to 0 - 1 scale
-        #     for (d, w) in dofs:
-        #         index = d if isinstance(d, int) else self.skel().dof_index(d)
-        #         vv = v if w > 0.0 else 1.0 - v
-        #         q[index] = lo[index] + (hi[index] - lo[index]) * vv
-        # self.controller.target = q
-        print 'set_params is empty!'
+        self.controller.params = x
+        self.controller.reset()
 
     def collect_result(self):
         res = {}
         res['C'] = self.skel().C
+        res['T'] = self.skel().COP
+        res['maxCy'] = max([C[1] for C in self.com_trajectory])
         res['params'] = self.params
         return res
 
     def terminated(self):
-        return (self.world.t > 10.0)
+        return (self.world.t > 1.5)
 
     def __str__(self):
-        return 'Good'
+        res = self.collect_result()
+        status = ""
+        status += '[SimJump at %.4f' % self.world.t
+        for key, value in res.iteritems():
+            if key == 'C':
+                status += ' %s : %s' % (key, STR(value, 2))
+            elif key == 'T':
+                status += ' %s : %s' % (key, STR(value, 2))
+            elif key == 'params':
+                status += ' %s : %s' % (key, STR(value, 3))
+            else:
+                status += ' %s : %.4f' % (key, value)
+
+        # Print Values
+        status += ' value = {'
+        tasks = np.linspace(0.0, 1.0, 6)
+        values = [self.evaluate(res, t) for t in tasks]
+        status += ' '.join(['%.4f' % v for v in values])
+        status += '}'
+
+        status += ']'
+        return status
 
     def __repr__(self):
         return 'problems.SimJump()'

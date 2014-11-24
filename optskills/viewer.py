@@ -37,8 +37,12 @@ class MyWindow(QtGui.QMainWindow):
             self.model = model.Model(self.prob.dim, self.tasks, 'linear')
             # params = np.array([0.8647, 0.6611, -0.6017,
             #                    -0.3276, -0.3781, 0.2489])
-            params = np.array([1.0447, -0.8950, 0.0627,
-                               -0.5505, 0.3516, 0.0807])
+            # params = np.array([1.0447, -0.8950, 0.0627,
+            #                    -0.5505, 0.3516, 0.0807])
+            # params = np.random.rand(self.prob.dim * 2)
+            params = np.array([0.3, 0.4, 0.3, 0.5, -0.8, 1.0,
+                               0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ])
+
             self.model.mean.set_params(params)
         else:
             import json

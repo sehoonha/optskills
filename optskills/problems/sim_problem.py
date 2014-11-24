@@ -77,6 +77,28 @@ class SPDController:
         return tau
 
 
+class JTController:
+    """
+    # Usage
+    self.jt = JTController(self.skel)
+    tau += self.jt.control( ["l_hand", "r_hand"], f )
+    """
+    def __init__(self, _skel):
+        self.skel = _skel
+
+    def control(self, bodynames, f):
+        if not isinstance(bodynames, list):
+            bodynames = [bodynames]
+
+        tau = np.zeros(self.skel.ndofs)
+        for bodyname in bodynames:
+            # J = self.skel.getBodyNodeWorldLinearJacobian(bodyname)
+            J = self.skel.body(bodyname).world_linear_jacobian()
+            JT = np.transpose(J)
+            tau += JT.dot(f)
+        return tau
+
+
 class SimProblem(object):
     world = None
 
@@ -106,6 +128,9 @@ class SimProblem(object):
     def reset(self):
         self.skel().set_states(self.init_state)
         self.world.reset()
+        self.com_trajectory = [self.skel().C]
+        if hasattr(self.controller, 'reset'):
+            self.controller.reset()
 
     def step(self):
         if self.controller is not None:
@@ -113,6 +138,7 @@ class SimProblem(object):
             tau[0:6] = 0.0
             self.skel().tau = tau
         self.world.step()
+        self.com_trajectory += [self.skel().C]
         return self.terminated()
         # return False
 

@@ -244,6 +244,10 @@ class Skeleton(object):
     def C(self):
         return self.world_com()
 
+    @property
+    def COM(self):
+        return self.world_com()
+
     def world_com_velocity(self):
         return papi.getSkeletonWorldCOMVelocity(self.world.id, self.id)
 
@@ -326,6 +330,18 @@ class Skeleton(object):
 
     def contacted_bodies(self):
         return [body for body in self.bodies if body.num_contacts() > 0]
+
+    def world_cop(self):
+        bodies = self.contacted_bodies()
+        if len(bodies) == 0:
+            return None
+        pos_list = [b.C for b in bodies]
+        avg = sum(pos_list) / len(pos_list)
+        return avg
+
+    @property
+    def COP(self):
+        return self.world_cop()
 
     def contacted_body_names(self):
         return [body.name for body in self.contacted_bodies()]
