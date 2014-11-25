@@ -40,6 +40,7 @@ class DirectSolver(object):
         opts.set('tolfun', 0.001)
         opts.set('tolx', 0.0000001)
         opts.set('popsize', 16)
+        opts.set('maxiter', 1600)
         for key, value in opts.iteritems():
             print '[', key, ']\n', value
 
@@ -50,7 +51,7 @@ class DirectSolver(object):
 
         print()
         print('------- CMA-ES --------')
-        res = cma.fmin(self.evaluate, x0, 2.0, opts)
+        res = cma.fmin(self.evaluate, x0, 1.0, opts)
         print('-----------------------')
         print()
         # np.set_printoptions(precision=6, suppress=True)

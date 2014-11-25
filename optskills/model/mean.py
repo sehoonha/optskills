@@ -34,9 +34,10 @@ class Linear(object):
             popt, pcov = scipy.optimize.curve_fit(self.fit_func, xdata, ydata)
             a += [popt[0]]
             b += [popt[1]]
-            # print pcov
-            # print np.diag(pcov)
-            self.fit_error += sum(np.sqrt(np.diag(pcov)))
+            try:
+                self.fit_error += sum(np.sqrt(np.diag(pcov)))
+            except ValueError:
+                print('ValueError: pcov = %s' % pcov)
         self.a, self.b = np.array(a), np.array(b)
 
     def fit_func(self, x, a_i, b_i):

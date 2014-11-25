@@ -118,9 +118,9 @@ class ParameterizedSolver(object):
             s.iteration = iteration
             s.simulate()
             samples += [s]
-            # # Debuging
-            # j = self.model.debug_last_generate_index
-            # print("%s (from %d) %s" % (i, j, s))
+            # Debuging
+            j = self.model.debug_last_generate_index
+            print("%s (from %d) %s" % (i, j, s))
         return samples
 
     def select_samples(self, samples):
@@ -132,10 +132,11 @@ class ParameterizedSolver(object):
             task_samples = sorted_samples[:self.num_offsprings]
             selected += [task_samples]
 
-            # print('Selected sample for task %f' % task)
-            # for i, s in enumerate(task_samples):
-            #     print("%d (%.6f) : %s from %d" % (i, s.evaluate(task),
-            #                                       s, s.iteration))
+            print('Selected sample for task %f' % task)
+            for i, s in enumerate(task_samples):
+                print("%d (%.6f) : %s from %d" % (i, s.evaluate(task),
+                                                  s, s.iteration))
+                break
         return selected
 
     def evaluate_model(self, model, iteration):

@@ -10,7 +10,7 @@ class SimJumpController(object):
         self.spd.target = self.skel().q
         self.jt = JTController(self.skel())
 
-        self.dim = 6
+        self.dim = 4
         self.params = (np.random.rand(self.dim) - 0.5) * 2.0
 
         self.reset()
@@ -26,23 +26,24 @@ class SimJumpController(object):
         self.target_index = -1
 
         w = (self.params - (-1.0)) / 2.0  # Change to 0 - 1 Scale
-        lo = np.array([-3.0, 0.0, -3.0, -3.0, -3.0, 0.0])
-        hi = np.array([3.0, -3.0, 3.0, 3.0, 3.0, 500.0])
+        lo = np.array([-3.0, 0.0, -3.0, -300.0])
+        hi = np.array([3.0, -3.0, 3.0, 300.0])
         params = lo * (1 - w) + hi * w
         # print('self.params = %s' % self.params)
         # print('normalized params = %s' % params)
-        (q0, q1, q2, q3, q4, f0) = params
+        (q0, q1, q2, f0) = params
 
         # Set the first pose
         pose0 = self.skel().q
         pose0[6] = pose0[9] = q0  # Thighs
         pose0[14] = pose0[15] = q1  # Knees
         pose0[17] = pose0[19] = q2  # Heels
-        pose0[28], pose0[31] = q3, -q3  # Shoulder
+        pose0[28], pose0[31] = 0.5, -0.5  # Shoulder
 
         # Set the second pose
         pose1 = self.skel().q
-        pose1[28], pose1[31] = q4, -q4  # Shoulder
+        pose1[28], pose1[31] = -2.0, 2.0  # Shoulder
+        pose1[29], pose1[32] = 0.5, -0.5  # Shoulder
 
         # Set the third pose
         pose2 = self.skel().q
@@ -100,14 +101,18 @@ class SimJump(SimProblem):
 
     def evaluate(self, result, task):
         # Calculate the validity of COM
-        C = result['C']
+        C = np.array(result['C'])
         C[1] = result['maxCy']
         lo = np.array([0.0, 0.90, 0.0])
         hi = np.array([0.0, 1.40, 0.0])
         w = task
         C_hat = lo * (1 - w) + hi * w
-        weight = np.array([1.0, 1.0, 1.0]) * 2.0
+        weight = np.array([0.5, 1.0, 0.5]) * 2.0
         obj = norm((C - C_hat) * weight) ** 2
+
+        # Test height penalty
+        height_penalty = 0.0 if result['C'][1] > 0.5 else 1.0
+        obj += height_penalty
 
         # Calculate unbalanced penalty
         T = result['T']
@@ -124,7 +129,6 @@ class SimJump(SimProblem):
                 v = params[i]
                 penalty += max(0.0, v - 1.0) ** 2
                 penalty += min(0.0, v - (-1.0)) ** 2
-
         return obj + obj_balanced + penalty
 
     def set_random_params(self):

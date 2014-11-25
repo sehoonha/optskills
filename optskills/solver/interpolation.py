@@ -70,6 +70,7 @@ class InterpolationSolver(object):
         self.eval_counter += 1
         s = Sample(x, self.prob)
         v = s.evaluate(self.current_task)
+        print('%.6f <--- %s' % (v, x))
         return v
 
     def num_evals(self):

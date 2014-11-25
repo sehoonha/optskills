@@ -40,8 +40,11 @@ class MyWindow(QtGui.QMainWindow):
             # params = np.array([1.0447, -0.8950, 0.0627,
             #                    -0.5505, 0.3516, 0.0807])
             # params = np.random.rand(self.prob.dim * 2)
-            params = np.array([0.3, 0.4, 0.3, 0.5, -0.8, 1.0,
-                               0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ])
+
+            params = np.array([0.1876, -0.9591, 0.3144, -0.7733,
+                               0, 0, 0, 0])
+            # params = np.array([0.2, -0.3, 0.2, 0.0,
+            #                    0.0, 0.0, 0.0, 0.0, ])
 
             self.model.mean.set_params(params)
         else:
