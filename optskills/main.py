@@ -52,7 +52,7 @@ def evaluate(name, plotting=True):
     print('==== respond from solver ====')
     print(res)
     if plotting:
-        obs_plot_values.plot()
+        obs_plot_values.plot(PROBLEM_CODE)
     save(prob, s.model, 'result_%s.json' % name)
     pid = os.getpid()
     return (pid, name, obs_plot_values.data)
@@ -141,16 +141,18 @@ def mpi_benchmark(solvers, NUM_CORES=4):
     end_time = time.time()
     print ('total %.4fs elapsed' % (end_time - begin_time))
 
+seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
 # PROBLEM_CODE = 'problems.Sphere()'
 # PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
-PROBLEM_CODE = 'problems.SimJump()'
+# PROBLEM_CODE = 'problems.SimJump()'
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
+PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar", %s, "quadratic", 0.5)' % seg
 # PROBLEM_CODE = 'problems.CEC15(2, "weierstrass")'
 # PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
 
 # evaluate('parameterized')
-evaluate('direct')
+# evaluate('direct')
 # evaluate('interpolation')
 # mpi_benchmark(['parameterized'] * 11)
 # mpi_benchmark(['parameterized', 'direct'] * 21)
@@ -158,4 +160,4 @@ evaluate('direct')
 # mpi_benchmark(['parameterized', 'interpolation'] * 5)
 # mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 3, 1)
 # benchmark(['parameterized'] * 11)
-# benchmark(['parameterized', 'direct'] * 21)
+benchmark(['parameterized', 'direct'] * 21)

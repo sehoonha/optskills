@@ -40,7 +40,7 @@ class DirectSolver(object):
         opts.set('tolfun', 0.001)
         opts.set('tolx', 0.0000001)
         opts.set('popsize', 16)
-        opts.set('maxiter', 1600)
+        opts.set('maxiter', 200)
         for key, value in opts.iteritems():
             print '[', key, ']\n', value
 
@@ -70,6 +70,8 @@ class DirectSolver(object):
             v = s.evaluate(task)
             sample_values += [v]
         avg_error = np.mean(sample_values)
+        if np.isnan(avg_error):
+            avg_error = 9999.9
         print x, avg_error
         self.iter_values += [sample_values]  # Values for the entire iterations
 
@@ -91,7 +93,7 @@ class DirectSolver(object):
 
     def values(self):
         sum_values = [sum(v) for v in self.iter_values]
-        best_index = np.argmin(sum_values)
+        best_index = np.nanargmin(sum_values)
         return self.iter_values[best_index]
 
     def __str__(self):

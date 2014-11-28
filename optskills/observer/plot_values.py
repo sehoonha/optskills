@@ -97,6 +97,8 @@ class PlotValues(object):
             med = exp_list[(num_trials - 1) / 2]
             x = med.evals
             y = med.values
+            print 'x:', x
+            print 'y:', y
             p = plt.plot(x, y, color=colors[index])
             pp.append(p[0])
             print('')
