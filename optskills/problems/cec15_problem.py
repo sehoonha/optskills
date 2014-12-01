@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 class CEC15(object):
     def __init__(self, _dim, _func_name, _pts=None, _seg_type='linear',
-                 _fscale=1.0):
+                 _fscale=1.0, _adjust=None):
         self.dim = _dim
         self.func_name = _func_name
 
@@ -18,6 +18,12 @@ class CEC15(object):
             self.pts = _pts
         self.seg_type = _seg_type
         self.fscale = _fscale
+
+        if _adjust is None:
+            self.adjust = [1.0, 1.0]
+        else:
+            self.adjust = _adjust
+
         # self.plot_segment()
         self.eval_counter = 0  # Well, increasing when simulated
 
@@ -31,7 +37,14 @@ class CEC15(object):
             f = scipy.interpolate.interp1d(x, y, self.seg_type)
             center[i] = f(w)
         return np.array(center)
-        # return self.lo * (1 - w) + self.hi * w
+
+    def adjust_param(self, task):
+        n = len(self.adjust)
+        w = task
+        x = np.linspace(0.0, 1.0, n)
+        y = self.adjust
+        f = scipy.interpolate.interp1d(x, y)
+        return f(w)
 
     def plot_segment(self):
         tasks = np.linspace(0.0, 1.0, 11)
@@ -46,6 +59,10 @@ class CEC15(object):
         plt.axes().set_xlim(-1.0, 1.0)
         plt.axes().set_ylim(-1.0, 1.0)
         plt.savefig('plot_segment.png')
+
+        # Additional debug routine
+        for t in tasks:
+            print 'Task:', t, ' Adjust:', self.adjust_param(t)
         exit(0)
 
     def simulate(self, sample):
@@ -61,9 +78,10 @@ class CEC15(object):
             if result[i] < -1.0:
                 penalty += (result[i] - (-1.0)) ** 2
 
+        ap = self.adjust_param(task)
         f = 0.0
         if self.func_name == 'bent_cigar':
-            f = cec15.bent_cigar_func(result, Os=c)
+            f = cec15.bent_cigar_func(result, Os=c, adjust=ap)
         elif self.func_name == 'weierstrass':
             f = cec15.weierstrass_func(result, Os=c)
         elif self.func_name == 'schwefel':

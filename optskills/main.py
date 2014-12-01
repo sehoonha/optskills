@@ -141,14 +141,20 @@ def mpi_benchmark(solvers, NUM_CORES=4):
     end_time = time.time()
     print ('total %.4fs elapsed' % (end_time - begin_time))
 
-seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
 # PROBLEM_CODE = 'problems.Sphere()'
 # PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
 # PROBLEM_CODE = 'problems.SimJump()'
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
-PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar", %s, "quadratic", 0.5)' % seg
+# seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
+# adjust = "[0.5, 1.0]"
+# PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar", %s, "quadratic", 0.5, %s)' \
+#                % (seg, adjust)
 # PROBLEM_CODE = 'problems.CEC15(2, "weierstrass")'
+seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
+adjust = "[0.5, 1.5]"
+PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "quadratic", 0.01, %s)' \
+               % (seg, adjust)
 # PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
 
 # evaluate('parameterized')
