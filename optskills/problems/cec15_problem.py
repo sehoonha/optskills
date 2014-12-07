@@ -16,7 +16,13 @@ class CEC15(object):
             self.pts += [np.array([0.5] * self.dim)]
         else:
             self.pts = _pts
-        self.seg_type = _seg_type
+
+        # Allow function type shortcut
+        if _seg_type == 'quad':
+            self.seg_type = 'quadratic'
+        else:
+            self.seg_type = _seg_type
+
         self.fscale = _fscale
 
         if _adjust is None:
@@ -79,16 +85,26 @@ class CEC15(object):
                 penalty += (result[i] - (-1.0)) ** 2
 
         ap = self.adjust_param(task)
+        sr = self.scale_rate(task)
+
         f = 0.0
         if self.func_name == 'bent_cigar':
             f = cec15.bent_cigar_func(result, Os=c, adjust=ap)
         elif self.func_name == 'weierstrass':
-            f = cec15.weierstrass_func(result, Os=c)
+            f = cec15.weierstrass_func(result, Os=c, sr=sr)
         elif self.func_name == 'schwefel':
             f = cec15.schwefel_func(result, Os=c)
         else:
             f = 0.0
         return f * self.fscale + 0.1 * penalty
+
+    def scale_rate(self, task):
+        if self.func_name == 'weierstrass':
+            x = [0.0, 1.0]
+            y = [0.2, 2.0]
+            f = scipy.interpolate.interp1d(x, y)
+            return f(task)
+        return None
 
     def __str__(self):
         return "[CEC15.%s]" % self.func_name

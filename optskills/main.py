@@ -33,6 +33,8 @@ def create_solver(solver_name, prob):
         return solver.InterpolationSolver(prob, NUM_TASKS, MEAN_TYPE)
     elif solver_name == 'direct':
         return solver.DirectSolver(prob, NUM_TASKS, MEAN_TYPE)
+    elif solver_name == 'sampler':
+        return solver.Sampler(prob, NUM_TASKS, MEAN_TYPE)
     else:
         return None
 
@@ -53,7 +55,8 @@ def evaluate(name, plotting=True):
     print(res)
     if plotting:
         obs_plot_values.plot(PROBLEM_CODE)
-    save(prob, s.model, 'result_%s.json' % name)
+    if hasattr(s, 'model'):
+        save(prob, s.model, 'result_%s.json' % name)
     pid = os.getpid()
     return (pid, name, obs_plot_values.data)
 
@@ -151,15 +154,21 @@ def mpi_benchmark(solvers, NUM_CORES=4):
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar", %s, "quadratic", 0.5, %s)' \
 #                % (seg, adjust)
 # PROBLEM_CODE = 'problems.CEC15(2, "weierstrass")'
-seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
-adjust = "[0.5, 1.5]"
-PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "quadratic", 0.01, %s)' \
-               % (seg, adjust)
+
+# seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
+# adjust = "[0.5, 1.5]"
+# PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "quad", 0.01, %s)' \
+#                % (seg, adjust)
+
+seg = "[[-0.5, -0.1], [-0.4, 0.1]]"
+PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
+
 # PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
 
 # evaluate('parameterized')
 # evaluate('direct')
 # evaluate('interpolation')
+# evaluate('sampler', False)
 # mpi_benchmark(['parameterized'] * 11)
 # mpi_benchmark(['parameterized', 'direct'] * 21)
 # benchmark(['parameterized', 'direct'] * 5)

@@ -30,7 +30,7 @@ def sr_func(x, Os=None, Mr=None, sh_rate=1.0):
     return sr_x
 
 
-def bent_cigar_func(x, Os=None, Mr=None, adjust=1.0):
+def bent_cigar_func(x, Os=None, Mr=None, sr=None, adjust=1.0):
     nx = len(x)
     # z = sr_func(x, Os, Mr, 1.0)
     z = sr_func(x, Os, Mr, 100.0)
@@ -40,15 +40,17 @@ def bent_cigar_func(x, Os=None, Mr=None, adjust=1.0):
     return f / 5e10
 
 
-def weierstrass_func(x, Os=None, Mr=None, adjust=1.0):
+def weierstrass_func(x, Os=None, Mr=None, sr=None, adjust=1.0):
     a = 0.5 * adjust
     b = 3.0
     k_max = 20
     f = 0.0
 
+    sr = 1.0 if sr is None else sr
+
     nx = len(x)
     # z = sr_func(x, Os, Mr, 0.5 / 100.0)
-    z = sr_func(x, Os, Mr, 0.5)
+    z = sr_func(x, Os, Mr, 0.5 * sr)
     for i in range(nx):
         sum = 0.0
         sum2 = 0.0
@@ -60,7 +62,7 @@ def weierstrass_func(x, Os=None, Mr=None, adjust=1.0):
     return f / 10.0
 
 
-def schwefel_func(x, Os=None, Mr=None, adjust=1.0):
+def schwefel_func(x, Os=None, Mr=None, sr=None, adjust=1.0):
     nx = len(x)
     # z = sr_func(x, Os, Mr, 1000.0 / 100.0)
     z = sr_func(x, Os, Mr, 100000.0 / 100.0 * adjust)
@@ -100,7 +102,8 @@ if __name__ == '__main__':
             x = np.array([xs[i], ys[j]])
             # zv[i][j] = bent_cigar_func(x, adjust=0.0)
             # zv[i][j] = weierstrass_func(x, adjust=1.5)
-            zv[i][j] = schwefel_func(x, adjust=1.5)
+            # zv[i][j] = schwefel_func(x, adjust=1.5)
+            zv[i][j] = 1.0
 
     from mpl_toolkits.mplot3d import Axes3D
     from matplotlib import cm
