@@ -46,6 +46,9 @@ class PhaseController(object):
         else:
             return None
 
+    def clear_phases(self):
+        self.phases = []
+
     def add_phase_from_now(self, duration):
         ph = Phase(self.skel(), self.skel().q, duration)
         self.phases += [ph]
