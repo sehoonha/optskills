@@ -156,9 +156,9 @@ def plot(filename):
 # PROBLEM_CODE = 'problems.Sphere()'
 # PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
-# PROBLEM_CODE = 'problems.GPStep()'
+PROBLEM_CODE = 'problems.GPStep()'
 # PROBLEM_CODE = 'problems.SimJump()'
-PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
+# PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
 # seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
 # adjust = "[0.5, 1.0]"
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar", %s, "quadratic", 0.5, %s)' \
@@ -178,10 +178,16 @@ PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
 if __name__ == '__main__':
     import sys
     if len(sys.argv) > 1:
-        filename = sys.argv[1]
-        plot(filename)
+        cmd = sys.argv[1]
+        if cmd == 'parameterized':
+            evaluate('parameterized')
+        elif cmd == 'direct':
+            evaluate('direct')
+        elif cmd == 'plot':
+            filename = sys.argv[2]
+            plot(filename)
         exit(0)
-    # evaluate('parameterized')
+    evaluate('parameterized')
     # evaluate('direct')
     # evaluate('interpolation')
     # evaluate('sampler', False)
@@ -191,4 +197,4 @@ if __name__ == '__main__':
     # mpi_benchmark(['parameterized', 'interpolation'] * 5)
     # mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 3, 1)
     # benchmark(['parameterized'] * 11)
-    benchmark(['parameterized', 'direct'] * 5)
+    # benchmark(['parameterized', 'direct'] * 5)
