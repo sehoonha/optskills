@@ -8,7 +8,11 @@ class GPKick(SimProblem):
     def __init__(self):
         super(GPKick, self).__init__('urdf/BioloidGP/BioloidGP.URDF',
                                      make_ball=True)
-        self.ball_position = np.array([0.0, 0.4, 0.03])
+        self.ball_position = np.array([0.03, 0.03, 0.10])
+        r = 0.04
+        m = 0.05
+        I = (2.0 * m * r * r) / 3.0
+        print('I = %.8f' % I)
         self.__init__simulation__()
 
         self.dim = 5
@@ -20,7 +24,6 @@ class GPKick(SimProblem):
         self.init_state[0] = -0.50 * 3.14
         self.init_state[4] = 0.230
         self.init_state[5] = 0.230
-        self.set_init_state('r_thigh', -1.0)
         self.reset()
         self.controller = phase_controller.PhaseController(self.world)
 
@@ -79,21 +82,21 @@ class GPKick(SimProblem):
         self.controller.clear_phases()
         # The first phase
         phase = self.controller.add_phase_from_now(0.5)
-        phase.set_target('r_hip', -q0)
-        phase.set_target('r_foot', q0)
+        phase.set_target('r_hip', -0.16)
+        phase.set_target('r_foot', 0.16)
 
         # The second phase
         phase = self.controller.add_phase_from_prev(0.3)
-        phase.set_target('l_thigh', 0.8)
-        phase.set_target('l_shin', -0.4)
+        phase.set_target('l_thigh', -0.8)
+        phase.set_target('l_shin', -1.0)
+        phase.set_target('l_heel', 0.5)
 
         # The third phase
         phase = self.controller.add_phase_from_prev(0.3)
-        phase.set_target('l_thigh', q1)  # 0.4
-        phase.set_target('l_shin', q2)  # -0.5
-        phase.set_target('l_heel', q3)  # -0.2
-        phase.set_target('r_heel', -0.3)
-        phase.set_target('r_thigh', q4)  # -0.5
+        phase.set_target('l_thigh', 1.0)  # 1.0
+        phase.set_target('l_shin', -0.5)  # -0.5
+        phase.set_target('l_heel', 0.3)
+        phase.set_target('r_heel', -0.04)
         # print('num phases: %d' % len(self.controller.phases))
 
     def collect_result(self):
@@ -105,9 +108,6 @@ class GPKick(SimProblem):
         return res
 
     def terminated(self):
-        contacted = self.skel().contacted_body_names()
-        if self.world.t > 0.8 and 'l_foot' in contacted:
-            return True
         return (self.world.t > 2.0)
 
     def __str__(self):
