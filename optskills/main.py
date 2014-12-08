@@ -147,6 +147,7 @@ def mpi_benchmark(solvers, NUM_CORES=4):
 # PROBLEM_CODE = 'problems.Sphere()'
 # PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
+PROBLEM_CODE = 'problems.GPStep()'
 # PROBLEM_CODE = 'problems.SimJump()'
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
 # seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
@@ -160,13 +161,13 @@ def mpi_benchmark(solvers, NUM_CORES=4):
 # PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "quad", 0.01, %s)' \
 #                % (seg, adjust)
 
-seg = "[[-0.5, -0.1], [-0.4, 0.1]]"
-PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
+# seg = "[[-0.5, -0.1], [-0.4, 0.1]]"
+# PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
 
 # PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
 
 # evaluate('parameterized')
-# evaluate('direct')
+evaluate('direct')
 # evaluate('interpolation')
 # evaluate('sampler', False)
 # mpi_benchmark(['parameterized'] * 11)
@@ -175,4 +176,4 @@ PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
 # mpi_benchmark(['parameterized', 'interpolation'] * 5)
 # mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 3, 1)
 # benchmark(['parameterized'] * 11)
-benchmark(['parameterized', 'direct'] * 21)
+# benchmark(['parameterized', 'direct'] * 21)

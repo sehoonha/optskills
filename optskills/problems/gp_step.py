@@ -41,16 +41,16 @@ class GPStep(SimProblem):
         w = task
         # Calculate the validity of P (swing foot location)
         P = result['P']
-        lo = np.array([0.02, 0.002, 0.03])
-        hi = np.array([0.02, 0.002, 0.18])
+        lo = np.array([0.02, 0.002, 0.06])
+        hi = np.array([0.02, 0.002, 0.16])
         P_hat = lo * (1 - w) + hi * w
-        weight = np.array([1.0, 1.0, 1.0]) * 2.0
+        weight = np.array([1.0, 1.0, 5.0]) * 2.0
         obj = norm((P - P_hat) * weight) ** 2
 
         # Calculate the balance penaly
         Cx = result['C'][0]
         Cdotx = result['Cdot'][0]
-        b_penalty = (Cx * 5.0) ** 2 + (Cdotx * 1.0) ** 2
+        b_penalty = (Cx * 2.0) ** 2 + (Cdotx * 1.0) ** 2
 
         # Calculate parameter penalty
         params = result['params']
@@ -73,8 +73,8 @@ class GPStep(SimProblem):
     def set_params(self, x):
         self.params = x
         w = (x - (-1.0)) / 2.0  # Change to 0 - 1 Scale
-        lo = np.array([-1.0, -3.0, -3.0, -3.0, -3.0])
-        hi = np.array([1.0, 3.0, 3.0, 3.0, 3.0])
+        lo = np.array([-0.2, -3.0, -3.0, -3.0, -3.0])
+        hi = np.array([0.2, 3.0, 3.0, 3.0, 3.0])
         params = lo * (1 - w) + hi * w
         (q0, q1, q2, q3, q4) = params
         # print q0, q1, q2, q3, q4
