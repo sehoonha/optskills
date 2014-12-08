@@ -22,14 +22,36 @@ class Experiment(object):
 
 
 class PlotValues(object):
-    def __init__(self):
+    def __init__(self, _datafile=None):
         self.data = {}
+
+        self.datafile = _datafile
+        if self.datafile is not None:
+            self.fout = open(self.datafile, 'w+')
+        else:
+            self.fout = None
 
     def notify_init(self, solver, model):
         self.exp = Experiment()
+        # Log to file
+        if self.fout is not None:
+            self.fout.write('Experiment, %s\n' % solver.name)
+            self.fout.flush()
 
     def notify_solve(self, solver, model):
-        name = solver.name
+        self.add_exp(solver.name)
+        # if name not in self.data:
+        #     self.data[name] = []
+
+        # self.data[name] += [self.exp]
+        # self.exp = None
+
+        # Log to file
+        if self.fout is not None:
+            self.fout.write('Solved\n')
+            self.fout.flush()
+
+    def add_exp(self, name):
         if name not in self.data:
             self.data[name] = []
 
@@ -40,44 +62,40 @@ class PlotValues(object):
         e = solver.num_evals()
         v = np.mean(solver.values())
         self.exp.add_point(e, v)
+        # Log to file
+        if self.fout is not None:
+            self.fout.write('%d, %f\n' % (e, v))
+            self.fout.flush()
 
-    # def plot(self):
-    #     print('\n' * 3)
-    #     print('plot the experiment values')
-    #     names = self.data.keys()
-    #     print('Solver names = %s' % names)
+    def load(self, filename):
+        self.exp = None
+        name = None
+        with open(filename) as fin:
+            for line in fin.readlines():
+                tokens = line.split(', ')
+                if 'Experiment' in line:
+                    if self.exp is not None:
+                        self.add_exp(name)
+                    self.exp = Experiment()
+                    name = tokens[1]
+                elif 'Solved' in line:
+                    self.add_exp(name)
+                else:
+                    e = int(tokens[0])
+                    v = float(tokens[1])
+                    self.exp.add_point(e, v)
+        if self.exp is not None:
+            self.add_exp(name)
 
-    #     fig = plt.figure()
-    #     fig.set_size_inches(18.5, 10.5)
-    #     num_trials = 0
-    #     for name, exp_list in self.data.iteritems():
-    #         num_trials = len(exp_list)
-    #         n = min([e.num_data() for e in exp_list])
-    #         x = exp_list[0].evals[:n]
-    #         y = []
-    #         for i in range(n):
-    #             i_values = [e.values[i] for e in exp_list]
-    #             avg = np.mean(i_values)
-    #             y += [avg]
-    #         plt.plot(x, y)
-
-    #         # # Plot errorbar as well
-    #         last_values = [e.values[n - 1] for e in exp_list]
-    #         print('%s: %.8f' % (name, np.mean(last_values)))
-    #         print('last_values: %s' % last_values)
-    #         # lo = np.percentile(last_values, 20)
-    #         # mi = np.mean(last_values)
-    #         # hi = np.percentile(last_values, 80)
-    #         # plt.errorbar(x[n - 1], y[n - 1], yerr=[[mi - lo], [hi - mi]])
-    #     # plt.plot(self.evals, self.values)
-    #     font = {'size': 24}
-    #     plt.title('Compare %d Trials' % num_trials, fontdict=font)
-    #     font = {'size': 20}
-    #     plt.xlabel('The number of sample evaluations', fontdict=font)
-    #     plt.ylabel('The average error of mean segments', fontdict=font)
-    #     plt.legend(self.data.keys(), fontsize=20)
-    #     # plt.show()
-    #     plt.savefig('plot_values.png')
+    def save(self, filename):
+        with open(filename, "w+") as fout:
+            for name, exp_list in self.data.iteritems():
+                for exp in exp_list:
+                    fout.write('Experiment, %s\n' % name)
+                    for e, v in zip(exp.evals, exp.values):
+                        fout.write('%d, %f\n' % (e, v))
+                    fout.write('Solved\n')
+                    fout.flush()
 
     def plot(self, prob_name=''):
         print('\n' * 3)
@@ -132,7 +150,7 @@ class PlotValues(object):
         plt.xlabel('The number of sample evaluations', fontdict=font)
         plt.ylabel('The error of mean segments', fontdict=font)
         plt.legend(pp, self.data.keys(), numpoints=1, fontsize=20)
-        plt.axes().set_ylim(-0.1, 0.2)
+        plt.axes().set_ylim(-0.1, 1.0)
         plt.axhline(y=0, color='k')
         # plt.show()
         plt.savefig('plot_values.png')

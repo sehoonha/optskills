@@ -41,7 +41,7 @@ def create_solver(solver_name, prob):
 
 def evaluate(name, plotting=True):
     import os
-    obs_plot_values = observer.PlotValues()
+    obs_plot_values = observer.PlotValues('data_%s.csv' % name)
     observers = [obs_plot_values, observer.PrintTime()]
     prob = create_problem()
     s = create_solver(name, prob)
@@ -88,6 +88,7 @@ def benchmark(solvers):
     print ('plot...')
     pl = observer.PlotValues()
     pl.data = collected_data
+    pl.save('benchmark.csv')
     pl.plot(PROBLEM_CODE)
     print ('plot... done')
     end_time = time.time()
@@ -144,12 +145,20 @@ def mpi_benchmark(solvers, NUM_CORES=4):
     end_time = time.time()
     print ('total %.4fs elapsed' % (end_time - begin_time))
 
+
+def plot(filename):
+    print('plot [%s]' % filename)
+    obs_plot_values = observer.PlotValues()
+    obs_plot_values.load(filename)
+    obs_plot_values.plot(PROBLEM_CODE)
+
+
 # PROBLEM_CODE = 'problems.Sphere()'
 # PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
-PROBLEM_CODE = 'problems.GPStep()'
+# PROBLEM_CODE = 'problems.GPStep()'
 # PROBLEM_CODE = 'problems.SimJump()'
-# PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
+PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
 # seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
 # adjust = "[0.5, 1.0]"
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar", %s, "quadratic", 0.5, %s)' \
@@ -166,14 +175,20 @@ PROBLEM_CODE = 'problems.GPStep()'
 
 # PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
 
-# evaluate('parameterized')
-evaluate('direct')
-# evaluate('interpolation')
-# evaluate('sampler', False)
-# mpi_benchmark(['parameterized'] * 11)
-# mpi_benchmark(['parameterized', 'direct'] * 21)
-# benchmark(['parameterized', 'direct'] * 5)
-# mpi_benchmark(['parameterized', 'interpolation'] * 5)
-# mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 3, 1)
-# benchmark(['parameterized'] * 11)
-# benchmark(['parameterized', 'direct'] * 21)
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+        plot(filename)
+        exit(0)
+    # evaluate('parameterized')
+    # evaluate('direct')
+    # evaluate('interpolation')
+    # evaluate('sampler', False)
+    # mpi_benchmark(['parameterized'] * 11)
+    # mpi_benchmark(['parameterized', 'direct'] * 21)
+    # benchmark(['parameterized', 'direct'] * 5)
+    # mpi_benchmark(['parameterized', 'interpolation'] * 5)
+    # mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 3, 1)
+    # benchmark(['parameterized'] * 11)
+    benchmark(['parameterized', 'direct'] * 5)
