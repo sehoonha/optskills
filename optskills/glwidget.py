@@ -40,9 +40,15 @@ class GLWidget(QGLWidget):
         gltools.glMove([0.0, -0.01, 0.0])
         gltools.render_chessboard(10, 20.0)
 
-        # Draw skeleton
-        gltools.glMove([0, 0, 0])
-        self.prob.skel().render()
+        # gltools.glMove([0, 0, 0])
+        # self.prob.world.skels[1].render()
+
+        for i, skel in enumerate(self.prob.world.skels):
+            if i == 0:
+                continue
+            # Draw skeleton
+            gltools.glMove([0, 0, 0])
+            skel.render()
         # self.prob.render()
         glPopMatrix()
 

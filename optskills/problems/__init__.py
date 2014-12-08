@@ -5,3 +5,4 @@ from sim_problem import SimProblem
 from sim_jump import SimJump
 from gp_bow import GPBow
 from gp_step import GPStep
+from gp_kick import GPKick

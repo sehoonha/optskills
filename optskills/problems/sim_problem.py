@@ -102,18 +102,24 @@ class JTController:
 class SimProblem(object):
     world = None
 
-    def __init__(self, skel_filename):
+    def __init__(self, skel_filename, make_ball=False):
         self.skel_filename = skel_filename
+        self.ball = None
+        self.ball_position = None
         if SimProblem.world is None:
-            self.__init__pydart__(skel_filename)
+            self.__init__pydart__(skel_filename, make_ball)
         self.world = SimProblem.world
         self.controller = None
 
-    def __init__pydart__(self, skel_filename):
+    def __init__pydart__(self, skel_filename, make_ball):
         pydart.init()
         if '.skel' not in skel_filename:
             world = pydart.create_world(1.0 / 2000.0)
             world.add_skeleton(DATA_PATH + "sdf/ground.urdf", control=False)
+            if make_ball:
+                world.add_skeleton(DATA_PATH + "urdf/sphere.urdf",
+                                   control=False)
+                self.ball = world.skels[-1]
             world.add_skeleton(DATA_PATH + self.skel_filename)
         else:
             world = pydart.create_world(1.0 / 2000.0,
@@ -131,6 +137,12 @@ class SimProblem(object):
 
     def reset(self):
         self.skel().set_states(self.init_state)
+        if self.ball is not None and self.ball_position is not None:
+            q = np.zeros(6)
+            q[3:] = self.ball_position
+            self.ball.q = q
+            self.ball.qdot = np.zeros(6)
+
         self.world.reset()
         self.com_trajectory = [self.skel().C]
         if hasattr(self.controller, 'reset'):
