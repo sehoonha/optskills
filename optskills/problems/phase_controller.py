@@ -52,7 +52,8 @@ class PhaseController(object):
         return ph
 
     def add_phase_from_prev(self, duration):
-        ph = Phase(self.skel(), self.phases[-1].target, duration)
+        target = np.array(self.phases[-1].target)
+        ph = Phase(self.skel(), target, duration)
         self.phases += [ph]
         return ph
 

@@ -18,16 +18,33 @@ class GPStep(SimProblem):
         self.init_state[0] = -0.50 * 3.14
         self.init_state[4] = 0.230
         self.init_state[5] = 0.230
+        # self.set_init_state('r_foot', 0.5)
+        self.set_init_state('r_arm', 0.3)
+        self.set_init_state('r_hand', -0.3)
         self.reset()
         self.controller = phase_controller.PhaseController(self.world)
 
         # The first phase
         phase = self.controller.add_phase_from_now(0.5)
-        phase.set_target('l_thigh', 2.0)
+        phase.set_target('r_hip', -0.14)
+        phase.set_target('r_foot', 0.14)
+        # phase.set_target('r_arm', 1.0)
+        # phase.set_target('r_hand', -1.0)
 
         # The second phase
         phase = self.controller.add_phase_from_prev(0.3)
-        phase.set_target('r_thigh', -2.0)
+        phase.set_target('l_thigh', 1.0)
+        phase.set_target('l_shin', -0.5)
+
+        # The third phase
+        phase = self.controller.add_phase_from_prev(0.3)
+        phase.set_target('l_thigh', 1.5)
+        phase.set_target('l_shin', -0.5)
+        phase.set_target('l_heel', -0.5)
+        phase.set_target('r_thigh', -0.5)
+
+        for phase in self.controller.phases:
+            print phase.target
         self.controller.reset()
 
     def simulate(self, sample):
@@ -77,7 +94,10 @@ class GPStep(SimProblem):
         return res
 
     def terminated(self):
-        return (self.world.t > 1.0)
+        contacted = self.skel().contacted_body_names()
+        if self.world.t > 0.8 and 'l_foot' in contacted:
+            return True
+        return (self.world.t > 2.0)
 
     def __str__(self):
         res = self.collect_result()

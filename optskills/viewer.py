@@ -81,9 +81,8 @@ class MyWindow(QtGui.QMainWindow):
 
         self.cam0Event()
         self.taskSpinEvent(0.0)
-        # self.sim.load('gp_step_1.5.plan')
-        # self.sim.load('gp_step_5.plan')
-        # self.sim.load('test.plan')
+
+        self.after_reset = True
 
     def initUI(self):
         self.setGeometry(0, 0, 1280, 720)
@@ -177,7 +176,8 @@ class MyWindow(QtGui.QMainWindow):
         # Do play
         elif self.playAction.isChecked():
             result = self.prob.step()
-            if result:
+            if result and self.after_reset:
+                self.after_reset = False
                 self.playAction.setChecked(False)
 
         if self.captureAction.isChecked() and doCapture:
@@ -213,6 +213,7 @@ class MyWindow(QtGui.QMainWindow):
 
     def resetEvent(self):
         # self.prob.set_random_params()
+        self.after_reset = True
         self.prob.reset()
 
     def cam0Event(self):

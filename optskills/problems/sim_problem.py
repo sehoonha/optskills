@@ -125,6 +125,10 @@ class SimProblem(object):
     def skel(self):
         return self.world.skels[-1]
 
+    def set_init_state(self, dof, value):
+        index = self.skel().dof_index(dof)
+        self.init_state[index] = value
+
     def reset(self):
         self.skel().set_states(self.init_state)
         self.world.reset()
