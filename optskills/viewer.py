@@ -48,8 +48,14 @@ class MyWindow(QtGui.QMainWindow):
             #                    0.0, 0.2, 0.0, -0.15, -0.1])
             # params = np.array([0.5862, -0.7469, 0.6050, 0.8530, 0.4105,
             #                    0.0083, 0.3875, -0.1697, -0.1931, -0.0878])
-            params = np.array([-0.7862, 0.0, -0.2, 0.65, -0.2,
-                               0.0, 0.0, 0.0, 0.3, 0.0])
+            # params = np.array([-0.7862, 0.0, -0.2, 0.65, -0.2,
+            #                    0.0, 0.0, 0.0, 0.3, 0.0])
+            # params = np.array([0.7727, -0.9123, 0.4292, 1.1197, -0.2495,
+            #                    -0.0013, -0.0478, 0.1797, 0.01035, 0.0142125])
+            # params = np.array([0.7727, -0.9123, 0.4292, 1.1197, -0.2495,
+            #                    -0.0013, -0.0478, 0.1797, 0.01035, 0.0142125])
+            params = np.array([0.5492, 1.1193, -0.6007, 1.0099, 0.7416,
+                               0.1850, -0.0002, 0.2693, -0.24420, 0.3166])
 
             self.model.mean.set_params(params)
         else:
@@ -176,7 +182,7 @@ class MyWindow(QtGui.QMainWindow):
                 self.rangeSlider.setValue(v)
             else:
                 self.animAction.setChecked(False)
-            doCapture = (v % 4 == 1)
+            doCapture = (v % 20 == 1)
         # Do play
         elif self.playAction.isChecked():
             result = self.prob.step()

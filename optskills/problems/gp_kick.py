@@ -36,7 +36,7 @@ class GPKick(SimProblem):
         self.reset()
         self.set_params(sample)
         while not self.terminated():
-            self.kick()
+            self.step()
         # print 'result:', self.params, self.collect_result()
         return self.collect_result()
 
@@ -45,9 +45,9 @@ class GPKick(SimProblem):
         # Calculate the validity of P (swing foot location)
         B = result['B']
         lo = np.array([0.025, 0.04, 0.30])
-        hi = np.array([0.025, 0.04, 0.70])
+        hi = np.array([0.025, 0.04, 0.60])
         B_hat = lo * (1 - w) + hi * w
-        weight = np.array([1.0, 1.0, 2.0]) * 2.0
+        weight = np.array([1.0, 1.0, 5.0]) * 2
         obj = norm((B - B_hat) * weight) ** 2
 
         # Calculate the balance penaly
@@ -56,10 +56,10 @@ class GPKick(SimProblem):
         b_penalty = (Cx * 5.0) ** 2 + (Cz * 5.0) ** 2
 
         # Time penalty
-        t = result['t']
+        # t = result['t']
         t_penalty = 0.0
-        if t < 2.5:
-            t_penalty = (2.5 - t)
+        # if t < 2.5:
+        #     t_penalty = (2.5 - t)
 
         # Calculate parameter penalty
         params = result['params']
@@ -82,7 +82,7 @@ class GPKick(SimProblem):
         hi = np.array([0.2, 0.0, 0.0, 1.57, 0.0])
         params = lo * (1 - w) + hi * w
         (q0, q1, q2, q3, q4) = params
-        print 'q:', q0, q1, q2, q3, q4
+        # print 'q:', q0, q1, q2, q3, q4
 
         self.reset()
         self.controller.clear_phases()
@@ -102,7 +102,7 @@ class GPKick(SimProblem):
         phase.set_target('l_thigh', q3)  # 0.55 ~ 1.0
         phase.set_target('l_shin', q4)  # -0.5
         phase.set_target('l_heel', -0.5 * q4)  # 0.3
-        phase.set_target('r_heel', -0.05)  # -0.04
+        phase.set_target('r_heel', -0.06)  # -0.04
         # print('num phases: %d' % len(self.controller.phases))
 
     def collect_result(self):
@@ -117,11 +117,15 @@ class GPKick(SimProblem):
     def terminated(self):
         contacted = self.skel().contacted_body_names()
         for b in ['torso', 'l_hand', 'r_hand']:
-            if b in contacted:
+            if b in contacted and self.world.t > 0.5:
+                # print 'terminated due to the bad contact', b, self.world.t
                 return True
         dB = self.ball.Cdot
         if dB[2] < 0.0 and self.world.t > 1.5:
+            # print 'terminated when the ball is stopped', self.world.t
             return True
+        # if self.world.t > 5.0:
+        #     print 'terminated timeover', self.world.t
         return (self.world.t > 5.0)
 
     def __str__(self):
