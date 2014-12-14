@@ -1,5 +1,5 @@
 import numpy as np
-from mean import Linear
+from mean import Linear, Cubic
 from cov import Cov
 
 
@@ -10,9 +10,14 @@ class Model(object):
         self.n = len(tasks)
         self.mean_type = mean_type
 
+        print('mean_type: %s' % mean_type)
+        # exit(0)
+
         # Create a mean function
         if mean_type == 'linear':
             self.mean = Linear(dim, tasks)
+        elif mean_type == 'cubic':
+            self.mean = Cubic(dim, tasks)
 
         # Populate a set of covarience matrices
         self.covs = []
