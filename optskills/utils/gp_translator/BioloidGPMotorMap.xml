@@ -1,0 +1,19 @@
+<robot>
+  <motor index="7"  id="1" name="l_shoulder" />
+  <motor index="9"  id="2" name="r_shoulder" swap="1"/>
+  <motor index="11" id="3" name="l_arm" swap="1"/>
+  <motor index="13" id="4" name="r_arm" swap="1"/>
+  <motor index="15" id="5" name="l_hand" />
+  <motor index="17" id="6" name="r_hand" swap="1"/>
+
+  <motor index="6"  id="9" name="l_hip" swap="1" />
+  <motor index="8"  id="10" name="r_hip" swap="1"/>
+  <motor index="10" id="11" name="l_thigh" offset="-0.5" />
+  <motor index="12" id="12" name="r_thigh" offset="-0.5" swap="1" />
+  <motor index="14" id="13" name="l_shin" offset="1.0" swap="1" />
+  <motor index="16" id="14" name="r_shin" offset="1.0" />
+  <motor index="18" id="15" name="l_heel" offset="-0.5"/>
+  <motor index="19" id="16" name="r_heel" offset="-0.5" swap="1"/>
+  <motor index="20" id="17" name="l_foot" />
+  <motor index="21" id="18" name="r_foot" />
+</robot>
