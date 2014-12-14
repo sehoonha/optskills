@@ -88,7 +88,7 @@ def benchmark(solvers):
     print ('plot...')
     pl = observer.PlotValues()
     pl.data = collected_data
-    pl.save('benchmark.csv')
+    pl.save('data_benchmark.csv')
     pl.plot(PROBLEM_CODE)
     print ('plot... done')
     end_time = time.time()
@@ -186,6 +186,11 @@ if __name__ == '__main__':
             evaluate('parameterized')
         elif cmd == 'direct':
             evaluate('direct')
+        elif cmd == 'benchmark':
+            times = 11 if len(sys.argv) == 2 else int(sys.argv[2])
+            print('Command = %s Times = %d' % (cmd, times))
+            benchmark(['parameterized', 'direct'] * times)
+
         elif cmd == 'plot':
             filename = sys.argv[2]
             plot(filename)

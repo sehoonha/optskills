@@ -84,8 +84,8 @@ class ParameterizedSolver(object):
         # If offspring is better than parent
         if is_better:
             # self.model.stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
-            stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
-            # stepsize *= (math.exp(1.0 / 3.0))
+            # stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
+            stepsize *= (math.exp(1.0 / 3.0))
             print('Updated: YES (NO: %d)' % self.no_counter)
         else:
             stepsize /= (math.exp(1.0 / 3.0) ** 0.25)
