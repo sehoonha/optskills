@@ -72,7 +72,7 @@ class DirectSolver(object):
         avg_error = np.mean(sample_values)
         if np.isnan(avg_error):
             avg_error = 9999.9
-        print x, avg_error
+        print x, ' value: {', avg_error, '}'
         self.iter_values += [sample_values]  # Values for the entire iterations
 
         # If one iteration is ended

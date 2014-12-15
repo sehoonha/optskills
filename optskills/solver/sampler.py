@@ -16,7 +16,7 @@ class Sampler(object):
         self.eval_counter = 0
         self.observers = []
 
-        self.solve()
+        # self.solve()
         # exit(0)
 
         for t in self.tasks:
@@ -55,7 +55,7 @@ class Sampler(object):
         j = 1
         j += self.prob.dim
         j += int(task / 0.2 + 0.001)
-        indices = [i for i in range(len(data)) if data[i][j] < 0.2]
+        indices = [i for i in range(len(data)) if data[i][j] < 1.0]
         x = [data[i][1] for i in indices]
         y = [data[i][2] for i in indices]
         if self.prob.dim >= 3:
@@ -113,7 +113,8 @@ class Sampler(object):
         ax.set_zlim(-1.0, 1.0)
         # ax.view_init(elev=50.0, azim=60.0)
         # ax.view_init(elev=20.0, azim=140.0)
-        ax.view_init(elev=80.0, azim=10.0)
+        # ax.view_init(elev=80.0, azim=10.0)
+        ax.view_init(elev=20.0, azim=70.0)  # GPWalk
         # plt.show()
         # exit(0)
 

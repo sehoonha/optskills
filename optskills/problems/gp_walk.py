@@ -117,7 +117,7 @@ class GPWalk(SimProblem):
         hi = np.array([0.2, 1.0, 0.5, 0.5, 0.5])
         params = lo * (1 - w) + hi * w
         (t0, q1, q2, q3, q4) = params
-        print t0, q1, q2, q3, q4
+        # print t0, q1, q2, q3, q4
 
         self.reset()
         self.controller.clear_phases()
@@ -153,6 +153,8 @@ class GPWalk(SimProblem):
         return res
 
     def is_fallen(self):
+        if self.world.t < 0.1:
+            return False
         contacted = self.skel().contacted_body_names()
         C = self.skel().C
         if math.fabs(C[0]) > 0.15:

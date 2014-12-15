@@ -154,11 +154,12 @@ def plot(filename):
 
 
 # PROBLEM_CODE = 'problems.Sphere()'
-PROBLEM_CODE = 'problems.Sphere(_seg_type="cubic")'
+# PROBLEM_CODE = 'problems.Sphere(_seg_type="cubic")'
 # PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
 # PROBLEM_CODE = 'problems.GPStep()'
 # PROBLEM_CODE = 'problems.GPKick()'
+PROBLEM_CODE = 'problems.GPWalk()'
 # PROBLEM_CODE = 'problems.SimJump()'
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
 # seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
@@ -176,7 +177,7 @@ PROBLEM_CODE = 'problems.Sphere(_seg_type="cubic")'
 # PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
 
 # PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
-MEAN_TYPE = 'cubic'
+# MEAN_TYPE = 'cubic'
 
 if __name__ == '__main__':
     import sys
@@ -194,6 +195,8 @@ if __name__ == '__main__':
         elif cmd == 'plot':
             filename = sys.argv[2]
             plot(filename)
+        elif cmd == 'sampling':
+            evaluate('sampler', False)
         exit(0)
     # evaluate('parameterized')
     evaluate('direct')
