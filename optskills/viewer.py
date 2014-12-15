@@ -183,7 +183,10 @@ class MyWindow(QtGui.QMainWindow):
                 self.rangeSlider.setValue(v)
             else:
                 self.animAction.setChecked(False)
-            doCapture = (v % 20 == 1)
+            capture_rate = 20
+            if 'Walk' in repr(self.prob):
+                capture_rate = 50
+            doCapture = (v % capture_rate == 1)
         # Do play
         elif self.playAction.isChecked():
             result = self.prob.step()

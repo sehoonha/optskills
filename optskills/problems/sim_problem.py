@@ -102,19 +102,20 @@ class JTController:
 class SimProblem(object):
     world = None
 
-    def __init__(self, skel_filename, make_ball=False):
+    def __init__(self, skel_filename, make_ball=False, fps=2000.0):
         self.skel_filename = skel_filename
+        self.fps = fps
         self.ball = None
         self.ball_position = None
         if SimProblem.world is None:
-            self.__init__pydart__(skel_filename, make_ball)
+            self.__init__pydart__(skel_filename, make_ball, fps)
         self.world = SimProblem.world
         self.controller = None
 
-    def __init__pydart__(self, skel_filename, make_ball):
+    def __init__pydart__(self, skel_filename, make_ball, fps):
         pydart.init()
         if '.skel' not in skel_filename:
-            world = pydart.create_world(1.0 / 5000.0)
+            world = pydart.create_world(1.0 / fps)
             world.add_skeleton(DATA_PATH + "sdf/ground.urdf", control=False)
             if make_ball:
                 world.add_skeleton(DATA_PATH + "urdf/sphere.urdf",
@@ -122,7 +123,7 @@ class SimProblem(object):
                 self.ball = world.skels[-1]
             world.add_skeleton(DATA_PATH + self.skel_filename)
         else:
-            world = pydart.create_world(1.0 / 2000.0,
+            world = pydart.create_world(1.0 / fps,
                                         DATA_PATH + skel_filename)
             world.skels[-1].set_joint_damping(0.15)
         SimProblem.world = world

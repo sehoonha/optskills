@@ -78,7 +78,8 @@ class PhaseController(object):
             if self.phase_index + 1 < len(self.phases):
                 self.phase_index += 1
             else:
-                self.phase_index = self.loop_phase_index
+                if self.loop_phase_index is not None:
+                    self.phase_index = self.loop_phase_index
             self.phase_begins = self.world.t
             self.pd.target = self.phase().target
 

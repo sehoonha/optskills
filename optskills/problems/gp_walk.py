@@ -7,7 +7,8 @@ import gp_walk_poses
 
 class GPWalk(SimProblem):
     def __init__(self):
-        super(GPWalk, self).__init__('urdf/BioloidGP/BioloidGP.URDF')
+        super(GPWalk, self).__init__('urdf/BioloidGP/BioloidGP.URDF',
+                                     fps=5000.0)
         self.__init__simulation__()
 
         self.dim = 5
@@ -44,15 +45,15 @@ class GPWalk(SimProblem):
         l2 = self.skel().dof_index('l_heel')
         r2 = self.skel().dof_index('r_heel')
 
-        qhat = self.controller.phase().target
-        bal *= 0.08
-        print('bal: %.6f, offset0: %.6f' % (bal, bal * 0.015))
-        # qhat[l0] -= bal * 0.015
-        # qhat[r0] -= bal * 0.015
-        qhat[l1] -= bal * 0.02
-        qhat[r1] -= bal * 0.02
-        qhat[l2] -= bal * 0.02
-        qhat[r2] -= bal * 0.02
+        qhat = np.array(self.controller.phase().target)
+        bal *= 1.0
+        # print('t: %0.4f bal: %.6f' % (self.world.t, bal))
+        qhat[l0] -= bal * 1.0
+        qhat[r0] -= bal * 1.0
+        qhat[l1] -= bal * 1.0
+        qhat[r1] -= bal * 1.0
+        qhat[l2] -= bal * 1.0
+        qhat[r2] -= bal * 1.0
 
         self.controller.pd.target = qhat
 
@@ -93,10 +94,6 @@ class GPWalk(SimProblem):
         return obj + b_penalty + penalty
 
     def set_random_params(self):
-        # self.set_params(0.45 + 0.1 * np.random.rand(self.dim))
-        # self.set_params(2.0 * (np.random.rand(self.dim) - 0.5))
-        # self.set_params([0.5, -1.0, 0.7])
-        # self.set_params([0.5, -0.5, 0.1])
         pass
 
     def set_params(self, x):
@@ -127,7 +124,7 @@ class GPWalk(SimProblem):
     def __str__(self):
         res = self.collect_result()
         status = ""
-        status += '[GPStep at %.4f' % self.world.t
+        status += '[GPWalk at %.4f' % self.world.t
         status += '(%d)' % self.controller.phase_index
         # if self.params is not None:
         #     status += ' params = %s ' % self.params
@@ -153,4 +150,4 @@ class GPWalk(SimProblem):
         return status
 
     def __repr__(self):
-        return 'problems.GPStep()'
+        return 'problems.GPWalk()'
