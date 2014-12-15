@@ -19,6 +19,9 @@ class Phase(object):
         index = self.skel.dof_index(dof)
         self.target[index] = value
 
+    def add_target_offset(self, dof, value):
+        index = self.skel.dof_index(dof)
+        self.target[index] += value
 
 class PhaseController(object):
     def __init__(self, _world, _spd=False):

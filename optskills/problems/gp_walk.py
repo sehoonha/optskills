@@ -37,6 +37,7 @@ class GPWalk(SimProblem):
     def balance(self):
         Cd = self.skel().Cdot
         bal = Cd[2]
+        bal2 = Cd[0]
 
         l0 = self.skel().dof_index('l_thigh')
         r0 = self.skel().dof_index('r_thigh')
@@ -44,6 +45,11 @@ class GPWalk(SimProblem):
         r1 = self.skel().dof_index('r_shin')
         l2 = self.skel().dof_index('l_heel')
         r2 = self.skel().dof_index('r_heel')
+
+        x0 = self.skel().dof_index('l_hip')
+        y0 = self.skel().dof_index('r_hip')
+        x1 = self.skel().dof_index('l_foot')
+        y1 = self.skel().dof_index('r_foot')
 
         qhat = np.array(self.controller.phase().target)
         bal *= 1.0
@@ -54,6 +60,12 @@ class GPWalk(SimProblem):
         qhat[r1] -= bal * 1.0
         qhat[l2] -= bal * 1.0
         qhat[r2] -= bal * 1.0
+
+        bal2 *= 0.1
+        qhat[x0] += bal2 * 1.0
+        qhat[y0] += bal2 * 1.0
+        qhat[x1] += bal2 * 1.0
+        qhat[y1] += bal2 * 1.0
 
         self.controller.pd.target = qhat
 
@@ -107,8 +119,26 @@ class GPWalk(SimProblem):
 
         self.reset()
         self.controller.clear_phases()
+
         for t, q in zip(gp_walk_poses.durations, gp_walk_poses.targets):
-            self.controller.add_phase_from_pose(t, q)
+            phase_index = len(self.controller.phases)
+            ph = self.controller.add_phase_from_pose(t, q)
+
+            if phase_index in set([3, 4, 5]):
+                if phase_index == 4:
+                    ph.add_target_offset('r_thigh', 0.70)  # Swing hip
+                    ph.add_target_offset('l_heel', 0.15)  # Stand ankle
+                if phase_index == 5:
+                    ph.add_target_offset('r_hip', 0.10)  # Swing hip
+                    ph.add_target_offset('r_heel', -0.15)  # Stand ankle
+
+            elif phase_index in set([6, 7, 8]):
+                if phase_index == 7:
+                    ph.add_target_offset('l_thigh', 0.70)
+                    ph.add_target_offset('r_heel', 0.15)  # Stand ankle
+                if phase_index == 8:
+                    ph.add_target_offset('l_hip', -0.10)  # Swing ankle
+                    ph.add_target_offset('l_heel', -0.15)  # Stand ankle
 
     def collect_result(self):
         res = {}
