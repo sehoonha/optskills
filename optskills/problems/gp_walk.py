@@ -1,3 +1,4 @@
+import math
 import numpy as np
 from numpy.linalg import norm
 from sim_problem import SimProblem, STR
@@ -82,17 +83,18 @@ class GPWalk(SimProblem):
     def evaluate(self, result, task):
         w = task
         # Calculate the validity of P (swing foot location)
-        P = result['P']
-        lo = np.array([0.02, 0.002, 0.06])
-        hi = np.array([0.02, 0.002, 0.16])
+        P = result['C']
+        lo = np.array([0.0, 0.16, 0.20])
+        hi = np.array([0.0, 0.16, 0.70])
         P_hat = lo * (1 - w) + hi * w
-        weight = np.array([1.0, 1.0, 5.0]) * 2.0
+        weight = np.array([1.0, 1.0, 5.0]) * 0.5
         obj = norm((P - P_hat) * weight) ** 2
 
-        # Calculate the balance penaly
-        Cx = result['C'][0]
-        Cdotx = result['Cdot'][0]
-        b_penalty = (Cx * 2.0) ** 2 + (Cdotx * 1.0) ** 2
+        # Time penalty
+        t = result['t']
+        t_penalty = 0.0
+        if result['f']:
+            t_penalty = 0.5 + (0.2 * (5.0 - t)) ** 2
 
         # Calculate parameter penalty
         params = result['params']
@@ -103,7 +105,7 @@ class GPWalk(SimProblem):
                 penalty += max(0.0, v - 1.0) ** 2
                 penalty += min(0.0, v - (-1.0)) ** 2
 
-        return obj + b_penalty + penalty
+        return obj + t_penalty + penalty
 
     def set_random_params(self):
         pass
@@ -111,45 +113,56 @@ class GPWalk(SimProblem):
     def set_params(self, x):
         self.params = x
         w = (x - (-1.0)) / 2.0  # Change to 0 - 1 Scale
-        lo = np.array([-0.2, -3.0, -3.0, -3.0, -3.0])
-        hi = np.array([0.2, 3.0, 3.0, 3.0, 3.0])
+        lo = np.array([0.0, -1.0, -0.5, -0.5, -0.5])
+        hi = np.array([0.2, 1.0, 0.5, 0.5, 0.5])
         params = lo * (1 - w) + hi * w
-        (q0, q1, q2, q3, q4) = params
-        # print q0, q1, q2, q3, q4
+        (t0, q1, q2, q3, q4) = params
+        print t0, q1, q2, q3, q4
 
         self.reset()
         self.controller.clear_phases()
 
         for t, q in zip(gp_walk_poses.durations, gp_walk_poses.targets):
             phase_index = len(self.controller.phases)
+            if phase_index == 4 or phase_index == 7:
+                t = 0.072 + t0  # 0.168
             ph = self.controller.add_phase_from_pose(t, q)
 
             if phase_index in set([3, 4, 5]):
                 if phase_index == 4:
-                    ph.add_target_offset('r_thigh', 0.70)  # Swing hip
-                    ph.add_target_offset('l_heel', 0.15)  # Stand ankle
+                    ph.add_target_offset('r_thigh', q1)  # Swing hip. 1.00
+                    ph.add_target_offset('l_heel', q2)  # Stand ankle. 0.20
                 if phase_index == 5:
-                    ph.add_target_offset('r_hip', 0.10)  # Swing hip
-                    ph.add_target_offset('r_heel', -0.15)  # Stand ankle
+                    ph.add_target_offset('r_hip', q3)  # Swing hip. 0.10
+                    ph.add_target_offset('r_heel', q4)  # Stand ankle. -0.15
 
             elif phase_index in set([6, 7, 8]):
                 if phase_index == 7:
-                    ph.add_target_offset('l_thigh', 0.70)
-                    ph.add_target_offset('r_heel', 0.15)  # Stand ankle
+                    ph.add_target_offset('l_thigh', q1)  # Swing hip. 1.00
+                    ph.add_target_offset('r_heel', q2)  # Stand ankle. 0.20
                 if phase_index == 8:
-                    ph.add_target_offset('l_hip', -0.10)  # Swing ankle
-                    ph.add_target_offset('l_heel', -0.15)  # Stand ankle
+                    ph.add_target_offset('l_hip', -q3)  # Swing ankle -0.10
+                    ph.add_target_offset('l_heel', q4)  # Stand ankle -0.15
 
     def collect_result(self):
         res = {}
+        res['t'] = self.world.t
+        res['f'] = self.is_fallen()
         res['C'] = self.skel().C
-        res['Cdot'] = self.skel().Cdot
-        res['P'] = self.skel().body('l_foot').C
         res['params'] = self.params
         return res
 
+    def is_fallen(self):
+        contacted = self.skel().contacted_body_names()
+        C = self.skel().C
+        if math.fabs(C[0]) > 0.15:
+            return True
+        if set(contacted) - set(['l_foot', 'r_foot']):
+            return True
+        return False
+
     def terminated(self):
-        return (self.world.t > 5.0)
+        return self.is_fallen() or (self.world.t > 5.0)
 
     def __str__(self):
         res = self.collect_result()
