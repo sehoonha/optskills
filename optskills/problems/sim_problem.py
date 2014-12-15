@@ -114,7 +114,7 @@ class SimProblem(object):
     def __init__pydart__(self, skel_filename, make_ball):
         pydart.init()
         if '.skel' not in skel_filename:
-            world = pydart.create_world(1.0 / 2000.0)
+            world = pydart.create_world(1.0 / 5000.0)
             world.add_skeleton(DATA_PATH + "sdf/ground.urdf", control=False)
             if make_ball:
                 world.add_skeleton(DATA_PATH + "urdf/sphere.urdf",

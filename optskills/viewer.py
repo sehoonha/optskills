@@ -35,7 +35,8 @@ class MyWindow(QtGui.QMainWindow):
             # self.prob = problems.SimJump()
             # self.prob = problems.GPBow()
             # self.prob = problems.GPStep()
-            self.prob = problems.GPKick()
+            # self.prob = problems.GPKick()
+            self.prob = problems.GPWalk()
             self.model = model.Model(self.prob.dim, self.tasks, 'linear')
             # params = np.array([0.8647, 0.6611, -0.6017,
             #                    -0.3276, -0.3781, 0.2489])

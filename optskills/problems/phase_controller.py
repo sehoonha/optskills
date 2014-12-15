@@ -24,6 +24,8 @@ class PhaseController(object):
     def __init__(self, _world, _spd=False):
         self.world = _world
         self.spd = _spd
+        self.loop_phase_index = None
+        self.callback = None
         if self.spd:
             self.pd = SPDController(self.skel(), 300.0, 30.0, self.world.dt)
         else:
@@ -60,6 +62,11 @@ class PhaseController(object):
         self.phases += [ph]
         return ph
 
+    def add_phase_from_pose(self, duration, target):
+        ph = Phase(self.skel(), target, duration)
+        self.phases += [ph]
+        return ph
+
     def reset(self):
         self.phase_index = 0
         self.phase_begins = 0.0
@@ -70,8 +77,13 @@ class PhaseController(object):
         if self.phase().is_terminate(self.world, self.phase_begins):
             if self.phase_index + 1 < len(self.phases):
                 self.phase_index += 1
+            else:
+                self.phase_index = self.loop_phase_index
             self.phase_begins = self.world.t
             self.pd.target = self.phase().target
+
+        if self.callback is not None:
+            self.callback()
 
         vf = np.zeros(self.skel().ndofs)
         for f in self.phase().vfs:
