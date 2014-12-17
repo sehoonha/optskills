@@ -29,6 +29,8 @@ def create_problem():
 def create_solver(solver_name, prob):
     if solver_name == 'parameterized':
         return solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE)
+    elif solver_name == 'parameterized_cubic':
+        return solver.ParameterizedSolver(prob, NUM_TASKS, 'cubic')
     elif solver_name == 'interpolation':
         return solver.InterpolationSolver(prob, NUM_TASKS, MEAN_TYPE)
     elif solver_name == 'direct':
@@ -154,12 +156,12 @@ def plot(filename):
 
 
 # PROBLEM_CODE = 'problems.Sphere()'
-# PROBLEM_CODE = 'problems.Sphere(_seg_type="cubic")'
+PROBLEM_CODE = 'problems.Sphere(_seg_type="cubic")'
 # PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
 # PROBLEM_CODE = 'problems.GPStep()'
 # PROBLEM_CODE = 'problems.GPKick()'
-PROBLEM_CODE = 'problems.GPWalk()'
+# PROBLEM_CODE = 'problems.GPWalk()'
 # PROBLEM_CODE = 'problems.SimJump()'
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
 # seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
@@ -177,7 +179,7 @@ PROBLEM_CODE = 'problems.GPWalk()'
 # PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
 
 # PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
-MEAN_TYPE = 'cubic'
+# MEAN_TYPE = 'cubic'
 
 if __name__ == '__main__':
     import sys
@@ -199,7 +201,8 @@ if __name__ == '__main__':
             evaluate('sampler', False)
         exit(0)
     # evaluate('parameterized')
-    evaluate('direct')
+    # evaluate('parameterized_cubic')
+    # evaluate('direct')
     # evaluate('interpolation')
     # evaluate('sampler', False)
     # mpi_benchmark(['parameterized'] * 11)
@@ -209,3 +212,4 @@ if __name__ == '__main__':
     # mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 3, 1)
     # benchmark(['parameterized'] * 11)
     # benchmark(['parameterized', 'direct'] * 11)
+    benchmark(['parameterized', 'parameterized_cubic'] * 11)
