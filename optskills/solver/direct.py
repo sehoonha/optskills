@@ -39,7 +39,7 @@ class DirectSolver(object):
         opts.set('verb_disp', 1)
         opts.set('tolfun', 0.001)
         opts.set('tolx', 0.0000001)
-        opts.set('popsize', 16)
+        opts.set('popsize', 32)
         opts.set('maxiter', 200)
         for key, value in opts.iteritems():
             print '[', key, ']\n', value

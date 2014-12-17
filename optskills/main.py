@@ -177,7 +177,7 @@ PROBLEM_CODE = 'problems.GPWalk()'
 # PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
 
 # PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
-# MEAN_TYPE = 'cubic'
+MEAN_TYPE = 'cubic'
 
 if __name__ == '__main__':
     import sys

@@ -12,7 +12,8 @@ class ParameterizedSolver(object):
         self.n = _ntasks
         self.tasks = np.linspace(0.0, 1.0, self.n)
         self.model = model.Model(self.prob.dim, self.tasks, _mean_type)
-        self.num_parents = 16
+        # self.num_parents = 16
+        self.num_parents = 32
         # lambda
         self.num_offsprings = 8  # mu
         self.observers = []
