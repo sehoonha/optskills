@@ -2,12 +2,14 @@ import numpy as np
 
 
 class Cov(object):
-    def __init__(self, dim, center, pts=None):
+    def __init__(self, dim, center, pts=None, _C=None):
         self.dim = dim
         self.m = center
 
         if pts is not None:
             self.fit(pts)
+        elif _C is not None:
+            self.C = _C
         else:
             self.C = np.identity(dim)
 

@@ -22,7 +22,9 @@ class Model(object):
 
         # Populate a set of covarience matrices
         self.covs = []
+        self.paths = []
         for task in self.tasks:
+            self.paths += [np.zeros(self.dim)]
             center = self.mean.point(task)
             self.covs += [Cov(dim, center)]
 
@@ -44,9 +46,14 @@ class Model(object):
         self.debug_last_generate_index = i
         return self.covs[i].generate_params(self.stepsize)
 
+    def mean_centers(self):
+        return [self.mean.point(t) for t in self.tasks]
+
     def update(self, samples, mean_alg=None):
         # samples is a two-dimensional array of samples
         # sample[i][j] = a jth good sample for the ith task
+
+        prev_centers = self.mean_centers()
 
         # Various algorithms of update mean
         if mean_alg == 'best':
@@ -58,7 +65,11 @@ class Model(object):
         else:
             self.update_mean_randomized(samples)
 
-        self.update_covs(samples)
+        self.update_paths(prev_centers)
+
+        # self.update_covs(samples)
+        self.update_covs_rank_1()
+
         self.volumns = []
         for task, samples_for_task in zip(self.tasks, samples):
             s = samples_for_task[0]
@@ -118,12 +129,43 @@ class Model(object):
                 best_params = self.mean.params()
         self.mean.set_params(best_params)
 
+    def update_paths(self, prev_centers):
+        curr_centers = self.mean_centers()
+        n = self.dim
+        c_c = 2.0 / (n + 2.0)
+        p_thresh = 0.44
+        for i in range(len(self.tasks)):
+            p = self.paths[i]
+            y = curr_centers[i] - prev_centers[i]
+            if self.p_succ < p_thresh:
+                p = (1 - c_c) * p + math.sqrt(c_c * (2.0 - c_c)) * y
+            else:
+                p = (1 - c_c) * p
+            self.paths[i] = p
+
     def update_covs(self, samples):
         mean_pts = [self.mean.point(t) for t in self.tasks]
         self.covs = []
         for m, selected_for_task in zip(mean_pts, samples):
             pts = np.matrix(selected_for_task)
             self.covs += [Cov(self.dim, m, pts)]
+
+    def update_covs_rank_1(self):
+        n = self.dim
+        c_c = 2.0 / (n + 2.0)
+        c_cov = 2.0 / ((n  ** 2) + 2.0)
+        p_thresh = 0.44
+        for i in range(len(self.tasks)):
+            task = self.tasks[i]
+            m = self.mean.point(task)
+            p = self.paths[i]
+            C = self.covs[i].C
+            if self.p_succ < p_thresh:
+                C = (1 - c_cov) * C + c_cov * np.outer(p, p)
+            else:
+                C = (1 - c_cov) * C \
+                    + c_cov * (np.outer(p, p) + c_c * (2 - c_c) * C)
+            self.covs[i] = Cov(self.dim, m, _C=C)
 
     def update_stepsize_1_5th(self, stepsize, is_better, p_succ):
         c_p = 1.0 / 12.0
@@ -153,8 +195,11 @@ class Model(object):
 
     def __str__(self):
         cov_strings = ["\n%s" % c for c in self.covs]
-        return "[Model %s step (%.4f %.4f) %s / %s]" % (self.mean,
-                                                        self.stepsize,
-                                                        self.p_succ,
-                                                        self.volumns,
-                                                        " ".join(cov_strings))
+        ret = "[Model %s step (%.4f %.4f) %s / %s" % (self.mean,
+                                                      self.stepsize,
+                                                      self.p_succ,
+                                                      self.volumns,
+                                                      " ".join(cov_strings))
+        ret += "\n".join(["path %s" % p for p in self.paths])
+        ret += "]"
+        return ret
