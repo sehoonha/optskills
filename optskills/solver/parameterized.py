@@ -6,8 +6,9 @@ import copy
 
 
 class ParameterizedSolver(object):
-    def __init__(self, _prob, _ntasks, _mean_type):
-        self.name = 'Ours(%s)' % _mean_type
+    def __init__(self, _prob, _ntasks, _mean_type, _mean_alg='randomized'):
+        self.name = 'Ours(%s)' % _mean_alg
+        self.mean_alg = _mean_alg
         self.prob = _prob
         self.n = _ntasks
         self.tasks = np.linspace(0.0, 1.0, self.n)
@@ -19,6 +20,7 @@ class ParameterizedSolver(object):
         self.observers = []
         self.no_counter = 0
         print('model: %s' % self.model)
+        print('mean_alg: %s' % self.mean_alg)
         print('ParameterizedSolver init OK')
 
     def add_observer(self, o):
@@ -66,7 +68,7 @@ class ParameterizedSolver(object):
 
         # Update the model
         curr_model = copy.deepcopy(self.model)
-        curr_model.update(selected)
+        curr_model.update(selected, self.mean_alg)
         curr_mean_values, curr_mean_samples = self.evaluate_model(curr_model,
                                                                   iteration)
         # curr_mean_values, curr_mean_samples = self.evaluate_model_approx(

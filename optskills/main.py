@@ -37,6 +37,10 @@ def create_solver(solver_name, prob):
         return solver.DirectSolver(prob, NUM_TASKS, MEAN_TYPE)
     elif solver_name == 'sampler':
         return solver.Sampler(prob, NUM_TASKS, MEAN_TYPE)
+    elif 'parameterized|' in solver_name:
+        mean_alg = solver_name.split('|')[1]
+        print('create_solver: mean_alg = %s' % mean_alg)
+        return solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE, mean_alg)
     else:
         return None
 
@@ -156,8 +160,8 @@ def plot(filename):
 
 
 # PROBLEM_CODE = 'problems.Sphere()'
-PROBLEM_CODE = 'problems.Sphere(_seg_type="cubic")'
-# PROBLEM_CODE = 'problems.MirroredSphere()'
+# PROBLEM_CODE = 'problems.Sphere(_seg_type="cubic")'
+PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
 # PROBLEM_CODE = 'problems.GPStep()'
 # PROBLEM_CODE = 'problems.GPKick()'
@@ -212,4 +216,6 @@ if __name__ == '__main__':
     # mpi_benchmark(['parameterized', 'direct', 'interpolation'] * 3, 1)
     # benchmark(['parameterized'] * 11)
     # benchmark(['parameterized', 'direct'] * 11)
-    benchmark(['parameterized', 'parameterized_cubic'] * 11)
+    # benchmark(['parameterized', 'parameterized_cubic'] * 11)
+    benchmark(['parameterized|best', 'parameterized|groupmean',
+               'parameterized|all', 'parameterized|randomized'] * 21)

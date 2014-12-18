@@ -41,12 +41,20 @@ class Model(object):
         self.debug_last_generate_index = i
         return self.covs[i].generate_params(self.stepsize)
 
-    def update(self, samples):
+    def update(self, samples, mean_alg=None):
         # samples is a two-dimensional array of samples
         # sample[i][j] = a jth good sample for the ith task
 
-        # self.update_mean(samples)
-        self.update_mean_randomized(samples)
+        # Various algorithms of update mean
+        if mean_alg == 'best':
+            self.update_mean(samples)
+        elif mean_alg == 'groupmean':
+            self.update_mean_groupmean(samples)
+        elif mean_alg == 'all':
+            self.update_mean_all(samples)
+        else:
+            self.update_mean_randomized(samples)
+
         self.update_covs(samples)
         self.volumns = []
         for task, samples_for_task in zip(self.tasks, samples):
@@ -55,6 +63,7 @@ class Model(object):
             self.volumns += [v]
 
     def update_mean(self, samples):
+        print('updated_mean <best>')
         pts = []
         for selected_for_task in samples:
             # m = np.mean(selected_for_task, axis=0)
@@ -62,7 +71,26 @@ class Model(object):
             pts += [m]
         self.mean.fit(pts)
 
+    def update_mean_groupmean(self, samples):
+        print('updated_mean <groupmean>')
+        pts = []
+        for selected_for_task in samples:
+            m = np.mean(selected_for_task, axis=0)
+            pts += [m]
+        self.mean.fit(pts)
+
+    def update_mean_all(self, samples):
+        print('updated_mean <all>')
+        pts = []
+        xdata = []
+        for task, selected_for_task in zip(self.tasks, samples):
+            for pt in selected_for_task:
+                xdata += [task]
+                pts += [pt]
+        self.mean.fit(pts, xdata)
+
     def update_mean_randomized(self, samples):
+        print('updated_mean <randomized>')
         NUM_TRIALS = 64
         best_estimation, best_params = None, None
 

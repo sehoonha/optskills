@@ -103,7 +103,7 @@ class PlotValues(object):
         names = self.data.keys()
         print('Problem name = %s' % prob_name)
         print('Solver names = %s' % names)
-        colors = ['r', 'g', 'b']
+        colors = ['r', 'g', 'b', 'k']
         fig = plt.figure()
         fig.set_size_inches(18.5, 10.5)
         num_trials = 0

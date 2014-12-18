@@ -24,8 +24,8 @@ class Linear(object):
     def params(self):
         return np.concatenate([self.a, self.b])
 
-    def fit(self, pts):
-        xdata = self.tasks
+    def fit(self, pts, _xdata=None):
+        xdata = self.tasks if _xdata is None else _xdata
         a, b = [], []
         self.fit_error = 0
 
