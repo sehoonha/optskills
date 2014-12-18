@@ -1,3 +1,4 @@
+import math
 import numpy as np
 from mean import Linear, Cubic
 from cov import Cov
@@ -27,6 +28,8 @@ class Model(object):
 
         # Stepsize, externally controlled
         self.stepsize = 1.0
+        self.p_succ_target = 2.0 / 11.0
+        self.p_succ = self.p_succ_target
 
         # Populate a set of volumns
         self.volumns = [1.0] * self.n
@@ -122,12 +125,36 @@ class Model(object):
             pts = np.matrix(selected_for_task)
             self.covs += [Cov(self.dim, m, pts)]
 
+    def update_stepsize_1_5th(self, stepsize, is_better, p_succ):
+        c_p = 1.0 / 12.0
+        lambda_succ = 1.0 if is_better else 0.0
+        p_succ = (1 - c_p) * p_succ + c_p * lambda_succ
+
+        if is_better:
+            # self.model.stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
+            # stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
+            stepsize *= (math.exp(1.0 / 3.0))
+        else:
+            stepsize /= (math.exp(1.0 / 3.0) ** 0.25)
+        return (stepsize, p_succ)
+
+    def update_stepsize_success(self, stepsize, is_better, p_succ):
+        c_p = 1.0 / 12.0
+        lambda_succ = 1.0 if is_better else 0.0
+        p_succ = (1 - c_p) * p_succ + c_p * lambda_succ
+        p_succ_target = self.p_succ_target
+        d = 1.0 + self.dim / 2.0
+        stepsize = stepsize * math.exp((1 / d) * (
+            p_succ - (p_succ_target / (1 - p_succ_target)) * (1 - p_succ)))
+        return (stepsize, p_succ)
+
     def set_stepsize(self, stepsize):
         self.stepsize = stepsize
 
     def __str__(self):
         cov_strings = ["\n%s" % c for c in self.covs]
-        return "[Model %s stepsize %.4f %s / %s]" % (self.mean,
-                                                     self.stepsize,
-                                                     self.volumns,
-                                                     " ".join(cov_strings))
+        return "[Model %s step (%.4f %.4f) %s / %s]" % (self.mean,
+                                                        self.stepsize,
+                                                        self.p_succ,
+                                                        self.volumns,
+                                                        " ".join(cov_strings))

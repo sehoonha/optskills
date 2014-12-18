@@ -84,14 +84,18 @@ class ParameterizedSolver(object):
         print('curr_mean_values: %.8f' % np.mean(curr_mean_values))
 
         stepsize = self.model.stepsize
+        p_succ = self.model.p_succ
+
+        (stepsize, p_succ) = self.model.update_stepsize_1_5th(stepsize,
+                                                              is_better,
+                                                              p_succ)
+        # (stepsize, p_succ) = self.model.update_stepsize_success(stepsize,
+        #                                                         is_better,
+        #                                                         p_succ)
         # If offspring is better than parent
         if is_better:
-            # self.model.stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
-            # stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
-            stepsize *= (math.exp(1.0 / 3.0))
             print('Updated: YES (NO: %d)' % self.no_counter)
         else:
-            stepsize /= (math.exp(1.0 / 3.0) ** 0.25)
             self.no_counter += 1
             print('Updated: NO (NO: %d)' % self.no_counter)
 
@@ -102,6 +106,7 @@ class ParameterizedSolver(object):
             self.mean_samples = curr_mean_samples
             self.model.volumns = self.mean_values
         self.model.stepsize = stepsize  # Always update stepsize
+        self.model.p_succ = p_succ
 
         # Print out some information
         print('-' * 80)
