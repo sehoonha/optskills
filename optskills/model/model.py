@@ -49,26 +49,28 @@ class Model(object):
     def mean_centers(self):
         return [self.mean.point(t) for t in self.tasks]
 
-    def update(self, samples, mean_alg=None):
+    def update(self, samples, alg=''):
         # samples is a two-dimensional array of samples
         # sample[i][j] = a jth good sample for the ith task
 
         prev_centers = self.mean_centers()
 
         # Various algorithms of update mean
-        if mean_alg == 'best':
+        if 'mean_best' in alg:
             self.update_mean(samples)
-        elif mean_alg == 'groupmean':
+        elif 'mean_avg' in alg:
             self.update_mean_groupmean(samples)
-        elif mean_alg == 'all':
+        elif 'mean_all' in alg:
             self.update_mean_all(samples)
         else:
             self.update_mean_randomized(samples)
 
         self.update_paths(prev_centers)
 
-        # self.update_covs(samples)
-        self.update_covs_rank_1()
+        if 'cov_rank_1' in alg:
+            self.update_covs_rank_1()
+        else:
+            self.update_covs(samples)
 
         self.volumns = []
         for task, samples_for_task in zip(self.tasks, samples):
@@ -77,7 +79,7 @@ class Model(object):
             self.volumns += [v]
 
     def update_mean(self, samples):
-        print('updated_mean <best>')
+        print('update_mean <best>')
         pts = []
         for selected_for_task in samples:
             # m = np.mean(selected_for_task, axis=0)
@@ -86,7 +88,7 @@ class Model(object):
         self.mean.fit(pts)
 
     def update_mean_groupmean(self, samples):
-        print('updated_mean <groupmean>')
+        print('update_mean <avg>')
         pts = []
         for selected_for_task in samples:
             m = np.mean(selected_for_task, axis=0)
@@ -94,7 +96,7 @@ class Model(object):
         self.mean.fit(pts)
 
     def update_mean_all(self, samples):
-        print('updated_mean <all>')
+        print('update_mean <all>')
         pts = []
         xdata = []
         for task, selected_for_task in zip(self.tasks, samples):
@@ -104,7 +106,7 @@ class Model(object):
         self.mean.fit(pts, xdata)
 
     def update_mean_randomized(self, samples):
-        print('updated_mean <randomized>')
+        print('update_mean <randomized>')
         NUM_TRIALS = 64
         best_estimation, best_params = None, None
 
@@ -130,6 +132,7 @@ class Model(object):
         self.mean.set_params(best_params)
 
     def update_paths(self, prev_centers):
+        print('update_path')
         curr_centers = self.mean_centers()
         n = self.dim
         c_c = 2.0 / (n + 2.0)
@@ -144,6 +147,7 @@ class Model(object):
             self.paths[i] = p
 
     def update_covs(self, samples):
+        print('update_covs <all>')
         mean_pts = [self.mean.point(t) for t in self.tasks]
         self.covs = []
         for m, selected_for_task in zip(mean_pts, samples):
@@ -151,6 +155,7 @@ class Model(object):
             self.covs += [Cov(self.dim, m, pts)]
 
     def update_covs_rank_1(self):
+        print('update_covs <rank1>')
         n = self.dim
         c_c = 2.0 / (n + 2.0)
         c_cov = 2.0 / ((n  ** 2) + 2.0)
@@ -168,6 +173,7 @@ class Model(object):
             self.covs[i] = Cov(self.dim, m, _C=C)
 
     def update_stepsize_1_5th(self, stepsize, is_better, p_succ):
+        print('update_stepsize <1/5th>')
         c_p = 1.0 / 12.0
         lambda_succ = 1.0 if is_better else 0.0
         p_succ = (1 - c_p) * p_succ + c_p * lambda_succ
@@ -181,6 +187,7 @@ class Model(object):
         return (stepsize, p_succ)
 
     def update_stepsize_success(self, stepsize, is_better, p_succ):
+        print('update_stepsize <success>')
         c_p = 1.0 / 12.0
         lambda_succ = 1.0 if is_better else 0.0
         p_succ = (1 - c_p) * p_succ + c_p * lambda_succ

@@ -27,6 +27,7 @@ def create_problem():
 
 
 def create_solver(solver_name, prob):
+    print('create_solver: [%s]' % solver_name)
     if solver_name == 'parameterized':
         return solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE)
     elif solver_name == 'parameterized_cubic':
@@ -38,9 +39,9 @@ def create_solver(solver_name, prob):
     elif solver_name == 'sampler':
         return solver.Sampler(prob, NUM_TASKS, MEAN_TYPE)
     elif 'parameterized|' in solver_name:
-        mean_alg = solver_name.split('|')[1]
-        print('create_solver: mean_alg = %s' % mean_alg)
-        return solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE, mean_alg)
+        alg = solver_name.split('|')[1]
+        print('create_solver: alg = %s' % alg)
+        return solver.ParameterizedSolver(prob, NUM_TASKS, MEAN_TYPE, alg)
     else:
         return None
 
@@ -159,9 +160,21 @@ def plot(filename):
     obs_plot_values.plot(PROBLEM_CODE)
 
 
+def copy_and_replot(expname):
+    import shutil
+    csv_filename = '%s.csv' % expname
+    png_filename = '%s.png' % expname
+    shutil.copy('data_benchmark.csv', csv_filename)
+    print ('copy data into %s' % csv_filename)
+    plot(csv_filename)
+    print ('plot data from %s' % csv_filename)
+    shutil.copy('plot_values.png', png_filename)
+    print ('copy plot into %s' % png_filename)
+    print ('done!')
+
 # PROBLEM_CODE = 'problems.Sphere()'
 # PROBLEM_CODE = 'problems.Sphere(_seg_type="cubic")'
-PROBLEM_CODE = 'problems.MirroredSphere()'
+# PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
 # PROBLEM_CODE = 'problems.GPStep()'
 # PROBLEM_CODE = 'problems.GPKick()'
@@ -179,11 +192,12 @@ PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "quad", 0.01, %s)' \
 #                % (seg, adjust)
 
-# seg = "[[-0.5, -0.1], [-0.4, 0.1]]"
-# PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
+seg = "[[-0.5, -0.1], [-0.4, 0.1]]"
+PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
 
 # PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
 # MEAN_TYPE = 'cubic'
+
 
 if __name__ == '__main__':
     import sys
@@ -209,6 +223,9 @@ if __name__ == '__main__':
     # evaluate('direct')
     # evaluate('interpolation')
     # evaluate('sampler', False)
+    # evaluate('parameterized|mean_best,step_1_5,cov_rank_1')
+    # evaluate('parameterized|mean_all,step_1_5,cov_all')
+    # evaluate('parameterized|mean_rand,step_success,cov_rank_1')
     # mpi_benchmark(['parameterized'] * 11)
     # mpi_benchmark(['parameterized', 'direct'] * 21)
     # benchmark(['parameterized', 'direct'] * 5)
@@ -217,5 +234,7 @@ if __name__ == '__main__':
     # benchmark(['parameterized'] * 11)
     # benchmark(['parameterized', 'direct'] * 11)
     # benchmark(['parameterized', 'parameterized_cubic'] * 11)
-    benchmark(['parameterized|best', 'parameterized|groupmean',
-               'parameterized|all', 'parameterized|randomized'] * 21)
+    benchmark(['parameterized|step_1_5',
+               'parameterized|step_success',
+               'direct'] * 21)
+    copy_and_replot('stepalgs02_weierstrass')

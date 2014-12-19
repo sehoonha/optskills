@@ -6,9 +6,9 @@ import copy
 
 
 class ParameterizedSolver(object):
-    def __init__(self, _prob, _ntasks, _mean_type, _mean_alg='randomized'):
-        self.name = 'Ours(%s)' % _mean_alg
-        self.mean_alg = _mean_alg
+    def __init__(self, _prob, _ntasks, _mean_type, _alg=''):
+        self.name = 'Ours(%s)' % _alg
+        self.alg = _alg
         self.prob = _prob
         self.n = _ntasks
         self.tasks = np.linspace(0.0, 1.0, self.n)
@@ -20,7 +20,7 @@ class ParameterizedSolver(object):
         self.observers = []
         self.no_counter = 0
         print('model: %s' % self.model)
-        print('mean_alg: %s' % self.mean_alg)
+        print('algorithm: [%s]' % self.alg)
         print('ParameterizedSolver init OK')
 
     def add_observer(self, o):
@@ -68,17 +68,11 @@ class ParameterizedSolver(object):
 
         # Update the model
         curr_model = copy.deepcopy(self.model)
-        curr_model.update(selected, self.mean_alg)
+        curr_model.update(selected, self.alg)
         curr_mean_values, curr_mean_samples = self.evaluate_model(curr_model,
                                                                   iteration)
-        # curr_mean_values, curr_mean_samples = self.evaluate_model_approx(
-        #     curr_model, iteration, selected)
 
         is_better = np.mean(curr_mean_values) < np.mean(self.mean_values)
-
-        # c_v = np.mean(curr_mean_values) + 0.1 * curr_model.mean.fit_error
-        # s_v = np.mean(self.mean_values) + 0.1 * self.model.mean.fit_error
-        # is_better = c_v < s_v
 
         print('self.mean_values: %.8f' % np.mean(self.mean_values))
         print('curr_mean_values: %.8f' % np.mean(curr_mean_values))
@@ -86,12 +80,14 @@ class ParameterizedSolver(object):
         stepsize = self.model.stepsize
         p_succ = self.model.p_succ
 
-        (stepsize, p_succ) = self.model.update_stepsize_1_5th(stepsize,
-                                                              is_better,
-                                                              p_succ)
-        # (stepsize, p_succ) = self.model.update_stepsize_success(stepsize,
-        #                                                         is_better,
-        #                                                         p_succ)
+        if 'step_success' in self.alg:
+            (stepsize, p_succ) = self.model.update_stepsize_success(stepsize,
+                                                                    is_better,
+                                                                    p_succ)
+        else:
+            (stepsize, p_succ) = self.model.update_stepsize_1_5th(stepsize,
+                                                                  is_better,
+                                                                  p_succ)
         # If offspring is better than parent
         if is_better:
             print('Updated: YES (NO: %d)' % self.no_counter)
