@@ -270,47 +270,18 @@ if __name__ == '__main__':
     #     print('sleep 1 seconds..')
     #     time.sleep(1)
 
-    # # A full benchmarks for stepsize algorithms
-    # for i in range(len(math_problems)):
-    #     PROBLEM_CODE, shortname = math_problems[i]
-    #     print('start %s' % shortname)
-    #     benchmark(['parameterized|step_1_5',
-    #                'parameterized|step_success',
-    #                'direct'] * 21)
-    #     print('done with %s' % shortname)
-    #     print('sleep 1 seconds..')
-    #     time.sleep(1)
-    #     copy_and_replot('stepsize_prob%02d_%s' % (i, shortname))
-    #     print('sleep 1 seconds..')
-    #     time.sleep(1)
-
-    # # A full benchmarks for stepsize algorithms
-    # for i in range(len(math_problems)):
-    #     PROBLEM_CODE, shortname = math_problems[i]
-    #     print('start %s' % shortname)
-    #     benchmark(['parameterized|mean_best',
-    #                'parameterized|mean_all',
-    #                'parameterized|mean_rand',
-    #                'direct'] * 21)
-    #     print('done with %s' % shortname)
-    #     print('sleep 1 seconds..')
-    #     time.sleep(1)
-    #     copy_and_replot('mean_prob%02d_%s' % (i, shortname))
-    #     print('sleep 1 seconds..')
-    #     time.sleep(1)
-
     # A full benchmarks for all algorithms
     for i in range(len(math_problems)):
-        if i != 3:
+        if i >= 2:
             continue
         PROBLEM_CODE, shortname = math_problems[i]
         print('start %s' % shortname)
-        benchmark(['parameterized|mean_rand,cov_rank_1,step_1_5',
-                   'parameterized|mean_rand,cov_all,step_1_5',
+        benchmark(['parameterized|draw_uniform',
+                   'parameterized|draw_scaled',
                    'direct'] * 31)
         print('done with %s' % shortname)
         print('sleep 1 seconds..')
         time.sleep(1)
-        copy_and_replot('algorithm_prob%02d_%s' % (i, shortname))
+        copy_and_replot('draw_prob%02d_%s' % (i, shortname))
         print('sleep 1 seconds..')
         time.sleep(1)

@@ -118,7 +118,7 @@ class ParameterizedSolver(object):
         # Generate all samples
         for i in range(self.num_parents):
             # Generate params from the model and make a sample
-            params = self.model.generate_params()
+            params = self.model.generate_params(self.alg)
             s = Sample(params, self.prob)
             s.iteration = iteration
             s.simulate()
