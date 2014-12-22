@@ -82,8 +82,8 @@ def schwefel_func(x, Os=None, Mr=None, sr=None, adjust=1.0):
         else:
             f -= z[i] * sin(pow(fabs(z[i]), 0.5))
         f += 4.189828872724338e+002 * nx
-    # return f
-    return f / 1000.0 - 0.838
+    return max(f / 1000.0 - 0.838, 0.0)
+    # return f / 1000.0
 
 
 if __name__ == '__main__':

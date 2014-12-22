@@ -104,11 +104,13 @@ class PlotValues(object):
         print('Problem name = %s' % prob_name)
         print('Solver names = %s' % names)
         colors = ['r', 'g', 'b', 'k']
+        plt.ioff()
         fig = plt.figure()
         fig.set_size_inches(18.5, 10.5)
         num_trials = 0
         index = 0
         pp = []
+        legends = []
         for name, exp_list in self.data.iteritems():
             exp_list.sort(key=lambda exp: exp.num_evals())
             num_trials = len(exp_list)
@@ -138,6 +140,7 @@ class PlotValues(object):
             print ('90%% percentile iters: %d' % hi)
             plt.errorbar(x[-1], y[-1], fmt='o', xerr=[[mi - lo], [hi - mi]],
                          capsize=20, capthick=2.0, color=colors[index])
+            legends += ['%s {%.6f}' % (name, np.mean(final_values))]
 
             # Final, ugly..
             index += 1
@@ -149,9 +152,11 @@ class PlotValues(object):
         font = {'size': 20}
         plt.xlabel('The number of sample evaluations', fontdict=font)
         plt.ylabel('The error of mean segments', fontdict=font)
-        plt.legend(pp, self.data.keys(), numpoints=1, fontsize=20)
+        # plt.legend(pp, self.data.keys(), numpoints=1, fontsize=20)
+        plt.legend(pp, legends, numpoints=1, fontsize=16)
         (lo, hi) = plt.axes().get_ylim()
         plt.axes().set_ylim(lo - 0.05, hi + 0.05)
         plt.axhline(y=0, color='k')
         # plt.show()
         plt.savefig('plot_values.png')
+        plt.close(fig)

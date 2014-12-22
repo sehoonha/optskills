@@ -193,10 +193,20 @@ def copy_and_replot(expname):
 #                % (seg, adjust)
 
 seg = "[[-0.5, -0.1], [-0.4, 0.1]]"
-PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
+# PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
+PROBLEM_CODE = 'problems.CEC15(2, "schwefel", %s, "linear", 1.0)' % seg
 
 # PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
 # MEAN_TYPE = 'cubic'
+
+math_problems = []
+math_problems += [('problems.Sphere()', 'sphere')]
+math_problems += [('problems.MirroredSphere()', 'mirrored')]
+seg = "[[-0.5, -0.1], [-0.4, 0.1]]"
+math_problems += [('problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg,
+                   'weierstrass')]
+math_problems += [('problems.CEC15(2, "schwefel", %s, "linear", 1.0)' % seg,
+                   'schwefel')]
 
 
 if __name__ == '__main__':
@@ -207,6 +217,8 @@ if __name__ == '__main__':
             evaluate('parameterized')
         elif cmd == 'direct':
             evaluate('direct')
+        elif cmd == 'interpolation':
+            evaluate('interpolation')
         elif cmd == 'benchmark':
             times = 11 if len(sys.argv) == 2 else int(sys.argv[2])
             print('Command = %s Times = %d' % (cmd, times))
@@ -234,7 +246,71 @@ if __name__ == '__main__':
     # benchmark(['parameterized'] * 11)
     # benchmark(['parameterized', 'direct'] * 11)
     # benchmark(['parameterized', 'parameterized_cubic'] * 11)
-    benchmark(['parameterized|step_1_5',
-               'parameterized|step_success',
-               'direct'] * 21)
-    copy_and_replot('stepalgs02_weierstrass')
+    # benchmark(['parameterized|step_1_5',
+    #            'parameterized|step_success',
+    #            'direct'] * 21)
+    # copy_and_replot('stepalgs02_weierstrass')
+
+    print('sleep 1 seconds..')
+    import time
+    time.sleep(1)
+
+    # # A full benchmarks for covariance matrix algorithms
+    # for i in range(len(math_problems)):
+    #     PROBLEM_CODE, shortname = math_problems[i]
+    #     print('start %s' % shortname)
+    #     # benchmark(['direct', 'parameterized|cov_rank_1'])
+    #     benchmark(['parameterized|cov_rank_1',
+    #                'parameterized|cov_all',
+    #                'direct'] * 21)
+    #     print('done with %s' % shortname)
+    #     print('sleep 1 seconds..')
+    #     time.sleep(1)
+    #     copy_and_replot('covariance_prob%02d_%s' % (i, shortname))
+    #     print('sleep 1 seconds..')
+    #     time.sleep(1)
+
+    # # A full benchmarks for stepsize algorithms
+    # for i in range(len(math_problems)):
+    #     PROBLEM_CODE, shortname = math_problems[i]
+    #     print('start %s' % shortname)
+    #     benchmark(['parameterized|step_1_5',
+    #                'parameterized|step_success',
+    #                'direct'] * 21)
+    #     print('done with %s' % shortname)
+    #     print('sleep 1 seconds..')
+    #     time.sleep(1)
+    #     copy_and_replot('stepsize_prob%02d_%s' % (i, shortname))
+    #     print('sleep 1 seconds..')
+    #     time.sleep(1)
+
+    # # A full benchmarks for stepsize algorithms
+    # for i in range(len(math_problems)):
+    #     PROBLEM_CODE, shortname = math_problems[i]
+    #     print('start %s' % shortname)
+    #     benchmark(['parameterized|mean_best',
+    #                'parameterized|mean_all',
+    #                'parameterized|mean_rand',
+    #                'direct'] * 21)
+    #     print('done with %s' % shortname)
+    #     print('sleep 1 seconds..')
+    #     time.sleep(1)
+    #     copy_and_replot('mean_prob%02d_%s' % (i, shortname))
+    #     print('sleep 1 seconds..')
+    #     time.sleep(1)
+
+    # A full benchmarks for all algorithms
+    for i in range(len(math_problems)):
+        if i != 3:
+            continue
+        PROBLEM_CODE, shortname = math_problems[i]
+        print('start %s' % shortname)
+        benchmark(['parameterized|mean_rand,cov_rank_1,step_1_5',
+                   'parameterized|mean_rand,cov_all,step_1_5',
+                   'direct'] * 31)
+        print('done with %s' % shortname)
+        print('sleep 1 seconds..')
+        time.sleep(1)
+        copy_and_replot('algorithm_prob%02d_%s' % (i, shortname))
+        print('sleep 1 seconds..')
+        time.sleep(1)

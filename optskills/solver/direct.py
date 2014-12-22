@@ -35,12 +35,19 @@ class DirectSolver(object):
         [o.notify_step(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
         # opt = {'verb_time': 0, 'popsize': 16, 'tolfun': 1.0}
+        cma.CMAOptions('tol')
+
         opts = cma.CMAOptions()
         opts.set('verb_disp', 1)
-        opts.set('tolfun', 0.001)
-        opts.set('tolx', 0.0000001)
-        opts.set('popsize', 32)
-        opts.set('maxiter', 200)
+        # opts.set('tolfun', 0.001)
+        # opts.set('tolx', 0.0000001)
+        # opts.set('tolx', 1.0)
+        opts.set('ftarget', 0.001)
+        num_offsprings = 16
+        opts.set('popsize', num_offsprings)
+        max_iter = int(10000 / 6 / num_offsprings)
+        print('maxiter: %d' % max_iter)
+        opts.set('maxiter', max_iter)
         for key, value in opts.iteritems():
             print '[', key, ']\n', value
 
