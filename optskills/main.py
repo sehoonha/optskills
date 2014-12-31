@@ -272,16 +272,16 @@ if __name__ == '__main__':
 
     # A full benchmarks for all algorithms
     for i in range(len(math_problems)):
-        if i >= 2:
+        if i != 3:
             continue
         PROBLEM_CODE, shortname = math_problems[i]
         print('start %s' % shortname)
-        benchmark(['parameterized|draw_uniform',
-                   'parameterized|draw_scaled',
+        benchmark(['parameterized|draw_uniform,cov_rank1',
+                   'parameterized|draw_uniform,cov_all',
                    'direct'] * 31)
         print('done with %s' % shortname)
         print('sleep 1 seconds..')
         time.sleep(1)
-        copy_and_replot('draw_prob%02d_%s' % (i, shortname))
+        copy_and_replot('cov_uniform_prob%02d_%s' % (i, shortname))
         print('sleep 1 seconds..')
         time.sleep(1)
