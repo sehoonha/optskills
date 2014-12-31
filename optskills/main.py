@@ -50,6 +50,7 @@ def evaluate(name, plotting=True):
     import os
     obs_plot_values = observer.PlotValues('data_%s.csv' % name)
     observers = [obs_plot_values, observer.PrintTime()]
+    observers += [observer.SaveModel('result_%s.json' % name)]
     prob = create_problem()
     s = create_solver(name, prob)
     # if name == 'parameterized':
@@ -179,7 +180,7 @@ def copy_and_replot(expname):
 # PROBLEM_CODE = 'problems.GPStep()'
 # PROBLEM_CODE = 'problems.GPKick()'
 # PROBLEM_CODE = 'problems.GPWalk()'
-# PROBLEM_CODE = 'problems.SimJump()'
+PROBLEM_CODE = 'problems.SimJump()'
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
 # seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
 # adjust = "[0.5, 1.0]"
@@ -192,9 +193,9 @@ def copy_and_replot(expname):
 # PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "quad", 0.01, %s)' \
 #                % (seg, adjust)
 
-seg = "[[-0.5, -0.1], [-0.4, 0.1]]"
-# PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
-PROBLEM_CODE = 'problems.CEC15(2, "schwefel", %s, "linear", 1.0)' % seg
+# seg = "[[-0.5, -0.1], [-0.4, 0.1]]"
+# # PROBLEM_CODE = 'problems.CEC15(2, "weierstrass", %s, "linear", 1.0)' % seg
+# PROBLEM_CODE = 'problems.CEC15(2, "schwefel", %s, "linear", 1.0)' % seg
 
 # PROBLEM_CODE = 'problems.CEC15(2, "schwefel")'
 # MEAN_TYPE = 'cubic'
@@ -215,6 +216,8 @@ if __name__ == '__main__':
         cmd = sys.argv[1]
         if cmd == 'parameterized':
             evaluate('parameterized')
+        elif cmd == 'parameterized2':
+            evaluate('parameterized|cov_rank_1')
         elif cmd == 'direct':
             evaluate('direct')
         elif cmd == 'interpolation':

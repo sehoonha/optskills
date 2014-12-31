@@ -108,11 +108,11 @@ class SimJump(SimProblem):
         # Calculate the validity of COM
         C = np.array(result['C'])
         C[1] = result['maxCy']
-        lo = np.array([0.0, 0.90, 0.0])
+        lo = np.array([0.0, 1.00, 0.0])
         hi = np.array([0.0, 1.40, 0.0])
         w = task
         C_hat = lo * (1 - w) + hi * w
-        weight = np.array([0.5, 1.0, 0.5]) * 2.0
+        weight = np.array([0.2, 1.0, 0.2])
         obj = norm((C - C_hat) * weight) ** 2
 
         # Test height penalty
@@ -123,7 +123,7 @@ class SimJump(SimProblem):
         T = result['T']
         obj_balanced = 10.0
         if T is not None:
-            weight = np.array([1.0, 0.0, 1.0])
+            weight = np.array([0.2, 0.0, 0.2])
             obj_balanced = norm((T - C) * weight) ** 2
 
         # Calculate parameter penalty
