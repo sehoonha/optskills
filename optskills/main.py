@@ -225,7 +225,8 @@ if __name__ == '__main__':
         elif cmd == 'benchmark':
             times = 11 if len(sys.argv) == 2 else int(sys.argv[2])
             print('Command = %s Times = %d' % (cmd, times))
-            benchmark(['parameterized', 'direct'] * times)
+            benchmark(['parameterized', 'parameterized|cov_rank_1', 'direct']
+                      * times)
 
         elif cmd == 'plot':
             filename = sys.argv[2]

@@ -27,8 +27,8 @@ class SimJumpController(object):
         self.target_index = -1
 
         w = (self.params - (-1.0)) / 2.0  # Change to 0 - 1 Scale
-        lo = np.array([-3.0, 0.0, -3.0, -300.0])
-        hi = np.array([3.0, -3.0, 3.0, 300.0])
+        lo = np.array([-3.0, 0.0, -3.0, -500.0])
+        hi = np.array([3.0, -3.0, 3.0, 500.0])
         # lo = np.array([-3.0, 0.0, -3.0])
         # hi = np.array([3.0, -3.0, 3.0])
         params = lo * (1 - w) + hi * w
@@ -52,8 +52,9 @@ class SimJumpController(object):
 
         # Set the third pose
         pose2 = self.skel().q
+        # pose2[6] = pose2[9] = q3  # Thighs
 
-        self.target_time = [0.0, 0.5, 1.0, 9.9e8]
+        self.target_time = [0.0, 0.4, 0.8, 9.9e8]
         self.targets = [pose0, pose1, pose2]
         self.forces = [[],
                        [(["h_toe_left", "h_toe_right"], [0, -f0, 0])],
@@ -109,10 +110,10 @@ class SimJump(SimProblem):
         C = np.array(result['C'])
         C[1] = result['maxCy']
         lo = np.array([0.0, 1.00, 0.0])
-        hi = np.array([0.0, 1.40, 0.0])
+        hi = np.array([0.0, 1.50, 0.0])
         w = task
         C_hat = lo * (1 - w) + hi * w
-        weight = np.array([1.0, 2.0, 1.0])
+        weight = np.array([0.2, 1.0, 0.2])
         obj = norm((C - C_hat) * weight) ** 2
 
         # Test height penalty
@@ -123,7 +124,7 @@ class SimJump(SimProblem):
         T = result['T']
         obj_balanced = 10.0
         if T is not None:
-            weight = np.array([1.0, 0.0, 1.0])
+            weight = np.array([0.5, 0.0, 0.5])
             obj_balanced = norm((T - C) * weight) ** 2
 
         # Calculate parameter penalty
@@ -153,7 +154,13 @@ class SimJump(SimProblem):
         return res
 
     def terminated(self):
-        return (self.world.t > 1.5)
+        # contacted = self.skel().contacted_body_names()
+        # print contacted
+        # if self.world.t > 0.8:
+        #     for body in contacted:
+        #         if 'toe' in body:
+        #             return True
+        return (self.world.t > 1.3)
 
     def __str__(self):
         res = self.collect_result()

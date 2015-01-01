@@ -46,7 +46,7 @@ class DirectSolver(object):
         opts.set('ftarget', 0.001)
         num_offsprings = 16
         opts.set('popsize', num_offsprings)
-        max_iter = int(10000 / 6 / num_offsprings)
+        max_iter = int(5000 / self.n / num_offsprings)
         print('maxiter: %d' % max_iter)
         opts.set('maxiter', max_iter)
         for key, value in opts.iteritems():
@@ -68,8 +68,14 @@ class DirectSolver(object):
         [o.notify_solve(self, self.model) for o in self.observers]
         return res
 
-    def evaluate(self, x):
+    def evaluate(self, _x):
         self.eval_counter += 1
+        # Scale up the second part, to cover all the possible range
+        x = np.zeros(self.prob.dim * 2)
+        for i in range(self.prob.dim):
+            x[i] = _x[i]
+        for i in range(self.prob.dim, 2 * self.prob.dim):
+            x[i] = _x[i] - _x[i - self.prob.dim]
         self.mean().set_params(x)
         sample_values = []
         for task in self.tasks:

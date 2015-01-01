@@ -30,7 +30,7 @@ class ParameterizedSolver(object):
         [o.notify_init(self, self.model) for o in self.observers]
         [o.notify_step(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
-        MAX_ITER = int(10000 / (self.num_parents + self.n))
+        MAX_ITER = int(5000 / (self.num_parents + self.n))
         print('MAX_ITER: %d', MAX_ITER)
         self.mean_values, self.mean_samples = self.evaluate_model(self.model,
                                                                   -1)
