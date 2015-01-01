@@ -112,7 +112,7 @@ class SimJump(SimProblem):
         hi = np.array([0.0, 1.40, 0.0])
         w = task
         C_hat = lo * (1 - w) + hi * w
-        weight = np.array([0.2, 1.0, 0.2])
+        weight = np.array([1.0, 2.0, 1.0])
         obj = norm((C - C_hat) * weight) ** 2
 
         # Test height penalty
@@ -123,7 +123,7 @@ class SimJump(SimProblem):
         T = result['T']
         obj_balanced = 10.0
         if T is not None:
-            weight = np.array([0.2, 0.0, 0.2])
+            weight = np.array([1.0, 0.0, 1.0])
             obj_balanced = norm((T - C) * weight) ** 2
 
         # Calculate parameter penalty

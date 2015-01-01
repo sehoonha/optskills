@@ -15,6 +15,7 @@ class DirectSolver(object):
         self.eval_counter = 0
         self.observers = []
         self.iter_values = []
+        self.iter_params = []
         print 'model:', self.model
 
     def add_observer(self, o):
@@ -81,6 +82,7 @@ class DirectSolver(object):
             avg_error = 9999.9
         print x, ' value: {', avg_error, '}'
         self.iter_values += [sample_values]  # Values for the entire iterations
+        self.iter_params += [x]
 
         # If one iteration is ended
         if self.eval_counter % 16 == 0:
@@ -89,9 +91,17 @@ class DirectSolver(object):
             # for v in self.iter_values:
             #     print sum(v), v
             # print 'best:', self.values()
+            sum_values = [sum(vs) for vs in self.iter_values]
+            print('sum_values = %s' % sum_values)
+            best_index = np.nanargmin(sum_values)
+            print('best_index = %d' % best_index)
+            best_params = self.iter_params[best_index]
+            print('best params = %s' % best_params)
+            self.mean().set_params(best_params)
             [o.notify_step(self, self.model) for o in self.observers]
 
             self.iter_values = []
+            self.iter_params = []
 
         return avg_error
 
