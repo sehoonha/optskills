@@ -215,11 +215,26 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         cmd = sys.argv[1]
         if cmd == 'parameterized':
-            evaluate('parameterized')
+            if len(sys.argv) == 2:
+                evaluate('parameterized')
+            else:
+                n = int(sys.argv[2])
+                print('Experiment Times = %d' % n)
+                benchmark(['parameterized'] * n)
         elif cmd == 'parameterized2':
-            evaluate('parameterized|cov_rank_1')
+            if len(sys.argv) == 2:
+                evaluate('parameterized|cov_rank_1')
+            else:
+                n = int(sys.argv[2])
+                print('Experiment Times = %d' % n)
+                benchmark(['parameterized|cov_rank_1'] * n)
         elif cmd == 'direct':
-            evaluate('direct')
+            if len(sys.argv) == 2:
+                evaluate('direct')
+            else:
+                n = int(sys.argv[2])
+                print('Experiment Times = %d' % n)
+                benchmark(['direct'] * n)
         elif cmd == 'interpolation':
             evaluate('interpolation')
         elif cmd == 'benchmark':

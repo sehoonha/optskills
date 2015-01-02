@@ -10,7 +10,7 @@ class SimJumpController(object):
         self.spd.target = self.skel().q
         self.jt = JTController(self.skel())
 
-        self.dim = 4
+        self.dim = 5
         # self.dim = 3
         self.params = (np.random.rand(self.dim) - 0.5) * 2.0
 
@@ -27,14 +27,14 @@ class SimJumpController(object):
         self.target_index = -1
 
         w = (self.params - (-1.0)) / 2.0  # Change to 0 - 1 Scale
-        lo = np.array([-3.0, 0.0, -3.0, -500.0])
-        hi = np.array([3.0, -3.0, 3.0, 500.0])
+        lo = np.array([-3.0, 0.0, -1.57, -300.0, -0.5])
+        hi = np.array([3.0, -3.0, 1.57, 300.0, 0.5])
         # lo = np.array([-3.0, 0.0, -3.0])
         # hi = np.array([3.0, -3.0, 3.0])
         params = lo * (1 - w) + hi * w
         # print('self.params = %s' % self.params)
         # print('normalized params = %s' % params)
-        (q0, q1, q2, f0) = params
+        (q0, q1, q2, f0, q3) = params
         # (q0, q1, q2) = params
         # f0 = 100.0
 
@@ -52,7 +52,7 @@ class SimJumpController(object):
 
         # Set the third pose
         pose2 = self.skel().q
-        # pose2[6] = pose2[9] = q3  # Thighs
+        pose2[6] = pose2[9] = q3  # Thighs
 
         self.target_time = [0.0, 0.4, 0.8, 9.9e8]
         self.targets = [pose0, pose1, pose2]
