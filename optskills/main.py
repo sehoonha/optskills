@@ -46,11 +46,12 @@ def create_solver(solver_name, prob):
         return None
 
 
-def evaluate(name, plotting=True):
+def evaluate(name, plotting=True, exp_id=None):
     import os
-    obs_plot_values = observer.PlotValues('data_%s.csv' % name)
+    exp = '' if exp_id is None else '%02d' % exp_id
+    obs_plot_values = observer.PlotValues('data_%s_%s.csv' % (name, exp))
     observers = [obs_plot_values, observer.PrintTime()]
-    observers += [observer.SaveModel('result_%s.json' % name)]
+    observers += [observer.SaveModel('result_%s_%s.json' % (name, exp))]
     prob = create_problem()
     s = create_solver(name, prob)
     # if name == 'parameterized':
@@ -218,23 +219,23 @@ if __name__ == '__main__':
             if len(sys.argv) == 2:
                 evaluate('parameterized')
             else:
-                n = int(sys.argv[2])
-                print('Experiment Times = %d' % n)
-                benchmark(['parameterized'] * n)
+                exp_id = int(sys.argv[2])
+                print('Experiment Id = %d' % exp_id)
+                evaluate('parameterized', exp_id=exp_id)
         elif cmd == 'parameterized2':
             if len(sys.argv) == 2:
                 evaluate('parameterized|cov_rank_1')
             else:
-                n = int(sys.argv[2])
-                print('Experiment Times = %d' % n)
-                benchmark(['parameterized|cov_rank_1'] * n)
+                exp_id = int(sys.argv[2])
+                print('Experiment Id = %d' % exp_id)
+                evaluate('parameterized|cov_rank_1', exp_id=exp_id)
         elif cmd == 'direct':
             if len(sys.argv) == 2:
                 evaluate('direct')
             else:
-                n = int(sys.argv[2])
-                print('Experiment Times = %d' % n)
-                benchmark(['direct'] * n)
+                exp_id = int(sys.argv[2])
+                print('Experiment Id = %d' % exp_id)
+                evaluate('direct', exp_id=exp_id)
         elif cmd == 'interpolation':
             evaluate('interpolation')
         elif cmd == 'benchmark':
