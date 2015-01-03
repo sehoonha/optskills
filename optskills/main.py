@@ -48,10 +48,10 @@ def create_solver(solver_name, prob):
 
 def evaluate(name, plotting=True, exp_id=None):
     import os
-    exp = '' if exp_id is None else '%02d' % exp_id
-    obs_plot_values = observer.PlotValues('data_%s_%s.csv' % (name, exp))
+    exp = '' if exp_id is None else '_%02d' % exp_id
+    obs_plot_values = observer.PlotValues('data_%s%s.csv' % (name, exp))
     observers = [obs_plot_values, observer.PrintTime()]
-    observers += [observer.SaveModel('result_%s_%s.json' % (name, exp))]
+    observers += [observer.SaveModel('result_%s%s.json' % (name, exp))]
     prob = create_problem()
     s = create_solver(name, prob)
     # if name == 'parameterized':
@@ -190,9 +190,9 @@ def merge(output, keywords):
 # PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
 # PROBLEM_CODE = 'problems.GPStep()'
-# PROBLEM_CODE = 'problems.GPKick()'
+PROBLEM_CODE = 'problems.GPKick()'
 # PROBLEM_CODE = 'problems.GPWalk()'
-PROBLEM_CODE = 'problems.SimJump()'
+# PROBLEM_CODE = 'problems.SimJump()'
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
 # seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
 # adjust = "[0.5, 1.0]"

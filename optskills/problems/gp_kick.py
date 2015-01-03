@@ -47,7 +47,7 @@ class GPKick(SimProblem):
         lo = np.array([0.025, 0.04, 0.30])
         hi = np.array([0.025, 0.04, 0.60])
         B_hat = lo * (1 - w) + hi * w
-        weight = np.array([1.0, 1.0, 5.0]) * 2
+        weight = np.array([0.1, 0.0, 1.0])
         obj = norm((B - B_hat) * weight) ** 2
 
         # Calculate the balance penaly
@@ -83,21 +83,23 @@ class GPKick(SimProblem):
         params = lo * (1 - w) + hi * w
         (q0, q1, q2, q3, q4) = params
         # print 'q:', q0, q1, q2, q3, q4
+        # (q0, q1, q2, q3, q4) = (0.16, -0.8, -1.0, 0.5, -0.5)
+        (q0, q1, q2, q3, q4) = (0.16, -0.8, -1.0, 0.60, -0.5)
 
         self.reset()
         self.controller.clear_phases()
-        # The first phase
+        # The first phase - balance
         phase = self.controller.add_phase_from_now(0.5)
         phase.set_target('r_hip', -q0)  # -0.16
         phase.set_target('r_foot', q0)  # 0.16
 
-        # The second phase
+        # The second phase - swing back
         phase = self.controller.add_phase_from_prev(0.3)
         phase.set_target('l_thigh', q1)  # -0.8
         phase.set_target('l_shin', q2)  # -1.0
         phase.set_target('l_heel', -0.5 * q2)  # 0.5
 
-        # The third phase
+        # The third phase - swing forward
         phase = self.controller.add_phase_from_prev(0.3)
         phase.set_target('l_thigh', q3)  # 0.55 ~ 1.0
         phase.set_target('l_shin', q4)  # -0.5

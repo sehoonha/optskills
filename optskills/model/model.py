@@ -73,8 +73,10 @@ class Model(object):
 
         if 'cov_rank_1' in alg:
             self.update_covs_rank_1()
-        else:
+        elif 'cov_all' in alg:
             self.update_covs(samples)
+        else:
+            self.update_covs_rank_1()
 
         self.volumns = []
         for task, samples_for_task in zip(self.tasks, samples):
