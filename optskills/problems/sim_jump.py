@@ -6,7 +6,7 @@ from sim_problem import SimProblem, SPDController, JTController, STR
 class SimJumpController(object):
     def __init__(self, _world):
         self.world = _world
-        self.spd = SPDController(self.skel(), 300.0, 30.0, self.world.dt)
+        self.spd = SPDController(self.skel(), 250.0, 20.0, self.world.dt)
         self.spd.target = self.skel().q
         self.jt = JTController(self.skel())
 
@@ -27,8 +27,8 @@ class SimJumpController(object):
         self.target_index = -1
 
         w = (self.params - (-1.0)) / 2.0  # Change to 0 - 1 Scale
-        lo = np.array([-3.0, 0.0, -1.57, -300.0, -0.5])
-        hi = np.array([3.0, -3.0, 1.57, 300.0, 0.5])
+        lo = np.array([-3.0, 0.0, -3.0, -300.0, -0.5])
+        hi = np.array([3.0, -3.0, 3.0, 300.0, 0.5])
         # lo = np.array([-3.0, 0.0, -3.0])
         # hi = np.array([3.0, -3.0, 3.0])
         params = lo * (1 - w) + hi * w
@@ -122,8 +122,9 @@ class SimJump(SimProblem):
 
         # Calculate unbalanced penalty
         T = result['T']
+        Hy = result['Hy']
         obj_balanced = 10.0
-        if T is not None:
+        if T is not None and Hy > 0.5:
             weight = np.array([0.5, 0.0, 0.5])
             obj_balanced = norm((T - C) * weight) ** 2
 
@@ -149,17 +150,12 @@ class SimJump(SimProblem):
         res = {}
         res['C'] = self.skel().C
         res['T'] = self.skel().COP
+        res['Hy'] = self.skel().body('h_head').C[1]
         res['maxCy'] = max([C[1] for C in self.com_trajectory])
         res['params'] = self.params
         return res
 
     def terminated(self):
-        # contacted = self.skel().contacted_body_names()
-        # print contacted
-        # if self.world.t > 0.8:
-        #     for body in contacted:
-        #         if 'toe' in body:
-        #             return True
         return (self.world.t > 1.3)
 
     def __str__(self):

@@ -74,7 +74,6 @@ class ParameterizedSolver(object):
                                                                   iteration)
 
         is_better = np.mean(curr_mean_values) < np.mean(self.mean_values)
-
         print('self.mean_values: %.8f' % np.mean(self.mean_values))
         print('curr_mean_values: %.8f' % np.mean(curr_mean_values))
 
