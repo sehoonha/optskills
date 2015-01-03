@@ -174,6 +174,17 @@ def copy_and_replot(expname):
     print ('copy plot into %s' % png_filename)
     print ('done!')
 
+
+def merge(output, keywords):
+    import glob
+    print('outputfile = %s' % output)
+    with open(output, 'w+') as fout:
+        for key in keywords:
+            for filename in glob.glob(key):
+                print('merge %s' % filename)
+                with open(filename) as fin:
+                    fout.write(fin.read())
+
 # PROBLEM_CODE = 'problems.Sphere()'
 # PROBLEM_CODE = 'problems.Sphere(_seg_type="cubic")'
 # PROBLEM_CODE = 'problems.MirroredSphere()'
@@ -243,12 +254,15 @@ if __name__ == '__main__':
             print('Command = %s Times = %d' % (cmd, times))
             benchmark(['parameterized', 'parameterized|cov_rank_1', 'direct']
                       * times)
-
         elif cmd == 'plot':
             filename = sys.argv[2]
             plot(filename)
         elif cmd == 'sampling':
             evaluate('sampler', False)
+        elif cmd == 'merge':
+            merge(sys.argv[2], sys.argv[3:])
+        else:
+            print('Unknown command: %s' % cmd)
         exit(0)
     # evaluate('parameterized')
     # evaluate('parameterized_cubic')

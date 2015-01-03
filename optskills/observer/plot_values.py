@@ -17,6 +17,9 @@ class Experiment(object):
     def num_data(self):
         return max(len(self.evals), len(self.values))
 
+    def best_value(self):
+        return min(self.values)
+
     def __repr__(self):
         return 'Exp(%d, %.6f)' % (self.evals[-1], self.values[-1])
 
@@ -112,7 +115,9 @@ class PlotValues(object):
         pp = []
         legends = []
         for name, exp_list in self.data.iteritems():
-            exp_list.sort(key=lambda exp: exp.num_evals())
+            print('=' * 80)
+            # exp_list.sort(key=lambda exp: exp.num_evals())
+            exp_list.sort(key=lambda exp: exp.best_value())
             num_trials = len(exp_list)
             med = exp_list[(num_trials - 1) / 2]
             x = med.evals
@@ -127,18 +132,18 @@ class PlotValues(object):
             print('exp_list: %s' % exp_list)
 
             final_iters = [e.evals[-1] for e in exp_list]
-            final_values = [e.values[-1] for e in exp_list]
+            final_values = [min(e.values) for e in exp_list]
             print('average final iters: %.1f' % np.mean(final_iters))
             print('average final values: %.8f' % np.mean(final_values))
 
             # Plot errorbar as well
-            lo = np.percentile(final_iters, 10)
-            mi = x[-1]
-            hi = np.percentile(final_iters, 90)
-            print ('10%% percentile iters: %d' % lo)
-            print ('median: %d' % mi)
-            print ('90%% percentile iters: %d' % hi)
-            plt.errorbar(x[-1], y[-1], fmt='o', xerr=[[mi - lo], [hi - mi]],
+            lo = np.percentile(final_values, 10)
+            mi = np.median(final_values)
+            hi = np.percentile(final_values, 90)
+            print ('10%% percentile iters: %f' % lo)
+            print ('median: %f' % mi)
+            print ('90%% percentile iters: %f' % hi)
+            plt.errorbar(x[-1], y[-1], fmt='o', yerr=[[mi - lo], [hi - mi]],
                          capsize=20, capthick=2.0, color=colors[index])
             legends += ['%s {%.6f}' % (name, np.mean(final_values))]
 
@@ -154,6 +159,7 @@ class PlotValues(object):
         plt.ylabel('The error of mean segments', fontdict=font)
         # plt.legend(pp, self.data.keys(), numpoints=1, fontsize=20)
         plt.legend(pp, legends, numpoints=1, fontsize=16)
+        plt.axes().set_yscale('log')
         (lo, hi) = plt.axes().get_ylim()
         plt.axes().set_ylim(lo - 0.05, hi + 0.05)
         plt.axhline(y=0, color='k')
