@@ -155,6 +155,8 @@ class SimProblem(object):
             tau[0:6] = 0.0
             self.skel().tau = tau
         self.world.step()
+        # print self.world.t, len(self.ball.external_contacts_and_body_id())
+
         self.com_trajectory += [self.skel().C]
         return self.terminated()
         # return False

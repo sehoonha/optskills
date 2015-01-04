@@ -7,8 +7,8 @@ import phase_controller
 class GPKick(SimProblem):
     def __init__(self):
         super(GPKick, self).__init__('urdf/BioloidGP/BioloidGP.URDF',
-                                     make_ball=True)
-        self.ball_position = np.array([0.03, 0.03, 0.10])
+                                     make_ball=True, fps=2000.0)
+        self.ball_position = np.array([0.03, 0.031, 0.10])
         r = 0.04
         m = 0.05
         I = (2.0 * m * r * r) / 3.0
@@ -50,13 +50,19 @@ class GPKick(SimProblem):
         weight = np.array([0.1, 0.0, 1.0])
         obj = norm((B - B_hat) * weight) ** 2
 
+        b_penalty = 0.0
         # Calculate the balance penaly
-        Cx = result['C'][0] - (-0.009)
-        Cz = result['C'][2] - (0.014)
-        b_penalty = (Cx * 5.0) ** 2 + (Cz * 5.0) ** 2
+        # Cx = result['C'][0] - (-0.009)
+        # Cz = result['C'][2] - (0.014)
+        Cy = result['C'][1]
+        if Cy < 0.15:  # May check |Cx| > 0.04
+            t = result['t']
+            b_penalty += 0.5 * (5.0 - t)
+
+        if B[2] < 0.11:
+            b_penalty += 0.5
 
         # Time penalty
-        # t = result['t']
         t_penalty = 0.0
         # if t < 2.5:
         #     t_penalty = (2.5 - t)
@@ -71,6 +77,7 @@ class GPKick(SimProblem):
                 penalty += min(0.0, v - (-1.0)) ** 2
 
         return obj + b_penalty + t_penalty + penalty
+        # return b_penalty
 
     def set_random_params(self):
         pass
@@ -78,13 +85,15 @@ class GPKick(SimProblem):
     def set_params(self, x):
         self.params = x
         w = (x - (-1.0)) / 2.0  # Change to 0 - 1 Scale
-        lo = np.array([-0.2, -1.57, -1.57, 0.0, -1.57])
+        # lo = np.array([-0.2, -1.57, -1.57, 0.0, -1.57])
+        lo = np.array([0.0, -1.57, -1.57, 0.0, -1.57])
+        # hi = np.array([0.2, 0.0, 0.0, 1.57, 0.0])
         hi = np.array([0.2, 0.0, 0.0, 1.57, 0.0])
         params = lo * (1 - w) + hi * w
         (q0, q1, q2, q3, q4) = params
         # print 'q:', q0, q1, q2, q3, q4
         # (q0, q1, q2, q3, q4) = (0.16, -0.8, -1.0, 0.5, -0.5)
-        (q0, q1, q2, q3, q4) = (0.16, -0.8, -1.0, 0.60, -0.5)
+        # (q0, q1, q2, q3, q4) = (0.16, -0.8, -1.0, 0.60, -0.5)
 
         self.reset()
         self.controller.clear_phases()
