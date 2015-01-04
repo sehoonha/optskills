@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.linalg import norm
 import model
 import math
 from sample import Sample
@@ -28,18 +29,20 @@ class ParameterizedSolver(object):
 
     def solve(self):
         [o.notify_init(self, self.model) for o in self.observers]
-        [o.notify_step(self, self.model) for o in self.observers]
         res = {'result': 'NG'}
-        MAX_ITER = int(5000 / (self.num_parents + self.n))
+        MAX_ITER = int(5000 / (self.num_parents + self.n)) + 50
         print('MAX_ITER: %d', MAX_ITER)
         self.mean_values, self.mean_samples = self.evaluate_model(self.model,
                                                                   -1)
+        [o.notify_step(self, self.model) for o in self.observers]
         best_samples = self.mean_samples
         for i in range(MAX_ITER):
             next_best_samples = self.solve_step(i, best_samples)
             best_samples = next_best_samples
             [o.notify_step(self, self.model) for o in self.observers]
             if np.mean(self.mean_values) < 0.001:
+                break
+            if self.prob.eval_counter > 5000:
                 break
             # if self.model.stepsize < 0.00001:
             #     break
@@ -70,8 +73,18 @@ class ParameterizedSolver(object):
         # Update the model
         curr_model = copy.deepcopy(self.model)
         curr_model.update(selected, self.alg)
-        curr_mean_values, curr_mean_samples = self.evaluate_model(curr_model,
-                                                                  iteration)
+        curr_param = curr_model.mean.params()
+        self_param = self.model.mean.params()
+        print('curr_param = %s' % curr_param)
+        print('self_param = %s' % self_param)
+        print('dist = %.8f' % norm(curr_param - self_param))
+        if norm(curr_param - self_param) < 1e-10:
+            print('Skip evaluation: same (%s, %s)' % (curr_param, self_param))
+            curr_mean_values = copy.deepcopy(self.mean_values)
+            curr_mean_samples = copy.deepcopy(self.mean_samples)
+        else:
+            curr_mean_values, curr_mean_samples = self.evaluate_model(
+                curr_model, iteration)
 
         is_better = np.mean(curr_mean_values) < np.mean(self.mean_values)
         print('self.mean_values: %.8f' % np.mean(self.mean_values))
@@ -120,11 +133,16 @@ class ParameterizedSolver(object):
             params = self.model.generate_params(self.alg)
             s = Sample(params, self.prob)
             s.iteration = iteration
+            self.prob.reset()
             s.simulate()
             samples += [s]
             # Debuging
             j = self.model.debug_last_generate_index
             print("%s (from %d) %s" % (i, j, s))
+            # print('  >> params: %s' % s)
+            # print('  >> result: %s' % s.result)
+            # print('  >> values: %s' % ([s.evaluate(t) for t in self.tasks]))
+            # print('\n\n')
         return samples
 
     def select_samples(self, samples):
@@ -162,7 +180,9 @@ class ParameterizedSolver(object):
                 self.prob.eval_counter = saved
             # ###############
             v = s.evaluate(task)
-            print 'evaluate::', i, task, pt, v
+            # print 'evaluate::', i, task, pt, v
+            # print('  >> result: %s' % s.result)
+            # print('\n\n')
             mean_samples += [s]
             mean_values += [v]
         return mean_values, mean_samples
@@ -181,16 +201,17 @@ class ParameterizedSolver(object):
         return self.prob.eval_counter
 
     def values(self):
-        saved = self.prob.eval_counter
-        sample_values = []
-        for task in self.tasks:
-            pt = self.model.mean.point(task)
-            s = Sample(pt, self.prob)
-            v = s.evaluate(task)
-            sample_values += [v]
+        return self.mean_values
+        # saved = self.prob.eval_counter
+        # sample_values = []
+        # for task in self.tasks:
+        #     pt = self.model.mean.point(task)
+        #     s = Sample(pt, self.prob)
+        #     v = s.evaluate(task)
+        #     sample_values += [v]
 
-        self.prob.eval_counter = saved
-        return sample_values
+        # self.prob.eval_counter = saved
+        # return sample_values
 
     def __str__(self):
         return "[ParameterizedSolver on %s]" % self.prob

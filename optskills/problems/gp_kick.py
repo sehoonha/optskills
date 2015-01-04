@@ -2,6 +2,7 @@ import numpy as np
 from numpy.linalg import norm
 from sim_problem import SimProblem, STR
 import phase_controller
+import math
 
 
 class GPKick(SimProblem):
@@ -33,9 +34,8 @@ class GPKick(SimProblem):
     def simulate(self, sample):
         self.eval_counter += 1
 
-        self.reset()
-        self.reset()
         self.set_params(sample)
+        self.reset()
         while not self.terminated():
             self.step()
         # print 'result:', self.params, self.collect_result()
@@ -55,13 +55,14 @@ class GPKick(SimProblem):
         # Calculate the balance penaly
         # Cx = result['C'][0] - (-0.009)
         # Cz = result['C'][2] - (0.014)
-        Cy = result['C'][1]
-        if Cy < 0.15:  # May check |Cx| > 0.04
+        # Cy = result['C'][1]
+        # if Cy < 0.15:  # May check |Cx| > 0.04
+        if result['fallen']:
             t = result['t']
             b_penalty += 0.5 * (5.0 - t)
 
         if B[2] < 0.11:
-            b_penalty += 0.5
+            b_penalty += 0.1
 
         # Time penalty
         t_penalty = 0.0
@@ -87,9 +88,9 @@ class GPKick(SimProblem):
         self.params = x
         w = (x - (-1.0)) / 2.0  # Change to 0 - 1 Scale
         # lo = np.array([-0.2, -1.57, -1.57, 0.0, -1.57])
-        lo = np.array([-0.1, -1.57, -1.57, 0.0, -1.57])
+        lo = np.array([0.0, -1.57, -1.57, 0.0, -1.57])
         # hi = np.array([0.2, 0.0, 0.0, 1.57, 0.0])
-        hi = np.array([0.3, 0.0, 0.0, 1.57, 0.0])
+        hi = np.array([0.5, 0.0, 0.0, 1.57, 0.0])
         params = lo * (1 - w) + hi * w
         (q0, q1, q2, q3, q4) = params
         # print 'q:', q0, q1, q2, q3, q4
@@ -120,19 +121,27 @@ class GPKick(SimProblem):
     def collect_result(self):
         res = {}
         res['t'] = self.world.t
-        res['C'] = self.skel().C
-        res['B'] = self.ball.C
-        res['dB'] = self.ball.Cdot
-        res['params'] = self.params
+        res['C'] = np.array(self.skel().C)
+        res['B'] = np.array(self.ball.C)
+        res['dB'] = np.array(self.ball.Cdot)
+        res['params'] = None if self.params is None else np.array(self.params)
+        res['fallen'] = self.fallen
         # print 'result: ', res
         return res
 
+    def reset_hook(self):
+        self.fallen = False
+
     def terminated(self):
-        contacted = self.skel().contacted_body_names()
-        for b in ['torso', 'l_hand', 'r_hand']:
-            if b in contacted and self.world.t > 0.5:
-                # print 'terminated due to the bad contact', b, self.world.t
-                return True
+        C = self.skel().C
+        if C[1] < 0.15 or math.fabs(C[0]) > 0.06:  # May check |Cx| > 0.04
+            self.fallen = True
+            return True
+        # contacted = self.skel().contacted_body_names()
+        # for b in ['torso', 'l_hand', 'r_hand']:
+        #     if b in contacted and self.world.t > 0.5:
+        #         # print 'terminated due to the bad contact', b, self.world.t
+        #         return True
         dB = self.ball.Cdot
         if dB[2] < 0.0 and self.world.t > 1.5:
             # print 'terminated when the ball is stopped', self.world.t

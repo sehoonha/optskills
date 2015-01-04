@@ -148,6 +148,10 @@ class SimProblem(object):
         self.com_trajectory = [self.skel().C]
         if hasattr(self.controller, 'reset'):
             self.controller.reset()
+        self.reset_hook()
+
+    def reset_hook(self):
+        pass
 
     def step(self):
         if self.controller is not None:
@@ -155,7 +159,7 @@ class SimProblem(object):
             tau[0:6] = 0.0
             self.skel().tau = tau
         self.world.step()
-        # print self.world.t, len(self.ball.external_contacts_and_body_id())
+        print self.world.t, len(self.skel().external_contacts_and_body_id())
 
         self.com_trajectory += [self.skel().C]
         return self.terminated()
