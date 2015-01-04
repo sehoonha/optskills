@@ -79,7 +79,7 @@ class ParameterizedSolver(object):
         print('self_param = %s' % self_param)
         print('dist = %.8f' % norm(curr_param - self_param))
         if norm(curr_param - self_param) < 1e-10:
-            print('Skip evaluation: same (%s, %s)' % (curr_param, self_param))
+            print('Skip evaluation: same')
             curr_mean_values = copy.deepcopy(self.mean_values)
             curr_mean_samples = copy.deepcopy(self.mean_samples)
         else:

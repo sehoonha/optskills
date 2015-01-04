@@ -129,10 +129,10 @@ class Model(object):
                 values += [s.evaluate(task)]
             self.mean.fit(pts)
             estimated_cost = sum(values) + 10.0 * self.mean.fit_error
-            if loop == 0:
-                print '>> Loop 0', pts
-                print '    >>', estimated_cost, values, self.mean.fit_error
-                print '    >>', self.mean.params()
+            # if loop == 0:
+            #     print '>> Loop 0', pts
+            #     print '    >>', estimated_cost, values, self.mean.fit_error
+            #     print '    >>', self.mean.params()
 
             # estimated_cost = sum(values) + 1.0 * self.mean.fit_error
             # print loop, self.mean.params(), ':',
