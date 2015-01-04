@@ -34,6 +34,7 @@ class GPKick(SimProblem):
         self.eval_counter += 1
 
         self.reset()
+        self.reset()
         self.set_params(sample)
         while not self.terminated():
             self.step()
@@ -86,9 +87,9 @@ class GPKick(SimProblem):
         self.params = x
         w = (x - (-1.0)) / 2.0  # Change to 0 - 1 Scale
         # lo = np.array([-0.2, -1.57, -1.57, 0.0, -1.57])
-        lo = np.array([0.0, -1.57, -1.57, 0.0, -1.57])
+        lo = np.array([-0.1, -1.57, -1.57, 0.0, -1.57])
         # hi = np.array([0.2, 0.0, 0.0, 1.57, 0.0])
-        hi = np.array([0.2, 0.0, 0.0, 1.57, 0.0])
+        hi = np.array([0.3, 0.0, 0.0, 1.57, 0.0])
         params = lo * (1 - w) + hi * w
         (q0, q1, q2, q3, q4) = params
         # print 'q:', q0, q1, q2, q3, q4
@@ -123,6 +124,7 @@ class GPKick(SimProblem):
         res['B'] = self.ball.C
         res['dB'] = self.ball.Cdot
         res['params'] = self.params
+        # print 'result: ', res
         return res
 
     def terminated(self):

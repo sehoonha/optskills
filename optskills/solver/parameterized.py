@@ -146,11 +146,23 @@ class ParameterizedSolver(object):
     def evaluate_model(self, model, iteration):
         mean_samples = []
         mean_values = []
-        for task in self.tasks:
+
+        for i, task in enumerate(self.tasks):
             pt = model.mean.point(task)
             s = Sample(pt, self.prob)
             s.iteration = iteration
+
+            # #############
+            # Hacky init T.T
+            if i == 0:
+                saved = self.prob.eval_counter
+                # print 'null evaluate'
+                s2 = Sample(pt, self.prob)
+                s2.evaluate(task)
+                self.prob.eval_counter = saved
+            # ###############
             v = s.evaluate(task)
+            print 'evaluate::', i, task, pt, v
             mean_samples += [s]
             mean_values += [v]
         return mean_values, mean_samples

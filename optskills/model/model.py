@@ -129,12 +129,18 @@ class Model(object):
                 values += [s.evaluate(task)]
             self.mean.fit(pts)
             estimated_cost = sum(values) + 10.0 * self.mean.fit_error
+            if loop == 0:
+                print '>> Loop 0', pts
+                print '    >>', estimated_cost, values, self.mean.fit_error
+                print '    >>', self.mean.params()
+
             # estimated_cost = sum(values) + 1.0 * self.mean.fit_error
             # print loop, self.mean.params(), ':',
             # print estimated_cost, sum(values), estimated_cost - sum(values)
             if best_estimation is None or estimated_cost < best_estimation:
                 best_estimation = estimated_cost
                 best_params = self.mean.params()
+        print '>> Best:', best_params
         self.mean.set_params(best_params)
 
     def update_paths(self, prev_centers):

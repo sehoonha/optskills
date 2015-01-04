@@ -37,7 +37,7 @@ class Linear(object):
             try:
                 self.fit_error += sum(np.sqrt(np.diag(pcov)))
             except ValueError:
-                print('ValueError: pcov = %s' % pcov)
+                print('ValueError: pcov = %s, popt = %s' % (pcov, popt))
         self.a, self.b = np.array(a), np.array(b)
 
     def fit_func(self, x, a_i, b_i):
