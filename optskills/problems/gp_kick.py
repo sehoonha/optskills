@@ -16,7 +16,7 @@ class GPKick(SimProblem):
         print('I = %.8f' % I)
         self.__init__simulation__()
 
-        self.dim = 5
+        self.dim = 6
         self.eval_counter = 0  # Well, increasing when simulated
         self.params = None
 
@@ -28,7 +28,7 @@ class GPKick(SimProblem):
         self.reset()
         self.controller = phase_controller.PhaseController(self.world)
 
-        self.set_params(np.array([0.14, 0.3, -0.15, -0.1, -0.2]))
+        self.set_params(np.array([0.14, 0.3, -0.15, -0.1, -0.2, 0.2]))
         self.controller.reset()
 
     def simulate(self, sample):
@@ -88,11 +88,11 @@ class GPKick(SimProblem):
         self.params = x
         w = (x - (-1.0)) / 2.0  # Change to 0 - 1 Scale
         # lo = np.array([-0.2, -1.57, -1.57, 0.0, -1.57])
-        lo = np.array([0.0, -1.57, -1.57, 0.0, -1.57])
+        lo = np.array([0.0, -1.57, -1.57, 0.0, -1.57, 0.0])
         # hi = np.array([0.2, 0.0, 0.0, 1.57, 0.0])
-        hi = np.array([0.5, 0.0, 0.0, 1.57, 0.0])
+        hi = np.array([0.5, 0.0, 0.0, 1.57, 0.0, 1.0])
         params = lo * (1 - w) + hi * w
-        (q0, q1, q2, q3, q4) = params
+        (q0, q1, q2, q3, q4, q5) = params
         # print 'q:', q0, q1, q2, q3, q4
         # (q0, q1, q2, q3, q4) = (0.16, -0.8, -1.0, 0.5, -0.5)
         # (q0, q1, q2, q3, q4) = (0.16, -0.8, -1.0, 0.60, -0.5)
@@ -114,8 +114,8 @@ class GPKick(SimProblem):
         phase = self.controller.add_phase_from_prev(0.3)
         phase.set_target('l_thigh', q3)  # 0.55 ~ 1.0
         phase.set_target('l_shin', q4)  # -0.5
-        phase.set_target('l_heel', -0.5 * q4)  # 0.3
-        phase.set_target('r_heel', -0.06)  # -0.04
+        phase.set_target('l_heel', q5)  # 0.3
+        phase.set_target('r_heel', -0.06)  # -0.06 (-0.04?)
         # print('num phases: %d' % len(self.controller.phases))
 
     def collect_result(self):
