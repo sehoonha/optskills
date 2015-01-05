@@ -29,6 +29,12 @@ class Linear(object):
         a, b = [], []
         self.fit_error = 0
 
+        if self.is_same_pts(pts):
+            self.a = np.array(pts[0])
+            self.b = np.zeros(self.dim)
+            self.fit_error = 0.0
+            return
+
         for i in range(self.dim):
             ydata = [x[i] for x in pts]
             popt, pcov = scipy.optimize.curve_fit(self.fit_func, xdata, ydata)
@@ -39,6 +45,14 @@ class Linear(object):
             except ValueError:
                 print('ValueError: pcov = %s, popt = %s' % (pcov, popt))
         self.a, self.b = np.array(a), np.array(b)
+
+    def is_same_pts(self, pts):
+        for i in range(1, len(pts)):
+            lhs = pts[0]
+            rhs = pts[1]
+            if norm(lhs - rhs) > 1e-10:
+                return False
+        return True
 
     def fit_func(self, x, a_i, b_i):
         return a_i + x * b_i
