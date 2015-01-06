@@ -122,6 +122,9 @@ class PlotValues(object):
             med = exp_list[(num_trials - 1) / 2]
             x = med.evals
             y = med.values
+            while x[-1] > 5000:
+                x.pop()
+                y.pop()
             print 'x:', x
             print 'y:', y
             p = plt.plot(x, y, color=colors[index])
