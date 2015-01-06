@@ -128,3 +128,30 @@ class Cubic(object):
         return "{Cubic: %s %s %s %s (err: %.8f)}" % (self.p0, self.p1,
                                                      self.p2, self.p3,
                                                      self.fit_error)
+
+
+class Interpolation(object):
+    def __init__(self, _ntasks):
+        self.n = _ntasks
+        self.tasks = np.linspace(0.0, 1.0, self.n)
+        pts = []
+        pts += [[0.38394697, 0.07715693, 0.2183575, -0.73254688, -0.32667838]]
+        pts += [[0.0373378, 0.2091511, 0.43970659, -0.04084228, -0.23918694]]
+        pts += [[0.38750581, 0.32964086, 0.29055378, -0.79171512, -0.08209188]]
+        pts += [[0.10170467, 0.22343821, 0.49462088, 0.33718621, -0.42981797]]
+        pts += [[0.40168449, 0.48471393, 0.35070097, -0.65844583, 0.5846436]]
+        pts += [[0.16607154, 0.23772532, 0.54953518, 0.7152147, -0.620449]]
+        self.pts = pts
+        self.dim = len(self.pts[0])
+
+    def point(self, w):
+        pt = np.zeros(self.dim)
+        xs = self.tasks
+        for i in range(self.dim):
+            ys = [p[i] for p in self.pts]
+            y = np.interp(w, xs, ys)
+            pt[i] = y
+        return pt
+
+    def __str__(self):
+        return "{Interpolation}"
