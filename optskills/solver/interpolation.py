@@ -33,8 +33,13 @@ class InterpolationSolver(object):
 
         print('Solving...')
         pts = []
-        for task in self.tasks:
-            task = 0.4  # Test
+
+        solved = []
+        values = []
+        # for task in self.tasks:
+        for task in np.linspace(0.0, 1.0, 51):
+            if not (2.0 / 3.0 <= task and task <= 3.0 / 3.0):
+                continue
             print('')
             print('------- CMA-ES : task = %.6f -------- ' % task)
 
@@ -44,7 +49,7 @@ class InterpolationSolver(object):
             opts.set('verb_disp', 1)
             opts.set('ftarget', 0.001)
             opts.set('popsize', 16)
-            opts.set('maxiter', 300)
+            opts.set('maxiter', 100)
 
             # opt = {'verb_time': 0, 'popsize': 16, 'tolfun': 1e-5}
             x0 = np.random.rand(self.prob.dim) - 0.5
@@ -52,7 +57,12 @@ class InterpolationSolver(object):
             print('------------ task = %.6f ----------- ' % task)
             print('self.eval_counter = %d' % self.num_evals())
             print('the answer: %s' % res[0])
+            print('value: %.6f' % res[1])
             pts += [res[0]]
+            solved += [task]
+            values += [res[1]]
+            print('solved tasks: %s' % solved)
+            print('solved values: %s' % values)
             print('')
 
             # [o.notify_step(self, self.model) for o in self.observers]
