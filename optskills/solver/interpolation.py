@@ -34,15 +34,17 @@ class InterpolationSolver(object):
         print('Solving...')
         pts = []
         for task in self.tasks:
+            task = 0.4  # Test
             print('')
             print('------- CMA-ES : task = %.6f -------- ' % task)
 
             self.current_task = task
             opts = cma.CMAOptions()
+            opts = cma.CMAOptions()
             opts.set('verb_disp', 1)
-            opts.set('tolfun', 0.001)
-            opts.set('tolx', 0.0000001)
+            opts.set('ftarget', 0.001)
             opts.set('popsize', 16)
+            opts.set('maxiter', 300)
 
             # opt = {'verb_time': 0, 'popsize': 16, 'tolfun': 1e-5}
             x0 = np.random.rand(self.prob.dim) - 0.5
@@ -70,7 +72,7 @@ class InterpolationSolver(object):
         self.eval_counter += 1
         s = Sample(x, self.prob)
         v = s.evaluate(self.current_task)
-        print('%.6f <--- %s' % (v, x))
+        # print('%.6f <--- %s' % (v, x))
         return v
 
     def num_evals(self):
