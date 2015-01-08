@@ -32,7 +32,7 @@ class GPWalk(SimProblem):
         self.controller.loop_phase_index = 3
         self.controller.callback = self.balance
 
-        self.set_params(np.array([0.14, 0.3, -0.15, -0.1, -0.2]))
+        self.set_params(np.array([0.14, 0.3, -0.15, -0.1, -0.2, 0.0]))
         self.controller.reset()
 
     def balance(self):
@@ -114,10 +114,12 @@ class GPWalk(SimProblem):
     def set_params(self, x):
         self.params = x
         w = (x - (-1.0)) / 2.0  # Change to 0 - 1 Scale
-        lo = np.array([0.0, -1.0, -0.5, -0.5, -0.5])
-        hi = np.array([0.2, 1.0, 0.5, 0.5, 0.5])
+        # lo = np.array([0.0, -1.0, -0.5, -0.5, -0.5, -0.5])
+        # hi = np.array([0.2, 1.0, 0.5, 0.5, 0.5, 0.5])
+        lo = np.array([0.0, -1.0, -1.0, -1.0, -1.0, -1.0])
+        hi = np.array([0.2, 1.0, 1.0, 1.0, 1.0, 1.0])
         params = lo * (1 - w) + hi * w
-        (t0, q1, q2, q3, q4) = params
+        (t0, q1, q2, q3, q4, q5) = params
         # print t0, q1, q2, q3, q4
 
         self.reset()
@@ -132,6 +134,7 @@ class GPWalk(SimProblem):
             if phase_index in set([3, 4, 5]):
                 if phase_index == 4:
                     ph.add_target_offset('r_thigh', q1)  # Swing hip. 1.00
+                    ph.add_target_offset('r_shin', q5)  # Swing hip. 1.00
                     ph.add_target_offset('l_heel', q2)  # Stand ankle. 0.20
                 if phase_index == 5:
                     ph.add_target_offset('r_hip', q3)  # Swing hip. 0.10
@@ -140,6 +143,7 @@ class GPWalk(SimProblem):
             elif phase_index in set([6, 7, 8]):
                 if phase_index == 7:
                     ph.add_target_offset('l_thigh', q1)  # Swing hip. 1.00
+                    ph.add_target_offset('l_shin', q5)  # Swing hip. 1.00
                     ph.add_target_offset('r_heel', q2)  # Stand ankle. 0.20
                 if phase_index == 8:
                     ph.add_target_offset('l_hip', -q3)  # Swing ankle -0.10
