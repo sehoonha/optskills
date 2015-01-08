@@ -122,12 +122,13 @@ class PlotValues(object):
             med = exp_list[(num_trials - 1) / 2]
             x = med.evals
             y = med.values
+            y = list(np.minimum.accumulate(med.values))
             while x[-1] > 5000:
                 x.pop()
                 y.pop()
             print 'x:', x
             print 'y:', y
-            p = plt.plot(x, y, color=colors[index])
+            p = plt.plot(x, y, color=colors[index], linewidth=2)
             pp.append(p[0])
             print('')
             print('Exp name: %s' % name)
@@ -148,24 +149,30 @@ class PlotValues(object):
             print ('90%% percentile iters: %f' % hi)
             plt.errorbar(x[-1], y[-1], fmt='o', yerr=[[mi - lo], [hi - mi]],
                          capsize=20, capthick=2.0, color=colors[index])
-            legends += ['%s {%.6f}' % (name, np.mean(final_values))]
+            # legends += ['%s {%.6f}' % (name, np.mean(final_values))]
+            legends += [name]
 
             # Final, ugly..
             index += 1
 
         # plt.plot(self.evals, self.values)
-        font = {'size': 24}
-        plt.title('Compare %d Trials on %s' % (num_trials, prob_name),
-                  fontdict=font)
-        font = {'size': 20}
+        font = {'size': 28}
+        # plt.title('Compare %d Trials on %s' % (num_trials, prob_name),
+        t = plt.title('Jumping',
+                      fontdict=font)
+        t.set_y(1.02)
+        font = {'size': 28}
         plt.xlabel('The number of sample evaluations', fontdict=font)
-        plt.ylabel('The error of mean segments', fontdict=font)
+        plt.ylabel('The cost of mean segments', fontdict=font)
         # plt.legend(pp, self.data.keys(), numpoints=1, fontsize=20)
-        plt.legend(pp, legends, numpoints=1, fontsize=16)
+        plt.legend(pp, legends, numpoints=1, fontsize=26)
+        plt.tick_params(axis='x', labelsize=22)
+        plt.tick_params(axis='y', labelsize=22)
         plt.axes().set_yscale('log')
         (lo, hi) = plt.axes().get_ylim()
-        plt.axes().set_ylim(lo - 0.05, hi + 0.05)
+        # plt.axes().set_ylim(lo - 0.05, hi + 0.05)
+        plt.axes().set_ylim(lo - 0.05, 10)
         plt.axhline(y=0, color='k')
         # plt.show()
-        plt.savefig('plot_values.png')
+        plt.savefig('plot_values.png', bbox_inches='tight')
         plt.close(fig)
