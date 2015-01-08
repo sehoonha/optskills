@@ -235,11 +235,11 @@ if __name__ == '__main__':
                 evaluate('parameterized', exp_id=exp_id)
         elif cmd == 'parameterized2':
             if len(sys.argv) == 2:
-                evaluate('parameterized|cov_rank_1')
+                evaluate('parameterized_cubic')
             else:
                 exp_id = int(sys.argv[2])
                 print('Experiment Id = %d' % exp_id)
-                evaluate('parameterized|cov_rank_1', exp_id=exp_id)
+                evaluate('parameterized_cubic', exp_id=exp_id)
         elif cmd == 'direct':
             if len(sys.argv) == 2:
                 evaluate('direct')

@@ -39,7 +39,7 @@ def plot_results():
     plt.tick_params(axis='y', labelsize=22)
     plt.legend(['Ours', 'Individual', 'Individual (High-res)'],
                numpoints=1, fontsize=26)
-    plt.savefig('plot_vs_ind.png')
+    plt.savefig('plot_vs_ind.png', bbox_inches='tight')
     plt.close(fig)
     print('Done plotting.')
     exit(0)
