@@ -94,6 +94,14 @@ class Cubic(object):
         p0, p1, p2, p3 = [], [], [], []
         self.fit_error = 0
 
+        if self.is_same_pts(pts):
+            self.p0 = np.array(pts[0])
+            self.p1 = np.array(pts[0])
+            self.p2 = np.array(pts[0])
+            self.p3 = np.array(pts[0])
+            self.fit_error = 0.0
+            return
+
         for i in range(self.dim):
             ydata = [x[i] for x in pts]
             popt, pcov = scipy.optimize.curve_fit(self.fit_func, xdata, ydata)
@@ -107,6 +115,14 @@ class Cubic(object):
                 print('ValueError: pcov = %s' % pcov)
         self.p0, self.p1 = np.array(p0), np.array(p1)
         self.p2, self.p3 = np.array(p2), np.array(p3)
+
+    def is_same_pts(self, pts):
+        for i in range(1, len(pts)):
+            lhs = pts[0]
+            rhs = pts[1]
+            if norm(lhs - rhs) > 1e-10:
+                return False
+        return True
 
     def fit_func(self, x, p0_i, p1_i, p2_i, p3_i):
         t = x

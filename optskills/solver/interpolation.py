@@ -38,8 +38,9 @@ class InterpolationSolver(object):
         values = []
         # for task in self.tasks:
         for task in np.linspace(0.0, 1.0, 51):
-            if not (2.0 / 3.0 <= task and task <= 3.0 / 3.0):
-                continue
+            # if not (2.0 / 3.0 <= task and task <= 3.0 / 3.0):
+            #     continue
+            task = 1.0
             print('')
             print('------- CMA-ES : task = %.6f -------- ' % task)
 

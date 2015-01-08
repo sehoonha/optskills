@@ -9,7 +9,7 @@ import gp_walk_poses
 class GPWalk(SimProblem):
     def __init__(self):
         super(GPWalk, self).__init__('urdf/BioloidGP/BioloidGP.URDF',
-                                     fps=5000.0)
+                                     fps=2000.0)
         self.__init__simulation__()
 
         self.dim = 5
@@ -74,7 +74,9 @@ class GPWalk(SimProblem):
         self.eval_counter += 1
 
         self.reset()
+        print self.skel().q
         self.set_params(sample)
+        self.reset()
         while not self.terminated():
             self.step()
         # print 'result:', self.params, self.collect_result()
@@ -82,19 +84,19 @@ class GPWalk(SimProblem):
 
     def evaluate(self, result, task):
         w = task
-        # Calculate the validity of P (swing foot location)
-        P = result['C']
+        # Calculate the validity of C
+        C = result['C']
         lo = np.array([0.0, 0.16, 0.20])
-        hi = np.array([0.0, 0.16, 0.70])
-        P_hat = lo * (1 - w) + hi * w
-        weight = np.array([1.0, 1.0, 5.0]) * 0.5
-        obj = norm((P - P_hat) * weight) ** 2
+        hi = np.array([0.0, 0.16, 0.40])
+        C_hat = lo * (1 - w) + hi * w
+        weight = np.array([0.1, 0.0, 3.0])
+        obj = norm((C - C_hat) * weight) ** 2
 
         # Time penalty
         t = result['t']
         t_penalty = 0.0
         if result['f']:
-            t_penalty = 0.5 + (0.2 * (5.0 - t)) ** 2
+            t_penalty = 0.5 + (0.1 * (5.0 - t)) ** 2
 
         # Calculate parameter penalty
         params = result['params']
@@ -159,12 +161,13 @@ class GPWalk(SimProblem):
         C = self.skel().C
         if math.fabs(C[0]) > 0.15:
             return True
-        if set(contacted) - set(['l_foot', 'r_foot']):
+        if set(contacted) - set(['l_foot', 'r_foot', 'l_shin',
+                                 'r_shin', 'l_heel', 'r_heel']):
             return True
         return False
 
     def terminated(self):
-        return self.is_fallen() or (self.world.t > 5.0)
+        return self.is_fallen() or (self.world.t > 3.0)
 
     def __str__(self):
         res = self.collect_result()
@@ -189,8 +192,9 @@ class GPWalk(SimProblem):
             #     status += ' %s : %s' % (key, value)
         status += ' value = {'
         tasks = np.linspace(0.0, 1.0, 6)
-        values = [self.evaluate(res, t) for t in tasks]
-        status += ' '.join(['%.4f' % v for v in values])
+        # values = [self.evaluate(res, t) for t in tasks]
+        values = [self.evaluate(res, 0.0)]
+        status += ' '.join(['%.10f' % v for v in values])
         status += '}]'
         return status
 

@@ -41,7 +41,7 @@ class ParameterizedSolver(object):
             next_best_samples = self.solve_step(i, best_samples)
             best_samples = next_best_samples
             [o.notify_step(self, self.model) for o in self.observers]
-            # if np.mean(self.mean_values) < 0.00001:
+            # if np.mean(self.mean_values) < 0.001:
             #     break
             if self.prob.eval_counter > 5000:
                 break
@@ -140,10 +140,20 @@ class ParameterizedSolver(object):
             # Debuging
             j = self.model.debug_last_generate_index
             print("%s (from %d) %s" % (i, j, s))
-            # print('  >> params: %s' % s)
-            # print('  >> result: %s' % s.result)
-            # print('  >> values: %s' % ([s.evaluate(t) for t in self.tasks]))
-            # print('\n\n')
+            print('  >> params: %s' % s)
+            print('  >> result: %s' % s.result)
+            print('  >> values: %s' % ([s.evaluate(t) for t in self.tasks]))
+            s2 = Sample(params, self.prob)
+            s2.simulate()
+            print('  >> params: %s' % s2)
+            print('  >> result: %s' % s2.result)
+            print('  >> values: %s' % ([s2.evaluate(t) for t in self.tasks]))
+            s3 = Sample(params, self.prob)
+            s3.simulate()
+            print('  >> params: %s' % s3)
+            print('  >> result: %s' % s3.result)
+            print('  >> values: %s' % ([s3.evaluate(t) for t in self.tasks]))
+            print('\n\n')
         return samples
 
     def select_samples(self, samples):
@@ -181,9 +191,9 @@ class ParameterizedSolver(object):
                 self.prob.eval_counter = saved
             # ###############
             v = s.evaluate(task)
-            # print 'evaluate::', i, task, pt, v
-            # print('  >> result: %s' % s.result)
-            # print('\n\n')
+            print 'evaluate::', i, task, pt, v
+            print('  >> result: %s' % s.result)
+            print('\n\n')
             mean_samples += [s]
             mean_values += [v]
         return mean_values, mean_samples

@@ -5,7 +5,7 @@ from sim_problem import SPDController, PDController, JTController
 class Phase(object):
     def __init__(self, _skel, _target, _terminate, _vfs=None):
         self.skel = _skel
-        self.target = _target
+        self.target = np.array(_target)
         self.terminate = _terminate
         self.vfs = _vfs if _vfs is not None else []
 
@@ -85,6 +85,10 @@ class PhaseController(object):
                     self.phase_index = self.loop_phase_index
             self.phase_begins = self.world.t
             self.pd.target = self.phase().target
+
+        if self.world.t < 1.0:
+            print self.world.t, self.phase_index, self.skel().C,
+            print self.pd.target
 
         if self.callback is not None:
             self.callback()

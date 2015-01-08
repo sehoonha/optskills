@@ -191,8 +191,8 @@ def merge(output, keywords):
 # PROBLEM_CODE = 'problems.GPBow()'
 # PROBLEM_CODE = 'problems.GPStep()'
 # PROBLEM_CODE = 'problems.GPKick()'
-# PROBLEM_CODE = 'problems.GPWalk()'
-PROBLEM_CODE = 'problems.SimJump()'
+PROBLEM_CODE = 'problems.GPWalk()'
+# PROBLEM_CODE = 'problems.SimJump()'
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
 # seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
 # adjust = "[0.5, 1.0]"

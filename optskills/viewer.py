@@ -35,8 +35,8 @@ class MyWindow(QtGui.QMainWindow):
             # self.prob = problems.SimJump()
             # self.prob = problems.GPBow()
             # self.prob = problems.GPStep()
-            self.prob = problems.GPKick()
-            # self.prob = problems.GPWalk()
+            # self.prob = problems.GPKick()
+            self.prob = problems.GPWalk()
             self.model = model.Model(self.prob.dim, self.tasks, 'linear')
             # params = np.array([0.8647, 0.6611, -0.6017,
             #                    -0.3276, -0.3781, 0.2489])
@@ -53,15 +53,12 @@ class MyWindow(QtGui.QMainWindow):
             #                    0.0, 0.0, 0.0, 0.3, 0.0])
             # params = np.array([0.7727, -0.9123, 0.4292, 1.1197, -0.2495,
             #                    -0.0013, -0.0478, 0.1797, 0.01035, 0.0142125])
-            params = np.array([0.75, -0.9123, 0.4292, 0.9197, -0.2495,  # Kck
-                               -0.0013, -0.0478, 0.1797, 0.01035, 0.0142125])
-            # params = np.array([-1.0, 0.0, 0.0, 0.0, 0.0,  # Walk
-            #                    1.6, 0.7, 0.3, 0.2, -0.3])
+            # params = np.array([0.75, -0.9123, 0.4292, 0.9197, -0.2495,  # Kck
+            #                    -0.0013, -0.0478, 0.1797, 0.01035, 0.0142125])
+            params = np.array([-1.0, 0.0, 0.0, 0.0, 0.0,  # Walk
+                               1.6, 0.7, 0.3, 0.2, -0.3])
             # params = np.array([-1.1595, 0.0236, -0.6677, 0.6955, 0.1316,
             #                    -0.2170, 0.3605, -0.0384, -0.2491, -0.8954])
-            params = np.array([-0.9205721 ,  1.09963322, -0.41908006, -0.10639936, -1.10111983,
-                               0.0, 0.0, 0.0, 0.0, 0.0])
-            params[5:] = np.array([-0.803483, -2.156631, 1.617396, -0.404424, 0.197488]) - params[:5]
 
             self.model.mean.set_params(params)
         else:
@@ -214,9 +211,9 @@ class MyWindow(QtGui.QMainWindow):
 
     def taskSpinEvent(self, value):
         task = self.taskSpin.value()
-        pt = self.model.mean.point(task)
-        print('task: %.4f point: %s' % (task, pt))
-        self.prob.set_params(pt)
+        self.pt = self.model.mean.point(task)
+        print('task: %.4f point: %s' % (task, self.pt))
+        self.prob.set_params(self.pt)
 
     def rangeSliderEvent(self, value):
         i = value
