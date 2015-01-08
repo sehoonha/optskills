@@ -23,6 +23,7 @@ class Phase(object):
         index = self.skel.dof_index(dof)
         self.target[index] += value
 
+
 class PhaseController(object):
     def __init__(self, _world, _spd=False):
         self.world = _world
@@ -86,9 +87,9 @@ class PhaseController(object):
             self.phase_begins = self.world.t
             self.pd.target = self.phase().target
 
-        if self.world.t < 1.0:
-            print self.world.t, self.phase_index, self.skel().C,
-            print self.pd.target
+        # if self.world.t < 1.0:
+        #     print self.world.t, self.phase_index, self.skel().C,
+        #     print self.pd.target
 
         if self.callback is not None:
             self.callback()

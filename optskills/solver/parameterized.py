@@ -140,20 +140,20 @@ class ParameterizedSolver(object):
             # Debuging
             j = self.model.debug_last_generate_index
             print("%s (from %d) %s" % (i, j, s))
-            print('  >> params: %s' % s)
-            print('  >> result: %s' % s.result)
-            print('  >> values: %s' % ([s.evaluate(t) for t in self.tasks]))
-            s2 = Sample(params, self.prob)
-            s2.simulate()
-            print('  >> params: %s' % s2)
-            print('  >> result: %s' % s2.result)
-            print('  >> values: %s' % ([s2.evaluate(t) for t in self.tasks]))
-            s3 = Sample(params, self.prob)
-            s3.simulate()
-            print('  >> params: %s' % s3)
-            print('  >> result: %s' % s3.result)
-            print('  >> values: %s' % ([s3.evaluate(t) for t in self.tasks]))
-            print('\n\n')
+            # print('  >> params: %s' % s)
+            # print('  >> result: %s' % s.result)
+            # print('  >> values: %s' % ([s.evaluate(t) for t in self.tasks]))
+            # s2 = Sample(params, self.prob)
+            # s2.simulate()
+            # print('  >> params: %s' % s2)
+            # print('  >> result: %s' % s2.result)
+            # print('  >> values: %s' % ([s2.evaluate(t) for t in self.tasks]))
+            # s3 = Sample(params, self.prob)
+            # s3.simulate()
+            # print('  >> params: %s' % s3)
+            # print('  >> result: %s' % s3.result)
+            # print('  >> values: %s' % ([s3.evaluate(t) for t in self.tasks]))
+            # print('\n\n')
         return samples
 
     def select_samples(self, samples):
@@ -192,8 +192,8 @@ class ParameterizedSolver(object):
             # ###############
             v = s.evaluate(task)
             print 'evaluate::', i, task, pt, v
-            print('  >> result: %s' % s.result)
-            print('\n\n')
+            # print('  >> result: %s' % s.result)
+            # print('\n\n')
             mean_samples += [s]
             mean_values += [v]
         return mean_values, mean_samples

@@ -12,7 +12,7 @@ class GPWalk(SimProblem):
                                      fps=2000.0)
         self.__init__simulation__()
 
-        self.dim = 5
+        self.dim = 6
         self.eval_counter = 0  # Well, increasing when simulated
         self.params = None
 
@@ -62,7 +62,7 @@ class GPWalk(SimProblem):
         qhat[l2] -= bal * 1.0
         qhat[r2] -= bal * 1.0
 
-        bal2 *= 0.1
+        bal2 *= (0.2)
         qhat[x0] += bal2 * 1.0
         qhat[y0] += bal2 * 1.0
         qhat[x1] += bal2 * 1.0
@@ -74,7 +74,6 @@ class GPWalk(SimProblem):
         self.eval_counter += 1
 
         self.reset()
-        print self.skel().q
         self.set_params(sample)
         self.reset()
         while not self.terminated():
@@ -192,9 +191,9 @@ class GPWalk(SimProblem):
             #     status += ' %s : %s' % (key, value)
         status += ' value = {'
         tasks = np.linspace(0.0, 1.0, 6)
-        # values = [self.evaluate(res, t) for t in tasks]
-        values = [self.evaluate(res, 0.0)]
-        status += ' '.join(['%.10f' % v for v in values])
+        values = [self.evaluate(res, t) for t in tasks]
+        # values = [self.evaluate(res, 0.0)]
+        status += ' '.join(['%.6f' % v for v in values])
         status += '}]'
         return status
 
