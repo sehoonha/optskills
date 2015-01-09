@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.stats.mstats
 import matplotlib.pyplot as plt
 
 
@@ -106,7 +107,8 @@ class PlotValues(object):
         names = self.data.keys()
         print('Problem name = %s' % prob_name)
         print('Solver names = %s' % names)
-        colors = ['r', 'g', 'b', 'k']
+        fp = open('plot_summary.txt', 'w+')
+        colors = ['r', 'b', 'g', 'k']
         plt.ioff()
         fig = plt.figure()
         fig.set_size_inches(18.5, 10.5)
@@ -122,31 +124,48 @@ class PlotValues(object):
             med = exp_list[(num_trials - 1) / 2]
             x = med.evals
             y = med.values
-            y = list(np.minimum.accumulate(med.values))
-            while x[-1] > 5000:
-                x.pop()
-                y.pop()
+            if 'Ours' in name:
+                y = list(np.minimum.accumulate(med.values))
+            # while x[-1] > 5000:
+            #     x.pop()
+            #     y.pop()
+            for i in range(len(x)):
+                if x[i] > 5000:
+                    x[i] = 5000
             print 'x:', x
             print 'y:', y
             p = plt.plot(x, y, color=colors[index], linewidth=2)
             pp.append(p[0])
             print('')
             print('Exp name: %s' % name)
+            fp.write('Exp name: %s\n' % name)
             print('Median index: %d' % ((num_trials - 1) / 2))
             print('exp_list: %s' % exp_list)
+            fp.write('exp_list: %s\n' % exp_list)
 
             final_iters = [e.evals[-1] for e in exp_list]
             final_values = [min(e.values) for e in exp_list]
+            geom_mean = scipy.stats.mstats.gmean(final_values)
             print('average final iters: %.1f' % np.mean(final_iters))
             print('average final values: %.8f' % np.mean(final_values))
+            print('geometric average final values: %.8f' % geom_mean)
+            fp.write('average final iters: %.1f\n' % np.mean(final_iters))
+            fp.write('average final values: %.8f\n' % np.mean(final_values))
+            fp.write('geometric average final values: %.8f\n' % geom_mean)
 
             # Plot errorbar as well
-            lo = np.percentile(final_values, 10)
+            # lo = np.percentile(final_values, 10)
+            # mi = np.median(final_values)
+            # hi = np.percentile(final_values, 90)
+            lo = np.min(final_values)
             mi = np.median(final_values)
-            hi = np.percentile(final_values, 90)
-            print ('10%% percentile iters: %f' % lo)
+            hi = np.max(final_values)
+            print ('min iters: %f' % lo)
             print ('median: %f' % mi)
-            print ('90%% percentile iters: %f' % hi)
+            print ('max iters: %f' % hi)
+            fp.write('min iters: %f\n' % lo)
+            fp.write('median: %f\n' % mi)
+            fp.write('max percentile iters: %f\n' % hi)
             plt.errorbar(x[-1], y[-1], fmt='o', yerr=[[mi - lo], [hi - mi]],
                          capsize=20, capthick=2.0, color=colors[index])
             # legends += ['%s {%.6f}' % (name, np.mean(final_values))]
@@ -158,12 +177,12 @@ class PlotValues(object):
         # plt.plot(self.evals, self.values)
         font = {'size': 28}
         # plt.title('Compare %d Trials on %s' % (num_trials, prob_name),
-        t = plt.title('Jumping',
-                      fontdict=font)
-        t.set_y(1.02)
+        t = plt.title('Kicking',
+                      fontdict={'size': 32})
+        t.set_y(0.92)
         font = {'size': 28}
-        plt.xlabel('The number of sample evaluations', fontdict=font)
-        plt.ylabel('The cost of mean segments', fontdict=font)
+        plt.xlabel('# Samples', fontdict=font)
+        plt.ylabel('Cost', fontdict=font)
         # plt.legend(pp, self.data.keys(), numpoints=1, fontsize=20)
         plt.legend(pp, legends, numpoints=1, fontsize=26)
         plt.tick_params(axis='x', labelsize=22)
@@ -171,7 +190,8 @@ class PlotValues(object):
         plt.axes().set_yscale('log')
         (lo, hi) = plt.axes().get_ylim()
         # plt.axes().set_ylim(lo - 0.05, hi + 0.05)
-        plt.axes().set_ylim(lo - 0.05, 10)
+        # plt.axes().set_ylim(lo - 0.05, 10)
+        plt.axes().set_ylim(0.0005, 10)
         plt.axhline(y=0, color='k')
         # plt.show()
         plt.savefig('plot_values.png', bbox_inches='tight')
