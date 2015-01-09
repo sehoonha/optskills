@@ -80,7 +80,7 @@ class MyWindow(QtGui.QMainWindow):
                 print('params: %s' % mean_params)
                 self.model.mean.set_params(mean_params)
         print('model:\n%s\n' % self.model)
-
+        print('Problem name = %s' % self.prob_name())
         self.initUI()
         self.initActions()
         self.initToolbar()
@@ -188,8 +188,10 @@ class MyWindow(QtGui.QMainWindow):
             else:
                 self.animAction.setChecked(False)
             capture_rate = 20
-            if 'Walk' in repr(self.prob):
-                capture_rate = 50
+            # if 'Walk' in repr(self.prob):
+            #     capture_rate = 50
+            if 'Jump' in repr(self.prob):
+                capture_rate = 10
             doCapture = (v % capture_rate == 1)
         # Do play
         elif self.playAction.isChecked():
@@ -199,7 +201,7 @@ class MyWindow(QtGui.QMainWindow):
                 self.playAction.setChecked(False)
 
         if self.captureAction.isChecked() and doCapture:
-            self.glwidget.capture()
+            self.glwidget.capture(self.prob_name())
 
     def renderTimerEvent(self):
         self.glwidget.updateGL()
@@ -225,9 +227,20 @@ class MyWindow(QtGui.QMainWindow):
     def screenshotEvent(self):
         self.glwidget.capture()
 
+    def prob_name(self):
+        ret = repr(self.prob)
+        ret = ret.replace('problems.', '')
+        ret = ret.replace('()', '')
+        task = self.taskSpin.value() if hasattr(self, 'taskSpin') else 0
+        ret += '%.1f' % task
+        return ret
+
     def movieEvent(self):
-        os.system('avconv -r 100 -i ./captures/frame.%04d.png output.mp4')
-        os.system('rm ./captures/frame.*.png')
+        name = self.prob_name()
+        cmd = 'avconv -r 100 -i ./captures/%s.%%04d.png %s.mp4' % (name, name)
+        print('cmd = %s' % cmd)
+        os.system(cmd)
+        # os.system('rm ./captures/*.png')
 
     def resetEvent(self):
         # self.prob.set_random_params()

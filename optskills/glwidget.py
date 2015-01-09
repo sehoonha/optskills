@@ -118,9 +118,9 @@ class GLWidget(QGLWidget):
         self.lastPos = event.pos()
         self.updateGL()
 
-    def capture(self):
+    def capture(self, name='frame'):
         img = self.grabFrameBuffer()
-        filename = 'captures/frame.%04d.png' % self.captureIndex
+        filename = 'captures/%s.%04d.png' % (name, self.captureIndex)
         img.save(filename)
         print 'Capture to ', filename
         self.captureIndex += 1
