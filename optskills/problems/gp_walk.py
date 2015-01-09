@@ -106,7 +106,7 @@ class GPWalk(SimProblem):
                 penalty += max(0.0, v - 1.0) ** 2
                 penalty += min(0.0, v - (-1.0)) ** 2
 
-        return obj + t_penalty + penalty
+        return 10.0 * (obj + t_penalty + penalty)
 
     def set_random_params(self):
         pass
@@ -116,8 +116,8 @@ class GPWalk(SimProblem):
         w = (x - (-1.0)) / 2.0  # Change to 0 - 1 Scale
         # lo = np.array([0.0, -1.0, -0.5, -0.5, -0.5, -0.5])
         # hi = np.array([0.2, 1.0, 0.5, 0.5, 0.5, 0.5])
-        lo = np.array([0.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0])
-        hi = np.array([0.2, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+        lo = np.array([0.0, -1.57, -1.57, -1.57, -1.57, -1.57, -1.57])
+        hi = np.array([0.2, 1.57, 1.57, 1.57, 1.57, 1.57, 1.57])
         params = lo * (1 - w) + hi * w
         (t0, q1, q2, q3, q4, q5, q6) = params
         # print t0, q1, q2, q3, q4
