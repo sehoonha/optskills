@@ -126,6 +126,16 @@ class PlotValues(object):
             y = med.values
             if 'Ours' in name:
                 y = list(np.minimum.accumulate(med.values))
+
+            y_average = np.zeros(501)
+            x2 = np.linspace(0, 5001.0, 501)
+            for exp in exp_list:
+                x = exp.evals
+                y = exp.values
+                y2 = np.array([np.interp(t, x, y) for t in x2])
+                y_average += y2 / 11.0
+            (x, y) = (x2, y_average)
+
             # while x[-1] > 5000:
             #     x.pop()
             #     y.pop()
@@ -177,7 +187,7 @@ class PlotValues(object):
         # plt.plot(self.evals, self.values)
         font = {'size': 28}
         # plt.title('Compare %d Trials on %s' % (num_trials, prob_name),
-        t = plt.title('Kicking',
+        t = plt.title('Walking',
                       fontdict={'size': 32})
         t.set_y(0.92)
         font = {'size': 28}
@@ -191,7 +201,8 @@ class PlotValues(object):
         (lo, hi) = plt.axes().get_ylim()
         # plt.axes().set_ylim(lo - 0.05, hi + 0.05)
         # plt.axes().set_ylim(lo - 0.05, 10)
-        plt.axes().set_ylim(0.0005, 10)
+        # plt.axes().set_ylim(0.0005, 10)
+        plt.axes().set_ylim(0.01, 10)
         plt.axhline(y=0, color='k')
         # plt.show()
         plt.savefig('plot_values.png', bbox_inches='tight')
