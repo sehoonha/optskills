@@ -234,6 +234,8 @@ if __name__ == '__main__':
             else:
                 exp_id = int(sys.argv[2])
                 print('Experiment Id = %d' % exp_id)
+                print('Halt!!! kk...')
+                exit(0)
                 evaluate('parameterized', exp_id=exp_id)
         elif cmd == 'parameterized2':
             if len(sys.argv) == 2:

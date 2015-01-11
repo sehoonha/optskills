@@ -13,8 +13,10 @@ class Linear(object):
         if pts is not None:
             self.fit(pts)
         else:
-            self.a = np.random.rand(dim) - 0.5
-            self.b = np.random.rand(dim) - 0.5
+            # self.a = np.random.rand(dim) - 0.5
+            # self.b = np.random.rand(dim) - 0.5
+            self.a = np.zeros(dim)
+            self.b = np.zeros(dim)
 
     def set_params(self, params):
         assert(len(params) == self.paramdim)
