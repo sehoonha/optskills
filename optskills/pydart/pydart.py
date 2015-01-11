@@ -349,6 +349,9 @@ class Skeleton(object):
     def render(self):
         papi.renderSkeleton(self.world.id, self.id)
 
+    def render_with_color(self, r, g, b, a=1.0):
+        papi.renderSkeletonWithColor(self.world.id, self.id, r, g, b, a)
+
     def __repr__(self):
         return '<Skel.%d.%s>' % (self.id, os.path.basename(self.filename))
 

@@ -26,7 +26,8 @@ class GLWidget(QGLWidget):
 
     def paintGL(self):
         glEnable(GL_DEPTH_TEST)
-        glClearColor(0.95, 0.95, 0.95, 0.0)
+        # glClearColor(0.95, 0.95, 0.95, 0.0)
+        glClearColor(0.90, 0.90, 0.90, 0.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         glLoadIdentity()
@@ -35,7 +36,7 @@ class GLWidget(QGLWidget):
         glMultMatrixf(self.tb.matrix)
 
         glPushMatrix()
-        gltools.render_axis(10)
+        # gltools.render_axis(10)
         # Draw chess board
         gltools.glMove([0.0, -0.01, 0.0])
         gltools.render_chessboard(10, 20.0)
@@ -48,6 +49,14 @@ class GLWidget(QGLWidget):
                 continue
             # Draw skeleton
             gltools.glMove([0, 0, 0])
+            glPushMatrix()
+            M_s = [1.0, 0.0, 0.0, 0.0,
+                   1.0, 0.0, -1.0, 0.0,
+                   0.0, 0.0, 1.0, 0.0,
+                   0.0, -0.001, 0.0, 1.0]
+            glMultMatrixf(M_s)
+            # skel.render_with_color(0.0, 0.0, 0.0)
+            glPopMatrix()
             skel.render()
         # self.prob.render()
         glPopMatrix()

@@ -28,15 +28,16 @@ def render_chessboard(n, sz):
     glDisable(GL_LIGHTING)
     cnt = 0
     step = sz / float(n)
+    glColor(0.86, 0.86, 0.76)
     for x in np.linspace(-0.5 * sz, 0.5 * sz, n, endpoint = False):
         for z in np.linspace(-0.5 * sz, 0.5 * sz, n, endpoint = False):
             x2 = x + step
             z2 = z + step
-            if cnt % 2 == 0:
-                glColor(0.2, 0.2, 0.2)
-            else:
-                glColor(0.8, 0.8, 0.8)
-                
+            # if cnt % 2 == 0:
+            #     glColor(0.2, 0.2, 0.2)
+            # else:
+            #     glColor(0.8, 0.8, 0.8)
+
             glBegin(GL_POLYGON)
             glVertex([x, 0, z])
             glVertex([x, 0, z2])
@@ -47,7 +48,7 @@ def render_chessboard(n, sz):
         cnt += 1
 
     glEnable(GL_LIGHTING)
-    
+
 
 def render_arrow(p, q):
     glDisable(GL_LIGHTING)
@@ -62,6 +63,3 @@ def render_arrow(p, q):
     glPopMatrix()
     glLineWidth(1)
     glEnable(GL_LIGHTING)
-
-    
-    

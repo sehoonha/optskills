@@ -118,6 +118,10 @@ def renderSkeleton(*args):
   return _pydart_api.renderSkeleton(*args)
 renderSkeleton = _pydart_api.renderSkeleton
 
+def renderSkeletonWithColor(*args):
+  return _pydart_api.renderSkeletonWithColor(*args)
+renderSkeletonWithColor = _pydart_api.renderSkeletonWithColor
+
 def getWorldTime(*args):
   return _pydart_api.getWorldTime(*args)
 getWorldTime = _pydart_api.getWorldTime
