@@ -9,6 +9,7 @@ class DirectSolver(object):
         self.name = 'CMA-ES'
         self.prob = _prob
         self.n = _ntasks
+        self.mean_type = _mean_type
         self.tasks = np.linspace(0.0, 1.0, self.n)
         self.model = model.Model(self.prob.dim, self.tasks, _mean_type)
         self.iter_counter = 0
@@ -72,11 +73,14 @@ class DirectSolver(object):
     def evaluate(self, _x):
         self.eval_counter += 1
         # Scale up the second part, to cover all the possible range
-        x = np.zeros(self.prob.dim * 2)
-        for i in range(self.prob.dim):
-            x[i] = _x[i]
-        for i in range(self.prob.dim, 2 * self.prob.dim):
-            x[i] = _x[i] - _x[i - self.prob.dim]
+        if self.mean_type == 'linear':
+            x = np.zeros(self.prob.dim * 2)
+            for i in range(self.prob.dim):
+                x[i] = _x[i]
+            for i in range(self.prob.dim, 2 * self.prob.dim):
+                x[i] = _x[i] - _x[i - self.prob.dim]
+        else:
+            x = np.array(_x)
         self.mean().set_params(x)
         sample_values = []
         for task in self.tasks:
