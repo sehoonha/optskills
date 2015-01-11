@@ -55,7 +55,7 @@ class GLWidget(QGLWidget):
                    0.0, 0.0, 1.0, 0.0,
                    0.0, -0.001, 0.0, 1.0]
             glMultMatrixf(M_s)
-            # skel.render_with_color(0.0, 0.0, 0.0)
+            skel.render_with_color(0.0, 0.0, 0.0)
             glPopMatrix()
             skel.render()
         # self.prob.render()
