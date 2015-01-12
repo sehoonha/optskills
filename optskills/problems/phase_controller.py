@@ -12,8 +12,18 @@ class Phase(object):
     def is_terminate(self, world, phase_begins):
         if isinstance(self.terminate, float):
             return (world.t - phase_begins >= self.terminate)
+        elif self.terminate == 'no_contact':
+            return self.has_no_contact()
+        elif self.terminate == 'has_contact':
+            return self.has_contact()
         else:
             return self.terminate(world)
+
+    def has_no_contact(self):
+        return len(self.skel.contacted_body_names()) == 0
+
+    def has_contact(self):
+        return len(self.skel.contacted_body_names()) > 0
 
     def set_target(self, dof, value):
         index = self.skel.dof_index(dof)
@@ -22,6 +32,9 @@ class Phase(object):
     def add_target_offset(self, dof, value):
         index = self.skel.dof_index(dof)
         self.target[index] += value
+
+    def add_virtual_force(self, b, f):
+        self.vfs += [(b, f)]
 
 
 class PhaseController(object):

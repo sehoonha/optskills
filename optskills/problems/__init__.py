@@ -7,3 +7,4 @@ from gp_bow import GPBow
 from gp_step import GPStep
 from gp_walk import GPWalk
 from gp_kick import GPKick
+from gp_jump import GPJump

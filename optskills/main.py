@@ -244,6 +244,8 @@ if __name__ == '__main__':
             else:
                 exp_id = int(sys.argv[2])
                 print('Experiment Id = %d' % exp_id)
+                print('Halt!!! kk...')
+                exit(0)
                 evaluate('parameterized|draw_uniform', exp_id=exp_id)
         elif cmd == 'direct':
             if len(sys.argv) == 2:
