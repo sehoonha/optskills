@@ -57,6 +57,22 @@ class GPJump(SimProblem):
         return self.collect_result()
 
     def evaluate(self, result, task):
+        w = task
+        # Calculate the validity of C
+        C = np.array(result['C'])
+        C[1] = result['maxCy']
+
+        lo = np.array([0.0, 0.22, 0.00])
+        hi = np.array([0.0, 0.27, 0.00])
+        C_hat = lo * (1 - w) + hi * w
+        weight = np.array([0.1, 2.0, 0.0])
+        obj = norm((C - C_hat) * weight) ** 2
+
+        b_penalty = 0.0
+        if result['fallen']:
+            t = result['t']
+            b_penalty += 0.5 * (2.0 - t)
+
         # Calculate parameter penalty
         params = result['params']
         penalty = 0.0
@@ -66,7 +82,7 @@ class GPJump(SimProblem):
                 penalty += max(0.0, v - 1.0) ** 2
                 penalty += min(0.0, v - (-1.0)) ** 2
 
-        return penalty
+        return obj + b_penalty + penalty
         # return b_penalty
 
     def set_random_params(self):
@@ -75,45 +91,48 @@ class GPJump(SimProblem):
     def set_params(self, x):
         self.params = x
         w = (x - (-1.0)) / 2.0  # Change to 0 - 1 Scale
-        # lo = np.array([-0.2, -1.57, -1.57, 0.0, -1.57])
-        lo = np.array([0.0, -1.57, -1.57, 0.0, -1.57, 0.0])
-        # hi = np.array([0.2, 0.0, 0.0, 1.57, 0.0])
-        hi = np.array([0.5, 0.0, 0.0, 1.57, 0.0, 1.0])
+        lo = np.array([-1.0, -1.5, -1.0, -1.0, -200, -100])
+        hi = np.array([1.0, 0.5, 1.0, 1.0, 0, 50])
         params = lo * (1 - w) + hi * w
-        (q0, q1, q2, q3, q4, q5) = params
-        # print 'q:', q0, q1, q2, q3, q4
-        # (q0, q1, q2, q3, q4) = (0.16, -0.8, -1.0, 0.5, -0.5)
+        (q0, q1, q2, q3, f0, f1) = params
+        # print 'q:', q0, q1, q2, q3, f0, f1
+        # (q0, q1, q2, q3, f0, f1) = (0.65, -1.3, 0.6, 0.2, -150, -55)
+        # print 'q:', q0, q1, q2, q3, f0, f1
         # (q0, q1, q2, q3, q4) = (0.16, -0.8, -1.0, 0.60, -0.5)
 
         self.reset()
         self.controller.clear_phases()
         # The first phase - balance
-        phase = self.controller.add_phase_from_now(1.0)
-        phase.set_target('l_thigh', 0.65)
-        phase.set_target('r_thigh', 0.65)
-        phase.set_target('l_shin', -1.3)
-        phase.set_target('r_shin', -1.3)
-        phase.set_target('l_heel', 0.6)
-        phase.set_target('r_heel', 0.6)
-        phase.set_target('l_shoulder', -0.7)
-        phase.set_target('r_shoulder', -0.7)
+        phase = self.controller.add_phase_from_now(0.75)
+        phase.set_target('l_thigh', q0)  # 0.65
+        phase.set_target('r_thigh', q0)  # 0.65
+        phase.set_target('l_shin', q1)  # -1.3
+        phase.set_target('r_shin', q1)  # -1.3
+        phase.set_target('l_heel', q2)  # 0.6
+        phase.set_target('r_heel', q2)  # 0.6
+        phase.set_target('l_shoulder', -0.7)  # -0.7
+        phase.set_target('r_shoulder', -0.7)  # -0.7
 
         # The second phase - swing back
         phase = self.controller.add_phase_from_now('no_contact')
-        phase.add_virtual_force(['l_foot', 'r_foot'], np.array([0, -150, -55]))
+        phase.add_virtual_force(['l_foot', 'r_foot'],
+                                np.array([0, f0, f1]))   # 0, -150, -55
 
         # The third phase - swing forward
-        phase = self.controller.add_phase_from_now(1.0)
-        phase.set_target('l_shoulder', 0.3)
-        phase.set_target('r_shoulder', 0.3)
-        phase.set_target('l_thigh', 0.2)
-        phase.set_target('r_thigh', 0.2)
+        phase = self.controller.add_phase_from_now(0.8)
+        phase.set_target('l_shoulder', 0.3)  # 0.3
+        phase.set_target('r_shoulder', 0.3)  # 0.3
+        phase.set_target('l_thigh', q3)  # 0.2
+        phase.set_target('r_thigh', q3)  # 0.2
         # print('num phases: %d' % len(self.controller.phases))
 
     def collect_result(self):
         res = {}
         res['params'] = None if self.params is None else np.array(self.params)
+        res['C'] = np.array(self.skel().C)
         res['maxCy'] = max([C[1] for C in self.com_trajectory])
+        res['t'] = self.world.t
+        res['fallen'] = self.fallen
         # print 'result: ', res
         return res
 
@@ -121,6 +140,11 @@ class GPJump(SimProblem):
         self.fallen = False
 
     def terminated(self):
+        C = self.skel().C
+        if C[1] < 0.12 or math.fabs(C[0]) > 0.06:  # May check |Cx| > 0.04
+            self.fallen = True
+            return True
+
         return (self.world.t > 1.5)
 
     def __str__(self):
