@@ -134,7 +134,9 @@ class PlotValues(object):
             fp.write('=' * 80 + '\n')
             # exp_list.sort(key=lambda exp: exp.num_evals())
             exp_list.sort(key=lambda exp: exp.best_value())
-            # exp_list = exp_list[1:-1]
+            print('the initial exp_list: %s' % exp_list)
+            fp.write('the initial exp_list: %s\n' % exp_list)
+            exp_list = exp_list[1:-1]
             num_trials = len(exp_list)
             med = exp_list[(num_trials - 1) / 2]
             x = med.evals

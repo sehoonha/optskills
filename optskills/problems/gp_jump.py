@@ -8,7 +8,7 @@ import math
 class GPJump(SimProblem):
     def __init__(self):
         super(GPJump, self).__init__('urdf/BioloidGP/BioloidGP.URDF',
-                                     fps=2000.0)
+                                     fps=1000.0)
         self.__init__simulation__()
 
         self.dim = 6
@@ -65,11 +65,11 @@ class GPJump(SimProblem):
         lo = np.array([0.0, 0.22, 0.00])
         hi = np.array([0.0, 0.27, 0.00])
         C_hat = lo * (1 - w) + hi * w
-        weight = np.array([0.1, 15.0, 0.0])
+        weight = np.array([0.1, 10.0, 0.0])
         obj = norm((C - C_hat) * weight) ** 2
 
         if result['maxCy'] < 0.2:
-            obj += 100 * (0.2 - result['maxCy'])
+            obj += 10.0 * (0.2 - result['maxCy'])
 
         b_penalty = 0.0
         if result['fallen']:
@@ -94,19 +94,20 @@ class GPJump(SimProblem):
     def set_params(self, x):
         self.params = x
         w = (x - (-1.0)) / 2.0  # Change to 0 - 1 Scale
-        lo = np.array([-1.0, -1.5, -1.0, -1.0, -200, -100])
-        hi = np.array([1.0, 0.5, 1.0, 1.0, 0, 50])
+        lo = np.array([-0.5, -1.5, -0.5, -1.0, -200, -100])
+        hi = np.array([1.0, 0.0, 1.0, 1.0, 0, 0])
         params = lo * (1 - w) + hi * w
         (q0, q1, q2, q3, f0, f1) = params
         # print 'q:', q0, q1, q2, q3, f0, f1
-        # (q0, q1, q2, q3, f0, f1) = (0.65, -1.3, 0.6, 0.2, -150, -55)
+        # (q0, q1, q2, q3, f0, f1) = (0.65, -1.3, 0.55, 0.2, -150, -70)
+        # (q0, q1, q2, q3, f0, f1) = (0.65, -1.3, 0.55, 0.2, -100, -40)
         # print 'q:', q0, q1, q2, q3, f0, f1
         # (q0, q1, q2, q3, q4) = (0.16, -0.8, -1.0, 0.60, -0.5)
 
         self.reset()
         self.controller.clear_phases()
         # The first phase - balance
-        phase = self.controller.add_phase_from_now(0.5)
+        phase = self.controller.add_phase_from_now(0.7)
         phase.set_target('l_thigh', q0)  # 0.65
         phase.set_target('r_thigh', q0)  # 0.65
         phase.set_target('l_shin', q1)  # -1.3
@@ -153,7 +154,7 @@ class GPJump(SimProblem):
             self.fallen = True
             return True
 
-        return (self.world.t > 1.5)
+        return (self.world.t > 1.7)
 
     def __str__(self):
         res = self.collect_result()

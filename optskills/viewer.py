@@ -260,7 +260,7 @@ class MyWindow(QtGui.QMainWindow):
                                              trans=[-0.32000000000000084,
                                                     -0.11000000000000004,
                                                     -0.710000000000003])
-            else:
+            elif 'Kick' in self.prob_name():
                 self.glwidget.tb = Trackball(phi=-25.5, theta=6.86, zoom=1,
                                              rot=[-0.11399118462862251,
                                                   -0.6947769785517393,
@@ -269,6 +269,15 @@ class MyWindow(QtGui.QMainWindow):
                                              trans=[-0.32000000000000084,
                                                     -0.11000000000000004,
                                                     -0.910000000000003])
+            else:
+                self.glwidget.tb = Trackball(phi=-25.5, theta=6.86, zoom=1,
+                                             rot=[-0.11399118462862251,
+                                                  -0.6947769785517393,
+                                                  -0.1156975272831452,
+                                                  0.7006461603991319],
+                                             trans=[-0.32000000000000084,
+                                                    -0.11000000000000004,
+                                                    -0.710000000000003])
         else:
             self.glwidget.tb = Trackball(phi=2.266, theta=-15.478, zoom=1,
                                          rot=[-0.09399048175876601,
