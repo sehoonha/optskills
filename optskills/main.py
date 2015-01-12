@@ -235,35 +235,26 @@ if __name__ == '__main__':
             else:
                 exp_id = int(sys.argv[2])
                 print('Experiment Id = %d' % exp_id)
-                print('Halt!!! kk...')
-                exit(0)
                 evaluate('parameterized', exp_id=exp_id)
         elif cmd == 'parameterized2':
             if len(sys.argv) == 2:
-                # evaluate('parameterized_cubic')
-                evaluate('parameterized|draw_uniform')
+                evaluate('parameterized_cubic')
             else:
                 exp_id = int(sys.argv[2])
                 print('Experiment Id = %d' % exp_id)
-                print('Halt!!! kk...')
-                exit(0)
-                evaluate('parameterized|draw_uniform', exp_id=exp_id)
+                evaluate('parameterized_cubic', exp_id=exp_id)
         elif cmd == 'direct':
             if len(sys.argv) == 2:
                 evaluate('direct')
             else:
                 exp_id = int(sys.argv[2])
                 print('Experiment Id = %d' % exp_id)
-                print('Halt!!! kk...')
-                exit(0)
                 evaluate('direct', exp_id=exp_id)
         elif cmd == 'direct2':
             if len(sys.argv) == 2:
                 evaluate('direct_cubic')
             else:
                 exp_id = int(sys.argv[2])
-                print('Halt!!! kk...')
-                exit(0)
                 print('Experiment Id = %d' % exp_id)
                 evaluate('direct_cubic', exp_id=exp_id)
         elif cmd == 'interpolation':
