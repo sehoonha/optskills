@@ -65,8 +65,11 @@ class GPJump(SimProblem):
         lo = np.array([0.0, 0.22, 0.00])
         hi = np.array([0.0, 0.27, 0.00])
         C_hat = lo * (1 - w) + hi * w
-        weight = np.array([0.1, 2.0, 0.0])
+        weight = np.array([0.1, 15.0, 0.0])
         obj = norm((C - C_hat) * weight) ** 2
+
+        if result['maxCy'] < 0.2:
+            obj += 100 * (0.2 - result['maxCy'])
 
         b_penalty = 0.0
         if result['fallen']:
@@ -103,7 +106,7 @@ class GPJump(SimProblem):
         self.reset()
         self.controller.clear_phases()
         # The first phase - balance
-        phase = self.controller.add_phase_from_now(0.75)
+        phase = self.controller.add_phase_from_now(0.5)
         phase.set_target('l_thigh', q0)  # 0.65
         phase.set_target('r_thigh', q0)  # 0.65
         phase.set_target('l_shin', q1)  # -1.3
@@ -130,6 +133,8 @@ class GPJump(SimProblem):
         res = {}
         res['params'] = None if self.params is None else np.array(self.params)
         res['C'] = np.array(self.skel().C)
+        # T = self.skel().COP
+        # res['T'] = np.array(T) if T is not None else np.zeros(3)
         res['maxCy'] = max([C[1] for C in self.com_trajectory])
         res['t'] = self.world.t
         res['fallen'] = self.fallen
@@ -141,7 +146,10 @@ class GPJump(SimProblem):
 
     def terminated(self):
         C = self.skel().C
-        if C[1] < 0.12 or math.fabs(C[0]) > 0.06:  # May check |Cx| > 0.04
+        Hy = self.skel().body('torso').C[1]
+
+        if C[1] < 0.12 or math.fabs(C[0]) > 0.06 or \
+           Hy < C[1]:  # May check |Cx| > 0.04
             self.fallen = True
             return True
 

@@ -161,7 +161,7 @@ def plot(filename):
     print('plot [%s]' % filename)
     obs_plot_values = observer.PlotValues()
     obs_plot_values.load(filename)
-    obs_plot_values.plot(PROBLEM_CODE)
+    obs_plot_values.plot(PROBLEM_CODE, filename)
 
 
 def copy_and_replot(expname):
@@ -193,7 +193,8 @@ def merge(output, keywords):
 # PROBLEM_CODE = 'problems.GPBow()'
 # PROBLEM_CODE = 'problems.GPStep()'
 # PROBLEM_CODE = 'problems.GPKick()'
-PROBLEM_CODE = 'problems.GPWalk()'
+# PROBLEM_CODE = 'problems.GPWalk()'
+PROBLEM_CODE = 'problems.GPJump()'
 # PROBLEM_CODE = 'problems.SimJump()'
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
 # seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
@@ -253,12 +254,16 @@ if __name__ == '__main__':
             else:
                 exp_id = int(sys.argv[2])
                 print('Experiment Id = %d' % exp_id)
+                print('Halt!!! kk...')
+                exit(0)
                 evaluate('direct', exp_id=exp_id)
         elif cmd == 'direct2':
             if len(sys.argv) == 2:
                 evaluate('direct_cubic')
             else:
                 exp_id = int(sys.argv[2])
+                print('Halt!!! kk...')
+                exit(0)
                 print('Experiment Id = %d' % exp_id)
                 evaluate('direct_cubic', exp_id=exp_id)
         elif cmd == 'interpolation':

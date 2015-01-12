@@ -101,13 +101,13 @@ class PlotValues(object):
                     fout.write('Solved\n')
                     fout.flush()
 
-    def plot(self, prob_name=''):
+    def plot(self, prob_name='', outputfile=''):
         print('\n' * 3)
         print('plot the experiment values')
         names = self.data.keys()
         print('Problem name = %s' % prob_name)
         print('Solver names = %s' % names)
-        fp = open('plot_summary.txt', 'w+')
+        fp = open('%s_summary.txt' % outputfile, 'w+')
         colors = ['r', 'b', 'g', 'k']
         plt.ioff()
         fig = plt.figure()
@@ -116,10 +116,25 @@ class PlotValues(object):
         index = 0
         pp = []
         legends = []
-        for name, exp_list in self.data.iteritems():
+        names = self.data.keys()
+        names.sort()
+        names.reverse()
+        # for i in range(len(names) - 1):
+        #     lhs = names[i]
+        #     rhs = names[i + 1]
+        #     if 'cubic' in lhs and 'linear' in rhs:
+        #         names[i] = rhs
+        #         names[i + 1] = lhs
+        print names
+
+        # for name, exp_list in self.data.iteritems():
+        for name in names:
+            exp_list = self.data[name]
             print('=' * 80)
+            fp.write('=' * 80 + '\n')
             # exp_list.sort(key=lambda exp: exp.num_evals())
             exp_list.sort(key=lambda exp: exp.best_value())
+            # exp_list = exp_list[1:-1]
             num_trials = len(exp_list)
             med = exp_list[(num_trials - 1) / 2]
             x = med.evals
@@ -144,7 +159,9 @@ class PlotValues(object):
                     x[i] = 5000
             print 'x:', x
             print 'y:', y
-            p = plt.plot(x, y, color=colors[index], linewidth=2)
+            color = 'r' if 'cubic' in name else 'b'
+            ls = '--' if 'CMA' in name else '-'
+            p = plt.plot(x, y, ls=ls, color=color, linewidth=2)
             pp.append(p[0])
             print('')
             print('Exp name: %s' % name)
@@ -176,8 +193,8 @@ class PlotValues(object):
             fp.write('min iters: %f\n' % lo)
             fp.write('median: %f\n' % mi)
             fp.write('max percentile iters: %f\n' % hi)
-            plt.errorbar(x[-1], y[-1], fmt='o', yerr=[[mi - lo], [hi - mi]],
-                         capsize=20, capthick=2.0, color=colors[index])
+            # plt.errorbar(x[-1], y[-1], fmt='o', yerr=[[mi - lo], [hi - mi]],
+            #              capsize=20, capthick=2.0, color=colors[index])
             # legends += ['%s {%.6f}' % (name, np.mean(final_values))]
             legends += [name]
 
@@ -194,7 +211,10 @@ class PlotValues(object):
         plt.xlabel('# Samples', fontdict=font)
         plt.ylabel('Cost', fontdict=font)
         # plt.legend(pp, self.data.keys(), numpoints=1, fontsize=20)
-        plt.legend(pp, legends, numpoints=1, fontsize=26)
+        # plt.legend(pp, legends, numpoints=1, fontsize=26,
+        plt.legend(pp, legends, fontsize=26,
+                   # bbox_to_anchor=(0.15, 0.15))
+                   loc='lower left')
         plt.tick_params(axis='x', labelsize=22)
         plt.tick_params(axis='y', labelsize=22)
         plt.axes().set_yscale('log')
@@ -202,8 +222,8 @@ class PlotValues(object):
         # plt.axes().set_ylim(lo - 0.05, hi + 0.05)
         # plt.axes().set_ylim(lo - 0.05, 10)
         # plt.axes().set_ylim(0.0005, 10)
-        plt.axes().set_ylim(0.01, 10)
+        plt.axes().set_ylim(0.0005, 10)
         plt.axhline(y=0, color='k')
         # plt.show()
-        plt.savefig('plot_values.png', bbox_inches='tight')
+        plt.savefig('%s.png' % outputfile, bbox_inches='tight')
         plt.close(fig)

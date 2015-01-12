@@ -40,9 +40,14 @@ class Model(object):
 
     def generate_params(self, alg=''):
         if 'draw_uniform' in alg:
+            # print('draw_uniform')
             prob = np.array([float(1.0 / self.n)] * self.n)
-        else:
+        elif 'draw_scaled' in alg:
+            # print('draw_scaled')
             prob = np.array(self.volumns) / sum(self.volumns)
+        else:
+            # print('draw_uniform')
+            prob = np.array([float(1.0 / self.n)] * self.n)
 
         # print 'probs:', prob
         # i = picked covariance matrix
