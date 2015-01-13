@@ -8,7 +8,7 @@ import copy
 
 class ParameterizedSolver(object):
     def __init__(self, _prob, _ntasks, _mean_type, _alg=''):
-        self.name = 'Ours(%s)' % _alg
+        self.name = 'Ours(%s)' % _mean_type
         self.alg = _alg
         self.prob = _prob
         self.n = _ntasks

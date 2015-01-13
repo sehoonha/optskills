@@ -136,7 +136,7 @@ class PlotValues(object):
             exp_list.sort(key=lambda exp: exp.best_value())
             print('the initial exp_list: %s' % exp_list)
             fp.write('the initial exp_list: %s\n' % exp_list)
-            # exp_list = exp_list[1:-1]
+            exp_list = exp_list[1:-1]  # Remove outlier exp
             num_trials = len(exp_list)
             med = exp_list[(num_trials - 1) / 2]
             x = med.evals
@@ -144,10 +144,11 @@ class PlotValues(object):
             if 'Ours' in name:
                 y = list(np.minimum.accumulate(med.values))
 
-            y_average = np.zeros(501)
-            x2 = np.linspace(0, 10001.0, 501)
+            num = 501 if "Ours" in name else 1201
+            y_average = np.zeros(num)
+            x2 = np.linspace(0, 12000.0, num)
             if "Our" in name:
-                x2 = np.linspace(0, 5000.0, 501)
+                x2 = np.linspace(0, 5000.0, num)
 
             for exp in exp_list:
                 x = exp.evals
@@ -209,7 +210,7 @@ class PlotValues(object):
         # plt.plot(self.evals, self.values)
         font = {'size': 28}
         # plt.title('Compare %d Trials on %s' % (num_trials, prob_name),
-        t = plt.title('Walking',
+        t = plt.title('Jumping',
                       fontdict={'size': 32})
         t.set_y(0.92)
         font = {'size': 28}
@@ -227,7 +228,7 @@ class PlotValues(object):
         # plt.axes().set_ylim(lo - 0.05, hi + 0.05)
         # plt.axes().set_ylim(lo - 0.05, 10)
         # plt.axes().set_ylim(0.0005, 10)
-        plt.axes().set_ylim(0.0005, 10)
+        plt.axes().set_ylim(0.0001, 10)
         plt.axhline(y=0, color='k')
         # plt.show()
         plt.savefig('%s.png' % outputfile, bbox_inches='tight')

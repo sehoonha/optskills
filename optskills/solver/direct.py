@@ -6,7 +6,7 @@ from sample import Sample
 
 class DirectSolver(object):
     def __init__(self, _prob, _ntasks, _mean_type):
-        self.name = 'CMA-ES'
+        self.name = 'CMA-ES(%s)' % _mean_type
         self.prob = _prob
         self.n = _ntasks
         self.mean_type = _mean_type
