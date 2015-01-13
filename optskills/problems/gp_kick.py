@@ -111,12 +111,31 @@ class GPKick(SimProblem):
         phase.set_target('l_heel', -0.5 * q2)  # 0.5
 
         # The third phase - swing forward
-        phase = self.controller.add_phase_from_prev(0.3)
+        phase = self.controller.add_phase_from_prev(1.3)
         phase.set_target('l_thigh', q3)  # 0.55 ~ 1.0
         phase.set_target('l_shin', q4)  # -0.5
         phase.set_target('l_heel', q5)  # 0.3
         phase.set_target('r_heel', -0.06)  # -0.06 (-0.04?)
         # print('num phases: %d' % len(self.controller.phases))
+
+        # # For the final production
+        # phase = self.controller.add_phase_from_prev(0.3)
+        # phase.set_target('l_thigh', 0.1)
+        # phase.set_target('l_shin', -0.5)
+        # phase.set_target('l_heel', 0.3)
+
+        # phase = self.controller.add_phase_from_prev(0.3)
+        # phase.set_target('l_thigh', 0.0)
+        # phase.set_target('l_shin', 0.0)
+        # phase.set_target('l_heel', 0.0)
+        # phase.set_target('l_hip', -0.2)
+        # phase.set_target('l_foot', 0.2)
+
+        # phase = self.controller.add_phase_from_prev(0.3)
+        # phase.set_target('l_hip', 0.0)
+        # phase.set_target('l_foot', 0.0)
+        # phase.set_target('r_hip', 0.0)
+        # phase.set_target('r_foot', 0.0)
 
     def collect_result(self):
         res = {}

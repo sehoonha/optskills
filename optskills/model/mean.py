@@ -76,10 +76,14 @@ class Cubic(object):
         if pts is not None:
             self.fit(pts)
         else:
-            self.p0 = np.random.rand(dim) - 0.5
-            self.p1 = np.random.rand(dim) - 0.5
-            self.p2 = np.random.rand(dim) - 0.5
-            self.p3 = np.random.rand(dim) - 0.5
+            # self.p0 = np.random.rand(dim) - 0.5
+            # self.p1 = np.random.rand(dim) - 0.5
+            # self.p2 = np.random.rand(dim) - 0.5
+            # self.p3 = np.random.rand(dim) - 0.5
+            self.p0 = np.zeros(dim)
+            self.p1 = np.zeros(dim)
+            self.p2 = np.zeros(dim)
+            self.p3 = np.zeros(dim)
 
     def set_params(self, params):
         assert(len(params) == self.paramdim)

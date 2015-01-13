@@ -48,7 +48,7 @@ class DirectSolver(object):
         opts.set('ftarget', 0.00001)
         num_offsprings = 16
         opts.set('popsize', num_offsprings)
-        max_iter = int(5000 / self.n / num_offsprings)
+        max_iter = int(12000 / self.n / num_offsprings)
         print('maxiter: %d' % max_iter)
         opts.set('maxiter', max_iter)
         for key, value in opts.iteritems():

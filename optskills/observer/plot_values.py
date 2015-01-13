@@ -136,7 +136,7 @@ class PlotValues(object):
             exp_list.sort(key=lambda exp: exp.best_value())
             print('the initial exp_list: %s' % exp_list)
             fp.write('the initial exp_list: %s\n' % exp_list)
-            exp_list = exp_list[1:-1]
+            # exp_list = exp_list[1:-1]
             num_trials = len(exp_list)
             med = exp_list[(num_trials - 1) / 2]
             x = med.evals
@@ -145,7 +145,10 @@ class PlotValues(object):
                 y = list(np.minimum.accumulate(med.values))
 
             y_average = np.zeros(501)
-            x2 = np.linspace(0, 5001.0, 501)
+            x2 = np.linspace(0, 10001.0, 501)
+            if "Our" in name:
+                x2 = np.linspace(0, 5000.0, 501)
+
             for exp in exp_list:
                 x = exp.evals
                 y = exp.values
@@ -156,9 +159,9 @@ class PlotValues(object):
             # while x[-1] > 5000:
             #     x.pop()
             #     y.pop()
-            for i in range(len(x)):
-                if x[i] > 5000:
-                    x[i] = 5000
+            # for i in range(len(x)):
+            #     if x[i] > 5000:
+            #         x[i] = 5000
             print 'x:', x
             print 'y:', y
             color = 'r' if 'cubic' in name else 'b'

@@ -94,8 +94,8 @@ class GPJump(SimProblem):
     def set_params(self, x):
         self.params = x
         w = (x - (-1.0)) / 2.0  # Change to 0 - 1 Scale
-        lo = np.array([-0.5, -1.5, -0.5, -1.0, -200, -100])
-        hi = np.array([1.0, 0.0, 1.0, 1.0, 0, 0])
+        lo = np.array([-0.5, -1.5, -0.5, -1.0, -200, -200])
+        hi = np.array([1.5, 0.0, 1.5, 1.0, 0, 0])
         params = lo * (1 - w) + hi * w
         (q0, q1, q2, q3, f0, f1) = params
         # print 'q:', q0, q1, q2, q3, f0, f1
@@ -128,6 +128,11 @@ class GPJump(SimProblem):
         phase.set_target('r_shoulder', 0.3)  # 0.3
         phase.set_target('l_thigh', q3)  # 0.2
         phase.set_target('r_thigh', q3)  # 0.2
+
+        # For the final production
+        phase.terminae = 0.5
+        phase = self.controller.add_phase_from_now(0.8)
+
         # print('num phases: %d' % len(self.controller.phases))
 
     def collect_result(self):

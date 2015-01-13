@@ -190,7 +190,7 @@ class Model(object):
             self.covs[i] = Cov(self.dim, m, _C=C)
 
     def update_stepsize_1_5th(self, stepsize, is_better, p_succ):
-        print('update_stepsize <1/5th>')
+        print('update_stepsize <1/5th> - 1/10th')
         c_p = 1.0 / 12.0
         lambda_succ = 1.0 if is_better else 0.0
         p_succ = (1 - c_p) * p_succ + c_p * lambda_succ
@@ -200,7 +200,8 @@ class Model(object):
             # stepsize *= (math.exp(1.0 / 3.0) ** 0.25)
             stepsize *= (math.exp(1.0 / 3.0))
         else:
-            stepsize /= (math.exp(1.0 / 3.0) ** 0.25)
+            # stepsize /= (math.exp(1.0 / 3.0) ** 0.25)
+            stepsize /= (math.exp(1.0 / 3.0) ** (1.0 / 9.0))
         return (stepsize, p_succ)
 
     def update_stepsize_success(self, stepsize, is_better, p_succ):
