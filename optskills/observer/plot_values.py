@@ -180,7 +180,8 @@ class PlotValues(object):
             fp.write('exp_list: %s\n' % exp_list)
 
             final_iters = [e.evals[-1] for e in exp_list]
-            final_values = [min(e.values) for e in exp_list]
+            # final_values = [min(e.values) for e in exp_list]
+            final_values = [e.values[-1] for e in exp_list]
             geom_mean = scipy.stats.mstats.gmean(final_values)
             print('average final iters: %.1f' % np.mean(final_iters))
             print('average final values: %.8f' % np.mean(final_values))
@@ -213,7 +214,7 @@ class PlotValues(object):
         # plt.plot(self.evals, self.values)
         font = {'size': 28}
         # plt.title('Compare %d Trials on %s' % (num_trials, prob_name),
-        t = plt.title('Jumping',
+        t = plt.title('Kicking',
                       fontdict={'size': 32})
         t.set_y(0.92)
         font = {'size': 28}
@@ -231,7 +232,7 @@ class PlotValues(object):
         # plt.axes().set_ylim(lo - 0.05, hi + 0.05)
         # plt.axes().set_ylim(lo - 0.05, 10)
         # plt.axes().set_ylim(0.0005, 10)
-        plt.axes().set_ylim(0.0001, 10)
+        plt.axes().set_ylim(0.0008, 10)
         plt.axhline(y=0, color='k')
         # plt.show()
         plt.savefig('%s.png' % outputfile, bbox_inches='tight')
