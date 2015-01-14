@@ -136,7 +136,10 @@ class PlotValues(object):
             exp_list.sort(key=lambda exp: exp.best_value())
             print('the initial exp_list: %s' % exp_list)
             fp.write('the initial exp_list: %s\n' % exp_list)
-            exp_list = exp_list[1:-1]  # Remove outlier exp
+            if len(exp_list) >= 9:
+                print('remove outliers')
+                fp.write('remove outliers')
+                exp_list = exp_list[1:-1]  # Remove outlier exp
             num_trials = len(exp_list)
             med = exp_list[(num_trials - 1) / 2]
             x = med.evals

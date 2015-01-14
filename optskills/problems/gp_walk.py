@@ -135,7 +135,9 @@ class GPWalk(SimProblem):
                 if phase_index == 4:
                     ph.add_target_offset('r_thigh', q1)  # Swing hip. 1.00
                     ph.add_target_offset('r_shin', q5)  # Swing knee. 0.00
+                    # ph.add_target_offset('r_heel', -1.0)  # Stand knee. 0.00
                     ph.add_target_offset('l_heel', q2)  # Stand ankle. 0.20
+                    # ph.add_target_offset('l_shin', -1.0)  # Stand knee. 0.00
                 if phase_index == 5:
                     ph.add_target_offset('r_hip', q3)  # Swing hip. 0.10
                     ph.add_target_offset('r_thigh', q6)  # Swing hip. 0.0
@@ -145,7 +147,9 @@ class GPWalk(SimProblem):
                 if phase_index == 7:
                     ph.add_target_offset('l_thigh', q1)  # Swing hip. 1.00
                     ph.add_target_offset('l_shin', q5)  # Swing knee. 0.00
+                    # ph.add_target_offset('l_heel', -1.0)  # Stand knee. 0.00
                     ph.add_target_offset('r_heel', q2)  # Stand ankle. 0.20
+                    # ph.add_target_offset('r_shin', -1.0)  # Stand knee. 0.00
                 if phase_index == 8:
                     ph.add_target_offset('l_hip', -q3)  # Swing ankle -0.10
                     ph.add_target_offset('l_thigh', q6)  # Swing hip. 0.0
@@ -156,6 +160,7 @@ class GPWalk(SimProblem):
         res['t'] = self.world.t
         res['f'] = self.is_fallen()
         res['C'] = self.skel().C
+        res['T'] = self.skel().COP
         res['params'] = self.params
         return res
 
@@ -165,6 +170,8 @@ class GPWalk(SimProblem):
         contacted = self.skel().contacted_body_names()
         C = self.skel().C
         if math.fabs(C[0]) > 0.15:
+            return True
+        if math.fabs(C[1]) < 0.12:
             return True
         if set(contacted) - set(['l_foot', 'r_foot', 'l_shin',
                                  'r_shin', 'l_heel', 'r_heel']):

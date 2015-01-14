@@ -51,8 +51,8 @@ class Linear(object):
     def is_same_pts(self, pts):
         for i in range(1, len(pts)):
             lhs = pts[0]
-            rhs = pts[1]
-            if norm(lhs - rhs) > 1e-10:
+            rhs = pts[i]
+            if norm(lhs - rhs) > 1e-8:
                 return False
         return True
 
@@ -125,8 +125,8 @@ class Cubic(object):
     def is_same_pts(self, pts):
         for i in range(1, len(pts)):
             lhs = pts[0]
-            rhs = pts[1]
-            if norm(lhs - rhs) > 1e-10:
+            rhs = pts[i]
+            if norm(lhs - rhs) > 1e-8:
                 return False
         return True
 
