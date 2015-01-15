@@ -36,8 +36,8 @@ class MyWindow(QtGui.QMainWindow):
             # self.prob = problems.GPBow()
             # self.prob = problems.GPStep()
             # self.prob = problems.GPKick()
-            self.prob = problems.GPJump()
-            # self.prob = problems.GPWalk()
+            # self.prob = problems.GPJump()
+            self.prob = problems.GPWalk()
             self.model = model.Model(self.prob.dim, self.tasks, 'linear')
             # params = np.array([0.8647, 0.6611, -0.6017,
             #                    -0.3276, -0.3781, 0.2489])
@@ -60,9 +60,19 @@ class MyWindow(QtGui.QMainWindow):
             #                    1.6, 0.7, 0.3, 0.2, -0.3])
             # params = np.array([-1.1595, 0.0236, -0.6677, 0.6955, 0.1316,
             #                    -0.2170, 0.3605, -0.0384, -0.2491, -0.8954])
-            params = np.array([-0.49943045, 0.68241983, 0.11126248, 0.46472543, -0.53002111, -0.18856136, -0.51978769, 0.0, 0.0,
-                               0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+            params = np.array([-0.49943045, 0.68241983, 0.11126248, 0.46472543, -0.53002111, -0.18856136, -0.51978769,
+                               0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
+            # For individual approach for walking
+            # lhs = np.array([-0.57016213, 0.90000273, -0.68236187, -0.33324228,
+            #                 0.34159808, 0.04885952, 0.35506013])
+            lhs = np.array([-0.80708114, 0.69733204, 0.10948302, 0.13978436,
+                            0.19853263, -0.43980252, 0.0329204])
+            rhs = np.array([-0.91217336, 0.07142092, 0.15365855, 0.01285273,
+                            0.32689401, -0.20036001, 0.57687862])
+            params[:7] = lhs
+            params[7:] = rhs - lhs
+            # params[:7] = 0.5 * (lhs + rhs)
             self.model.mean.set_params(params)
         else:
             import json
@@ -290,14 +300,34 @@ class MyWindow(QtGui.QMainWindow):
 
     def cam1Event(self):
         print 'cam1Event: frontview'
-        self.glwidget.tb = Trackball(phi=3.2785, theta=-28.967, zoom=1,
-                                     rot=[-0.2488669109614876,
-                                          -0.04137340091750815,
-                                          0.018840288369721358,
-                                          0.9674701782789754],
-                                     trans=[-0.290000000000001,
-                                            -0.05000000000000002,
-                                            -1.2100000000000029])
+        if 'Bioloid' in self.prob.skel_filename:
+            if 'Walk' in self.prob_name():
+                self.glwidget.tb = Trackball(phi=-25.5, theta=6.86, zoom=1,
+                                             rot=[-0.11399118462862251,
+                                                  -0.6947769785517393,
+                                                  -0.1156975272831452,
+                                                  0.7006461603991319],
+                                             trans=[-0.32000000000000084,
+                                                    -0.11000000000000004,
+                                                    -0.970000000000003])
+            elif 'Kick' in self.prob_name():
+                self.glwidget.tb = Trackball(phi=-25.5, theta=6.86, zoom=1,
+                                             rot=[-0.11399118462862251,
+                                                  -0.6947769785517393,
+                                                  -0.1156975272831452,
+                                                  0.7006461603991319],
+                                             trans=[-0.32000000000000084,
+                                                    -0.11000000000000004,
+                                                    -0.970000000000003])
+            else:
+                self.glwidget.tb = Trackball(phi=-25.5, theta=6.86, zoom=1,
+                                             rot=[-0.11399118462862251,
+                                                  -0.6947769785517393,
+                                                  -0.1156975272831452,
+                                                  0.7006461603991319],
+                                             trans=[-0.06000000000000084,
+                                                    -0.17000000000000004,
+                                                    -0.970000000000003])
 
     def printCamEvent(self):
         print 'printCamEvent'
