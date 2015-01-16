@@ -214,7 +214,7 @@ class PlotValues(object):
         # plt.plot(self.evals, self.values)
         font = {'size': 28}
         # plt.title('Compare %d Trials on %s' % (num_trials, prob_name),
-        t = plt.title('Walking',
+        t = plt.title('Kicking',
                       fontdict={'size': 32})
         t.set_y(0.92)
         font = {'size': 28}
@@ -224,7 +224,8 @@ class PlotValues(object):
         # plt.legend(pp, legends, numpoints=1, fontsize=26,
         plt.legend(pp, legends, fontsize=26,
                    # bbox_to_anchor=(0.15, 0.15))
-                   loc='lower left')
+                   # loc='lower left')
+                   loc='upper right')
         plt.tick_params(axis='x', labelsize=22)
         plt.tick_params(axis='y', labelsize=22)
         plt.axes().set_yscale('log')
@@ -232,8 +233,9 @@ class PlotValues(object):
         # plt.axes().set_ylim(lo - 0.05, hi + 0.05)
         # plt.axes().set_ylim(lo - 0.05, 10)
         # plt.axes().set_ylim(0.0005, 10)
-        # plt.axes().set_ylim(0.0008, 10)  # Kicking
-        plt.axes().set_ylim(0.0001, 10)  # Kicking
+        # plt.axes().set_ylim(0.0001, 10)  # Jumping
+        plt.axes().set_ylim(0.0008, 10)  # Kicking
+        # plt.axes().set_ylim(0.0005, 10)  # Walking
         plt.axhline(y=0, color='k')
         # plt.show()
         plt.savefig('%s.png' % outputfile, bbox_inches='tight')

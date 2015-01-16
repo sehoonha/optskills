@@ -7,7 +7,7 @@ import observer
 print 'Hello, OptSkills!'
 
 NUM_TESTS = 11
-NUM_TASKS = 6
+NUM_TASKS = 21
 MEAN_TYPE = 'linear'
 PROBLEM_CODE = None
 
@@ -193,8 +193,8 @@ def merge(output, keywords):
 # PROBLEM_CODE = 'problems.GPBow()'
 # PROBLEM_CODE = 'problems.GPStep()'
 # PROBLEM_CODE = 'problems.GPKick()'
-PROBLEM_CODE = 'problems.GPWalk()'
-# PROBLEM_CODE = 'problems.GPJump()'
+# PROBLEM_CODE = 'problems.GPWalk()'
+PROBLEM_CODE = 'problems.GPJump()'
 # PROBLEM_CODE = 'problems.SimJump()'
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
 # seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
