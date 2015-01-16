@@ -169,6 +169,8 @@ class PlotValues(object):
             print 'x:', x
             print 'y:', y
             color = 'r' if 'cubic' in name else 'b'
+            if '21' in name:
+                color = 'r'
             ls = '--' if 'CMA' in name else '-'
             p = plt.plot(x, y, ls=ls, color=color, linewidth=2)
             pp.append(p[0])
@@ -214,7 +216,7 @@ class PlotValues(object):
         # plt.plot(self.evals, self.values)
         font = {'size': 28}
         # plt.title('Compare %d Trials on %s' % (num_trials, prob_name),
-        t = plt.title('Kicking',
+        t = plt.title('',
                       fontdict={'size': 32})
         t.set_y(0.92)
         font = {'size': 28}
