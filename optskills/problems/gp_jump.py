@@ -133,11 +133,11 @@ class GPJump(SimProblem):
         phase.add_target_offset('l_shin', q5)  # 0.2
         phase.add_target_offset('r_shin', q5)  # 0.2
 
-        # # For the final production
-        # phase.terminae = 0.5
-        # phase = self.controller.add_phase_from_now(0.8)
-        # phase.add_target_offset('l_heel', -0.1)  # 0.2
-        # phase.add_target_offset('r_heel', -0.1)  # 0.2
+        # For the final production
+        phase.terminae = 0.5
+        phase = self.controller.add_phase_from_now(0.8)
+        phase.add_target_offset('l_heel', -0.1)  # 0.2
+        phase.add_target_offset('r_heel', -0.1)  # 0.2
 
         # print('num phases: %d' % len(self.controller.phases))
 
@@ -165,8 +165,8 @@ class GPJump(SimProblem):
             self.fallen = True
             return True
 
-        return (self.world.t > 1.7)
-        # return (self.world.t > 3.0)  # For final production
+        # return (self.world.t > 1.7)
+        return (self.world.t > 3.0)  # For final production
 
     def __str__(self):
         res = self.collect_result()
