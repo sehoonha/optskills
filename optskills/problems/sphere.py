@@ -10,8 +10,12 @@ class Sphere(object):
         self.seg_type = _seg_type
         if self.seg_type == 'linear':
             self.pts = []
-            self.pts += [np.array([-0.5] * self.dim)]
-            self.pts += [np.array([0.5] * self.dim)]
+            # self.pts += [np.array([-0.5] * self.dim)]
+            # self.pts += [np.array([0.5] * self.dim)]
+            p0 = (np.random.rand(self.dim) - 0.5)
+            p1 = p0 + 0.2 * (np.random.rand(self.dim) - 0.5)
+            self.pts += [p0]
+            self.pts += [p1]
         elif self.seg_type == 'cubic':
             self.pts = []
             self.pts += [np.array([-0.5, -0.5])]
@@ -20,6 +24,9 @@ class Sphere(object):
             self.pts += [np.array([0.0, 0.5])]
 
         self.eval_counter = 0  # Well, increasing when simulated
+
+    def reset(self):
+        pass
 
     def center(self, task):
         n = len(self.pts)

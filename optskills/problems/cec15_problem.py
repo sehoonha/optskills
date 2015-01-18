@@ -12,8 +12,12 @@ class CEC15(object):
 
         if _pts is None:
             self.pts = []
-            self.pts += [np.array([-0.5] * self.dim)]
-            self.pts += [np.array([0.5] * self.dim)]
+            # self.pts += [np.array([-0.5] * self.dim)]
+            # self.pts += [np.array([0.5] * self.dim)]
+            p0 = (np.random.rand(self.dim) - 0.5)
+            p1 = p0 + 0.2 * (np.random.rand(self.dim) - 0.5)
+            self.pts += [p0]
+            self.pts += [p1]
         else:
             self.pts = _pts
 
@@ -32,6 +36,9 @@ class CEC15(object):
 
         # self.plot_segment()
         self.eval_counter = 0  # Well, increasing when simulated
+
+    def reset(self):
+        pass
 
     def center(self, task):
         n = len(self.pts)
@@ -94,6 +101,8 @@ class CEC15(object):
             f = cec15.weierstrass_func(result, Os=c, sr=sr)
         elif self.func_name == 'schwefel':
             f = cec15.schwefel_func(result, Os=c)
+        elif self.func_name == 'hgbat':
+            f = cec15.hgbat_func(result, Os=c)
         else:
             f = 0.0
         return f * self.fscale + 0.1 * penalty

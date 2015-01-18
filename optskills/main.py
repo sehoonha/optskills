@@ -7,7 +7,7 @@ import observer
 print 'Hello, OptSkills!'
 
 NUM_TESTS = 11
-NUM_TASKS = 21
+NUM_TASKS = 6
 MEAN_TYPE = 'linear'
 PROBLEM_CODE = None
 
@@ -187,16 +187,20 @@ def merge(output, keywords):
                 with open(filename) as fin:
                     fout.write(fin.read())
 
-# PROBLEM_CODE = 'problems.Sphere()'
+# PROBLEM_CODE = 'problems.Sphere(20)'
 # PROBLEM_CODE = 'problems.Sphere(_seg_type="cubic")'
 # PROBLEM_CODE = 'problems.MirroredSphere()'
 # PROBLEM_CODE = 'problems.GPBow()'
 # PROBLEM_CODE = 'problems.GPStep()'
 # PROBLEM_CODE = 'problems.GPKick()'
 # PROBLEM_CODE = 'problems.GPWalk()'
-PROBLEM_CODE = 'problems.GPJump()'
+# PROBLEM_CODE = 'problems.GPJump()'
 # PROBLEM_CODE = 'problems.SimJump()'
-# PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar")'
+# PROBLEM_CODE = 'problems.Sphere(10)'
+# PROBLEM_CODE = 'problems.CEC15(20, "bent_cigar")'
+PROBLEM_CODE = 'problems.CEC15(20, "weierstrass")'
+# PROBLEM_CODE = 'problems.CEC15(10, "schwefel")'
+# PROBLEM_CODE = 'problems.CEC15(10, "hgbat")'
 # seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
 # adjust = "[0.5, 1.0]"
 # PROBLEM_CODE = 'problems.CEC15(2, "bent_cigar", %s, "quadratic", 0.5, %s)' \
@@ -271,6 +275,9 @@ if __name__ == '__main__':
             evaluate('sampler', False)
         elif cmd == 'merge':
             merge(sys.argv[2], sys.argv[3:])
+        elif cmd == 'mergeplot':
+            merge(sys.argv[2], sys.argv[3:])
+            plot(sys.argv[2])
         else:
             print('Unknown command: %s' % cmd)
         exit(0)

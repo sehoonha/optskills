@@ -216,7 +216,7 @@ class PlotValues(object):
         # plt.plot(self.evals, self.values)
         font = {'size': 28}
         # plt.title('Compare %d Trials on %s' % (num_trials, prob_name),
-        t = plt.title('',
+        t = plt.title('Jumping',
                       fontdict={'size': 32})
         t.set_y(0.92)
         font = {'size': 28}

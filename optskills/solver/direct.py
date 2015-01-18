@@ -45,10 +45,10 @@ class DirectSolver(object):
         # opts.set('tolfun', 0.001)
         # opts.set('tolx', 0.0000001)
         # opts.set('tolx', 1.0)
-        opts.set('ftarget', 0.00001)
+        opts.set('ftarget', 0.001)
         num_offsprings = 16
         opts.set('popsize', num_offsprings)
-        max_iter = int(12000 / self.n / num_offsprings)
+        max_iter = int(30000 / self.n / num_offsprings)
         print('maxiter: %d' % max_iter)
         opts.set('maxiter', max_iter)
         for key, value in opts.iteritems():

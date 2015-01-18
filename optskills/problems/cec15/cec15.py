@@ -65,8 +65,10 @@ def weierstrass_func(x, Os=None, Mr=None, sr=None, adjust=1.0):
 def schwefel_func(x, Os=None, Mr=None, sr=None, adjust=1.0):
     nx = len(x)
     # z = sr_func(x, Os, Mr, 1000.0 / 100.0)
+    adjust = 0.2
     z = sr_func(x, Os, Mr, 100000.0 / 100.0 * adjust)
     f = 0.0
+    dim = float(len(x))
     for i in range(nx):
         z[i] += 4.209687462275036e+002
         if z[i] > 500:
@@ -82,17 +84,40 @@ def schwefel_func(x, Os=None, Mr=None, sr=None, adjust=1.0):
         else:
             f -= z[i] * sin(pow(fabs(z[i]), 0.5))
         f += 4.189828872724338e+002 * nx
-    return max(f / 1000.0 - 0.838, 0.0)
-    # return f / 1000.0
+    # return max(f / 1000.0 - 0.838, 0.0)
+    # return max(f / 1000.0, 0.0)
+    return max((f - (dim * (dim - 1)) * 4.189e+002) / 1000.0, 0.0)
+
+
+def hgbat_func(x, Os=None, Mr=None, sr=None, adjust=1.0):
+    nx = len(x)
+    # z = sr_func(x, Os, Mr, 5.0 / 100.0)
+    z = sr_func(x, Os, Mr, 1.3)
+
+    alpha = 1.0 / 4.0
+    r2 = 0.0
+    sum_z = 0.0
+
+    for i in range(nx):
+        z[i] = z[i] - 1.0  # shift to orgin
+        r2 += z[i] * z[i]
+        sum_z += z[i]
+    f = pow(fabs(pow(r2,2.0)-pow(sum_z,2.0)),2*alpha) + (0.5*r2 + sum_z)/nx + 0.5
+    f *= 0.1
+    return f
 
 
 if __name__ == '__main__':
     print('Hello, cec15')
-    n = 51
-    xmax = 2.0
-    xmin = -xmax
-    ymax = xmax
-    ymin = -ymax
+    n = 101
+    xcen = 0.0
+    ycen = 0.0
+    xsize = 1.0
+    ysize = 1.0
+    xmax = xcen + xsize
+    xmin = xcen - xsize
+    ymax = ycen + ysize
+    ymin = ycen - ysize
     xs = np.linspace(xmin, xmax, n)
     ys = np.linspace(ymin, ymax, n)
     xv, yv = np.meshgrid(xs, ys)
@@ -102,8 +127,14 @@ if __name__ == '__main__':
             x = np.array([xs[i], ys[j]])
             # zv[i][j] = bent_cigar_func(x, adjust=0.0)
             # zv[i][j] = weierstrass_func(x, adjust=1.5)
-            # zv[i][j] = schwefel_func(x, adjust=1.5)
-            zv[i][j] = 1.0
+            zv[i][j] = schwefel_func(x)
+            # zv[i][j] = hgbat_func(x)
+            # zv[i][j] = 1.0
+    print('Minimum value = %.8f' % np.min(zv))
+    # print('Value at orig = %.8f' % hgbat_func(np.array([0.0, 0.0])))
+    # print('Value at diff = %.8f' % hgbat_func(np.array([1.0, 1.0])))
+    # print('Value at orig = %.8f' % hgbat_func(np.zeros(10)))
+    # print('Value at orig = %.8f' % hgbat_func(0.02 * (np.random.rand(10) - 0.5)))
 
     from mpl_toolkits.mplot3d import Axes3D
     from matplotlib import cm
