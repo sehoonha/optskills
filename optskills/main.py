@@ -198,8 +198,8 @@ def merge(output, keywords):
 # PROBLEM_CODE = 'problems.SimJump()'
 # PROBLEM_CODE = 'problems.Sphere(10)'
 # PROBLEM_CODE = 'problems.CEC15(20, "bent_cigar")'
-PROBLEM_CODE = 'problems.CEC15(20, "weierstrass")'
-# PROBLEM_CODE = 'problems.CEC15(10, "schwefel")'
+# PROBLEM_CODE = 'problems.CEC15(20, "weierstrass")'
+PROBLEM_CODE = 'problems.CEC15(5, "schwefel")'
 # PROBLEM_CODE = 'problems.CEC15(10, "hgbat")'
 # seg = "[[-0.5, -0.1], [0.0, 0.1], [0.5, -0.1]]"
 # adjust = "[0.5, 1.0]"
