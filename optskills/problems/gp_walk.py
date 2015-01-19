@@ -212,3 +212,25 @@ class GPWalk(SimProblem):
 
     def __repr__(self):
         return 'problems.GPWalk()'
+
+    def export_mtn(self):
+        print('GPWalk.export_mtn')
+        print('params = %s' % self.params)
+        print('loading motormap...')
+        from utils.gp_translator.motormap import MotorMap
+        from utils.gp_translator.motion import Motion
+        mmap = MotorMap()
+        mmap.load('../optskills/utils/gp_translator/BioloidGPMotorMap.xml')
+        print('creating gp motion...')
+        m = Motion(mmap)
+        phases = self.controller.phases
+        durations = [phase.terminate for phase in phases]
+        targets = [phase.target for phase in phases]
+        print('add pages...')
+        m.add_page('f_r1', targets[0:3], durations[0:3])
+        m.add_page('f_r_l', targets[3:6], durations[3:6])
+        m.add_page('f_l_r', targets[6:9], durations[6:9])
+        m.fill_with_empty_pages()
+        print('saving...')
+        m.save('gp_walk.mtn')
+        print('export_motion OK to gp_walk.mtn')

@@ -139,6 +139,9 @@ class MyWindow(QtGui.QMainWindow):
         self.screenshotAction = QtGui.QAction('Screenshot', self)
         self.screenshotAction.triggered.connect(self.screenshotEvent)
 
+        self.exportAction = QtGui.QAction('Export .mtn', self)
+        self.exportAction.triggered.connect(self.exportEvent)
+
         # Camera Menu
         self.cam0Action = QtGui.QAction('Camera0', self)
         self.cam0Action.triggered.connect(self.cam0Event)
@@ -188,6 +191,8 @@ class MyWindow(QtGui.QMainWindow):
         recordingMenu.addSeparator()
         recordingMenu.addAction(self.captureAction)
         recordingMenu.addAction(self.movieAction)
+        recordingMenu.addSeparator()
+        recordingMenu.addAction(self.exportAction)
 
     def idleTimerEvent(self):
         doCapture = False
@@ -237,6 +242,9 @@ class MyWindow(QtGui.QMainWindow):
 
     def screenshotEvent(self):
         self.glwidget.capture()
+
+    def exportEvent(self):
+        self.prob.export_mtn()
 
     def prob_name(self):
         ret = repr(self.prob)
