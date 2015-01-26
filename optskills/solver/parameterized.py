@@ -41,8 +41,8 @@ class ParameterizedSolver(object):
             next_best_samples = self.solve_step(i, best_samples)
             best_samples = next_best_samples
             [o.notify_step(self, self.model) for o in self.observers]
-            if np.mean(self.mean_values) < 0.001:
-                break
+            # if np.mean(self.mean_values) < 0.001:
+            #     break
             if self.prob.eval_counter > 20000:
                 break
             # if self.model.stepsize < 0.00001:

@@ -10,9 +10,10 @@ class GPWalk(SimProblem):
     def __init__(self):
         super(GPWalk, self).__init__('urdf/BioloidGP/BioloidGP.URDF',
                                      fps=2000.0)
+        # self.dim = 7
+        self.dim = 4
         self.__init__simulation__()
 
-        self.dim = 7
         self.eval_counter = 0  # Well, increasing when simulated
         self.params = None
 
@@ -32,7 +33,8 @@ class GPWalk(SimProblem):
         self.controller.loop_phase_index = 3
         self.controller.callback = self.balance
 
-        self.set_params(np.array([0.14, 0.3, -0.15, -0.1, -0.2, 0.0, 0.0]))
+        # self.set_params(np.array([0.14, 0.3, -0.15, -0.1, -0.2, 0.0, 0.0]))
+        self.set_params(np.zeros(self.dim))
         self.controller.reset()
 
     def balance(self):
@@ -52,17 +54,19 @@ class GPWalk(SimProblem):
         x1 = self.skel().dof_index('l_foot')
         y1 = self.skel().dof_index('r_foot')
 
+        power = 1.4
         qhat = np.array(self.controller.phase().target)
-        bal *= 1.0
+        bal *= (1.0 * power)
         # print('t: %0.4f bal: %.6f' % (self.world.t, bal))
-        qhat[l0] -= bal * 1.0
-        qhat[r0] -= bal * 1.0
-        qhat[l1] -= bal * 1.0
-        qhat[r1] -= bal * 1.0
+        # qhat[l0] -= bal * 1.0
+        # qhat[r0] -= bal * 1.0
+        # qhat[l1] -= bal * 1.0
+        # qhat[r1] -= bal * 1.0
         qhat[l2] -= bal * 1.0
         qhat[r2] -= bal * 1.0
 
-        bal2 *= (0.2)
+        # bal2 *= (0.1 * power)
+        bal2 *= (0.0 * power)
         qhat[x0] += bal2 * 1.0
         qhat[y0] += bal2 * 1.0
         qhat[x1] += bal2 * 1.0
@@ -85,8 +89,10 @@ class GPWalk(SimProblem):
         w = task
         # Calculate the validity of C
         C = result['C']
-        lo = np.array([0.0, 0.16, 0.20])
-        hi = np.array([0.0, 0.16, 0.40])
+        # lo = np.array([0.0, 0.16, 0.20])
+        # hi = np.array([0.0, 0.16, 0.40])
+        lo = np.array([0.0, 0.16, 0.15])
+        hi = np.array([0.0, 0.16, 0.30])
         C_hat = lo * (1 - w) + hi * w
         weight = np.array([0.1, 0.0, 3.0])
         obj = norm((C - C_hat) * weight) ** 2
@@ -114,13 +120,15 @@ class GPWalk(SimProblem):
     def set_params(self, x):
         self.params = x
         w = (x - (-1.0)) / 2.0  # Change to 0 - 1 Scale
-        # lo = np.array([0.0, -1.0, -0.5, -0.5, -0.5, -0.5])
-        # hi = np.array([0.2, 1.0, 0.5, 0.5, 0.5, 0.5])
-        lo = np.array([0.0, -1.2, -1.2, -1.2, -1.2, -1.2, -1.2])
-        hi = np.array([0.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2])
+        # lo = np.array([0.0, -1.2, -1.2, -1.2, -1.2, -1.2, -1.2])
+        # hi = np.array([0.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2])
+        lo = np.array([0.0, -0.4, -0.4, -0.4])
+        hi = np.array([0.1, 0.4, 0.4, 0.4])
         params = lo * (1 - w) + hi * w
-        (t0, q1, q2, q3, q4, q5, q6) = params
-        # print t0, q1, q2, q3, q4
+        # (t0, q1, q2, q3, q4, q5, q6) = params
+        (t0, q1, q3, q5) = params
+        (q2, q4, q6) = (0.0, 0.0, 0.0)
+        print t0, q1, q2, q3, q4, q5, q6
 
         self.reset()
         self.controller.clear_phases()
@@ -228,8 +236,12 @@ class GPWalk(SimProblem):
         targets = [phase.target for phase in phases]
         print('add pages...')
         m.add_page('f_r1', targets[0:3], durations[0:3])
-        m.add_page('f_r_l', targets[3:6], durations[3:6])
-        m.add_page('f_l_r', targets[6:9], durations[6:9])
+        pg = m.add_page('f_r_l', targets[3:6], durations[3:6])
+        pg.next_page = 6
+        pg.exit_page = 8
+        pg = m.add_page('f_l_r', targets[6:9], durations[6:9])
+        pg.next_page = 5
+        pg.exit_page = 7
         m.fill_with_empty_pages()
         print('saving...')
         m.save('gp_walk.mtn')

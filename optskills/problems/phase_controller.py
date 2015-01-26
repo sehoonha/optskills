@@ -46,7 +46,8 @@ class PhaseController(object):
         if self.spd:
             self.pd = SPDController(self.skel(), 300.0, 30.0, self.world.dt)
         else:
-            self.pd = PDController(self.skel(), 60.0, 3.0, 0.3)
+            # self.pd = PDController(self.skel(), 60.0, 3.0, 0.3)
+            self.pd = PDController(self.skel(), 10.0, 0.3, 0.3)
 
         self.jt = JTController(self.skel())
 

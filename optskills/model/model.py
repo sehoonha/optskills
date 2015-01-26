@@ -133,7 +133,8 @@ class Model(object):
                 pts += [s]
                 values += [s.evaluate(task)]
             self.mean.fit(pts)
-            estimated_cost = sum(values) + 10.0 * self.mean.fit_error
+            # estimated_cost = sum(values) + 10.0 * self.mean.fit_error
+            estimated_cost = sum(values) + 100.0 * self.mean.fit_error
             # if loop == 0:
             #     print '>> Loop 0', pts
             #     print '    >>', estimated_cost, values, self.mean.fit_error
